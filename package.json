@@ -13,6 +13,7 @@
         "build": "nx run-many -t build --projects=web,api",
         "graph": "nx graph",
         "lint": "nx run-many -t lint",
+        "lint:styles": "stylelint \"**/*.{css,scss}\"",
         "typecheck": "nx run-many -t typecheck",
         "format": "prettier --write .",
         "format:check": "prettier --check ."
@@ -54,6 +55,8 @@
         "nx": "23.1.1",
         "prettier": "~3.6.2",
         "sass": "^1.102.0",
+        "stylelint": "^17.14.1",
+        "stylelint-plugin-carbon-tokens": "^5.0.6",
         "tslib": "^2.3.0",
         "typescript": "~6.0.3",
         "typescript-eslint": "^8.67.0",

@@ -25,6 +25,9 @@ export default defineConfig(() => ({
         outDir: '../../dist/apps/web',
         emptyOutDir: true,
         reportCompressedSize: true,
+        // Carbon emits modern CSS (@position-try, etc.) that Vite 8's default
+        // lightningcss minifier rejects; esbuild handles it.
+        cssMinify: 'esbuild',
         commonjsOptions: {
             transformMixedEsModules: true,
         },
