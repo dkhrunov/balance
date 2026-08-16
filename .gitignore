@@ -37,3 +37,5 @@ Thumbs.db
 !.vscode/settings.json
 *.swp
 *.swo
+
+vite.config.*.timestamp*

@@ -19,7 +19,7 @@
      Goal: log in, manage accounts/categories, record income/expense/transfer with attribution,
      work offline and sync. No budgets, analytics charts, debts, or savings goals here. -->
 
-- [ ] Scaffold Nx monorepo with `apps/web` and `apps/api`
+- [x] Scaffold Nx monorepo with `apps/web` and `apps/api`
   - **ID**: scaffold-nx-monorepo
   - **Tags**: infra, nx
   - **Details**: Initialize Nx workspace; React+TS web app; NestJS API app; baseline libs layout (`contracts`, `domain` stubs OK; env in apps, no shared `libs/config`). Align with SPEC §1, §3–5. Update AGENTS.md Commands with real targets.
