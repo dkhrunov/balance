@@ -20,4 +20,4 @@ async function bootstrap(): Promise<void> {
     Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
 }
 
-bootstrap();
+void bootstrap();

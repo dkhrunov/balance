@@ -1,4 +1,8 @@
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import nx from '@nx/eslint-plugin';
+import safeql from '@ts-safeql/eslint-plugin/config';
+import { config as loadEnv } from 'dotenv';
 import aiGuard from 'eslint-plugin-ai-guard';
 import codeComplete from 'eslint-plugin-code-complete';
 import deMorgan from 'eslint-plugin-de-morgan';
@@ -13,6 +17,7 @@ export default [
     {
         ignores: ['**/dist', '**/out-tsc', '**/vite.config.*.timestamp*'],
     },
+    ...createSafeqlConfig(),
     {
         files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
         rules: {
@@ -172,3 +177,48 @@ export default [
         },
     },
 ];
+
+/**
+ * SafeQL: validate SQL against live Postgres (apps/api/.env via dotenv).
+ * Postgres should be up when linting files that use sql`...`.
+ */
+function createSafeqlConfig() {
+    const repoRoot = dirname(fileURLToPath(import.meta.url));
+
+    loadEnv({ path: resolve(repoRoot, 'apps/api/.env'), quiet: true });
+
+    const user = process.env.DATABASE_USER;
+    const password = process.env.DATABASE_PASSWORD;
+    const host = process.env.DATABASE_HOST;
+    const port = process.env.DATABASE_PORT;
+    const name = process.env.DATABASE_NAME;
+
+    if (!user || !password || !host || !port || !name) {
+        throw new Error('[Safeql] could not be configured - missing environment variables');
+    }
+
+    const databaseUrl = `postgres://${user}:${password}@${host}:${port}/${name}`;
+
+    return [
+        {
+            files: ['**/*.ts'],
+            languageOptions: {
+                parserOptions: {
+                    projectService: true,
+                },
+            },
+        },
+        // Connect to the database using the database URL
+        safeql.configs.connections({
+            databaseUrl,
+            targets: [{ tag: 'sql' }],
+        }),
+        // Alternative connection: shadow DB from SQL migrations instead of databaseUrl.
+        // safeql.configs.connections({
+        //     migrationsDir: resolve(repoRoot, 'apps/api/migrations'),
+        //     targets: [{ tag: 'sql' }],
+        //     // To connect using alternate superuser credentials (default is postgres://postgres:postgres@localhost:5432/postgres)
+        //     connectionUrl: `postgres://alternate-user:alternate-password@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/postgres`,
+        // }),
+    ];
+}

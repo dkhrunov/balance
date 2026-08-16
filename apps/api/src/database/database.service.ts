@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { sql } from '@ts-safeql/sql-tag';
 import { Pool } from 'pg';
 
 @Injectable()
@@ -18,7 +19,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     }
 
     public async onModuleInit(): Promise<void> {
-        await this.pool.query('SELECT 1');
+        await this.pool.query(sql`SELECT 1`);
         this.logger.log('PostgreSQL connection OK');
     }
 
