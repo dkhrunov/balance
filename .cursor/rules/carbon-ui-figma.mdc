@@ -1,0 +1,45 @@
+---
+description: Carbon UI + canonical Figma file; design-first approval before UI code
+alwaysApply: true
+---
+
+# Carbon UI and Figma (Balance)
+
+## Stack
+
+- Use `@carbon/react` and `@carbon/icons-react` for UI. Use Carbon Charts when the task needs charts.
+- Do not invent custom buttons, inputs, tables, modals, or other primitives when Carbon covers the need.
+- Styles: SCSS Modules + `@use '@carbon/react'` (or targeted `@use '@carbon/react/scss/...'`).
+- Theme: Carbon-compatible `light` / `dark` / `system`.
+- Layout: **mobile-first** — design and implement for the smallest viewport first, then enhance for larger breakpoints (Figma frames and CSS).
+- Map Figma designs to `@carbon/react` components — not generic HTML/CSS from Figma autogen, Material, or SDS.
+
+## Canonical Figma file
+
+Work only in this file (`fileKey`: `AKrrn2Cphz7chTu1GwvYTc`):
+
+https://www.figma.com/design/AKrrn2Cphz7chTu1GwvYTc/Balance--Carbon-Design-?node-id=58-2763&p=f&t=fcmZraDygkirkApE-0
+
+This is a Free-plan single-file copy of (v11) Carbon Design System (Community). Team libraries / Enable library across files are unavailable — do not rely on a separate product file or library subscribe.
+
+- App screens live only on pages named `Balance / …` (e.g. `Balance / Screens`). Create that page if missing.
+- Do not edit Carbon kit documentation pages (Button, Data table, Tokens, etc.) — read components from them only.
+- Build UI from **local** Carbon `COMPONENT` / `COMPONENT_SET` instances in this file.
+- Frame names: `Balance / <ScreenName>`.
+- Ignore any other Balance Figma file (e.g. empty product file without the kit).
+
+## Design-first gate (required)
+
+When the task **designs a new page/screen** or **adds/changes UI content** on a page (layout, components, copy blocks, navigation, etc.):
+
+1. First implement or update the mockup in the canonical Figma file (Carbon instances on `Balance / *`).
+2. Show the user the result (link to the frame/page + short description) and **explicitly ask for confirmation** that the design is acceptable.
+3. **Do not write or change UI code** (`apps/web` and related frontend) until the user confirms (e.g. “ok”, “approved”, “good”).
+4. After confirmation, implement code to match the approved mockup with `@carbon/react`.
+
+### Gate does not apply when
+
+- Backend / domain / contracts / sync / schema only
+- Bugfix with no visual UI change
+- Refactor with no visual change
+- User explicitly says code-only / skip Figma
