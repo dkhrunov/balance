@@ -26,7 +26,7 @@
   - **Acceptance**: `npx nx graph` works; `web` and `api` projects build; Node version matches `.nvmrc`; README notes how to start both apps.
   - **Estimate**: 2-4h
 
-- [ ] Docker Compose PostgreSQL for local API
+- [x] Docker Compose PostgreSQL for local API
   - **ID**: docker-postgres
   - **Tags**: infra, database
   - **Details**: `docker-compose` (or equivalent) with Postgres; `.env.example` for connection; documented start command. SPEC §5, §40.

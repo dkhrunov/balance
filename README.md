@@ -6,6 +6,7 @@ Offline-first multi-user finance app (multi-currency, sync, operation attributio
 
 - **Node.js 22+** (see [`.nvmrc`](./.nvmrc)): `nvm use`
 - npm (comes with Node)
+- **Docker** + Docker Compose (local PostgreSQL)
 
 ```bash
 npm install
@@ -24,9 +25,34 @@ libs/
 
 Import shared code via `@balance/contracts`, `@balance/domain`. App env/secrets stay in each app — no shared `libs/config`.
 
+## Local PostgreSQL
+
+```bash
+# Optional: override compose defaults
+cp .env.example .env
+
+# Start Postgres (port 5432 by default)
+docker compose up -d
+
+# Wait until healthy, then:
+docker compose ps
+```
+
+API connection settings live in `apps/api/.env` (copy from `apps/api/.env.example`). Defaults match Compose. Do not commit `.env` files.
+
+```bash
+cp apps/api/.env.example apps/api/.env
+```
+
+Stop / remove the container (volume kept):
+
+```bash
+docker compose down
+```
+
 ## Start apps locally
 
-In two terminals (Node 22):
+In two terminals (Node 22), with Postgres running:
 
 ```bash
 # API — http://localhost:3000/api

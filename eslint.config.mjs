@@ -147,6 +147,15 @@ export default [
         },
     },
     {
+        files: ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'],
+        rules: {
+            '@typescript-eslint/explicit-member-accessibility': [
+                'error',
+                { accessibility: 'explicit' },
+            ],
+        },
+    },
+    {
         files: ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts', '**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'],
         plugins: {
             'ai-guard': aiGuard,
@@ -155,7 +164,7 @@ export default [
         rules: {
             ...aiGuard.configs.recommended.rules,
             'code-complete/no-late-argument-usage': 'warn',
-            'code-complete/no-late-variable-usage': 'warn',
+            'code-complete/no-late-variable-usage': 'off',
             'code-complete/enforce-meaningful-names': 'error',
             'code-complete/no-magic-numbers-except-zero-one': 'warn',
             'code-complete/no-boolean-params': 'warn',

@@ -1,0 +1,28 @@
+# Local PostgreSQL for Balance API development.
+# Start: docker compose up -d
+# Stop:  docker compose down
+#
+# Override credentials via a root `.env` (copy from `.env.example`); defaults are for local use only.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: balance-postgres
+    restart: unless-stopped
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-balance}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-balance}
+      POSTGRES_DB: ${POSTGRES_DB:-balance}
+    volumes:
+      - balance_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  balance_db:

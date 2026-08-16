@@ -8,6 +8,8 @@
     "scripts": {
         "start:web": "nx serve web",
         "start:api": "nx serve api",
+        "db:up": "docker compose up -d",
+        "db:down": "docker compose down",
         "build": "nx run-many -t build --projects=web,api",
         "graph": "nx graph",
         "lint": "nx run-many -t lint",
@@ -32,6 +34,7 @@
         "@swc/core": "~1.15.5",
         "@swc/helpers": "~0.5.18",
         "@types/node": "^22.0.0",
+        "@types/pg": "^8.21.0",
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
         "@vitejs/plugin-react": "^6.0.0",
@@ -60,8 +63,10 @@
     "dependencies": {
         "@carbon/react": "^1.114.0",
         "@nestjs/common": "^11.0.0",
+        "@nestjs/config": "^4.0.4",
         "@nestjs/core": "^11.0.0",
         "@nestjs/platform-express": "^11.0.0",
+        "pg": "^8.23.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "reflect-metadata": "^0.2.0",

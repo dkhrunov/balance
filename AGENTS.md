@@ -107,6 +107,10 @@ Offline? Two users at once? Duplicate delivery? JWT expired offline? Old queue a
 Requires **Node 22+** (`nvm use`, see `.nvmrc`).
 
 ```bash
+# Local Postgres (required for API)
+docker compose up -d   # or: npm run db:up
+# apps/api/.env from apps/api/.env.example
+
 # Dev servers
 npx nx serve web    # http://localhost:4200  (/api → api :3000)
 npx nx serve api    # http://localhost:3000/api
@@ -125,4 +129,4 @@ npx nx test <project>      # Vitest (web/FE) or Jest (api/BE)
 npx nx e2e <project>       # Playwright (when an e2e project exists)
 ```
 
-npm scripts: `npm run start:web`, `start:api`, `build`, `graph`, `lint`, `typecheck`.
+npm scripts: `npm run start:web`, `start:api`, `db:up`, `db:down`, `build`, `graph`, `lint`, `typecheck`.
