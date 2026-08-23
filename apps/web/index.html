@@ -2,12 +2,37 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Web</title>
+        <title>Balance</title>
         <base href="/" />
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="stylesheet" href="/src/styles.scss" />
+        <script>
+            (function () {
+                /*
+                 * Apply the persisted theme before CSS can paint the page.
+                 *
+                 * ThemePreferenceProvider applies the same preference once React starts,
+                 * but the browser may render the HTML and Carbon styles before that point.
+                 * Without this early attribute, a user who selected a theme different from
+                 * their system preference sees a short flash of the system theme on reload.
+                 *
+                 * Keep this script in index.html; removing it does not break theme switching,
+                 * but reintroduces that initial theme flash.
+                 */
+                try {
+                    var preference = localStorage.getItem('balance.themePreference');
+                    if (preference === 'light') {
+                        document.documentElement.setAttribute('data-carbon-theme', 'white');
+                    } else if (preference === 'dark') {
+                        document.documentElement.setAttribute('data-carbon-theme', 'g100');
+                    }
+                } catch (error) {
+                    /* Keep the CSS system default when storage is unavailable. */
+                }
+            })();
+        </script>
     </head>
     <body>
         <div id="root"></div>

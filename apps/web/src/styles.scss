@@ -1,5 +1,33 @@
 // Carbon Design System — styles, tokens, reset, type, grid, components.
 // Vite requires $font-path without the webpack `~` prefix.
-@use '@carbon/react' with (
-    $font-path: '@ibm/plex'
-);
+@use '@carbon/react' with ($font-path: '@ibm/plex');
+
+@use '@carbon/themes/scss/themes' as *;
+@use '@carbon/themes';
+
+/* system preference theme by default */
+:root {
+    @include themes.theme($white);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        @include themes.theme($g100);
+    }
+}
+
+[data-carbon-theme='white'] {
+    @include themes.theme($white);
+}
+
+[data-carbon-theme='g10'] {
+    @include themes.theme($g10);
+}
+
+[data-carbon-theme='g90'] {
+    @include themes.theme($g90);
+}
+
+[data-carbon-theme='g100'] {
+    @include themes.theme($g100);
+}

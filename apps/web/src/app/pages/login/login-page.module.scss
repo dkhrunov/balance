@@ -1,0 +1,33 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
+
+.page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: $background;
+}
+
+.brand {
+    margin-bottom: $spacing-06;
+}
+
+.title {
+    @include type-style('heading-05');
+    color: $text-primary;
+    margin: 0 0 $spacing-03;
+}
+
+.subtitle {
+    @include type-style('body-01');
+    color: $text-secondary;
+    margin: 0;
+}
+
+.hint {
+    @include type-style('helper-text-01');
+    color: $text-secondary;
+    margin: 0;
+}
