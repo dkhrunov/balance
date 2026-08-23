@@ -1,6 +1,6 @@
 # AGENTS.md — Balance
 
-Personal multi-user finance tracking web app. Offline-first, multi-currency, sync across users.
+Personal multi-user finance tracking web app. **One financial space**, 1–n users; offline-first, multi-currency, sync across users.
 
 | File                                     | Purpose                            |
 | ---------------------------------------- | ---------------------------------- |
@@ -17,7 +17,7 @@ Senior/Staff engineer: architecture integrity, FE↔BE type-safety, offline-firs
 1. Read the chosen task in `TASKS.md` and the cited sections of `docs/requirements/SPEC.md` (start with §1 Product Scope).
 2. Study existing architecture and analogs in the repo; do not invent a new pattern when a suitable one already exists.
 3. Respect Nx dependency boundaries.
-4. Assess impact: domain, contracts, DB schema, sync, offline storage, authz, multi-user attribution, money/currency, user preferences (locale/theme).
+4. Assess impact: domain, contracts, DB schema, sync, offline storage, authz, multi-user attribution, money/currency, user preferences (locale/theme). Do not add a second financial space or account membership in MVP (SPEC §9).
 5. If the task is Post-MVP, do not pull MVP work into scope (and vice versa: do not pre-build Post-MVP tables/APIs).
 6. If multiple layers are affected — short plan first.
 7. After implementation: typecheck, lint, relevant tests.
@@ -25,14 +25,16 @@ Senior/Staff engineer: architecture integrity, FE↔BE type-safety, offline-firs
 ## Hard Constraints
 
 - Offline-first: client works without network; server is authoritative after sync.
-- API contract-first: shared TypeScript contracts in `libs/contracts`; do not duplicate DTOs between FE and BE.
+- Desktop-first UI (MVP): design and accept against a wide viewport (Carbon `lg+`). A dedicated mobile/tablet layout is Post-MVP; do not spend MVP time on a phone layout.
+- API contract-first: shared TypeScript contracts in `libs/contracts`; do not duplicate DTOs between FE and BE. Feature delivery is **contracts → backend → frontend**; do not start feature UI before that feature’s contract and API exist.
 - Money: never use JS `number` in calculations; decimal-safe `Money` (`amount: string` + currency); in PostgreSQL — `NUMERIC` (or agreed minor units).
 - Mutations are idempotent (`operationId`); for concurrently mutable entities — optimistic concurrency (`version`).
 - For sync entities — soft delete / tombstone (`deletedAt`).
 - Prefer correction/reversal over silent in-place edit of financial operations where possible.
 - No `last-write-wins` for financial data under concurrent multi-user edits without explicit conflict handling.
 - Authorization on every backend request (auth + permission); FE checks are not a security boundary.
-- UI: Carbon Design System / Carbon Charts / Carbon MCP instead of custom primitives when Carbon covers the need. Figma + design-first gate: [`.cursor/rules/carbon-ui-figma.mdc`](./.cursor/rules/carbon-ui-figma.mdc).
+- UI: Carbon Design System / Carbon Charts / Carbon MCP instead of custom primitives when Carbon covers the need. Design-in-app review (+ Figma only on request): [`.cursor/rules/carbon-ui-figma.mdc`](./.cursor/rules/carbon-ui-figma.mdc).
+- No silent hacks or workarounds. If the proper API/pattern does not fit, stop, describe the gap, propose options, and wait for the next instruction (see **Hacks and workarounds**).
 - Do not add Redis/queues/WebSockets “for later” without a concrete need and an evaluation against Postgres/NestJS.
 - Locale and theme are user preferences persisted on the backend (cross-session, cross-browser); see SPEC §4 and §8.
 
@@ -41,7 +43,7 @@ Senior/Staff engineer: architecture integrity, FE↔BE type-safety, offline-firs
 | Layer         | Technologies                                                                                   |
 | ------------- | ---------------------------------------------------------------------------------------------- |
 | Monorepo      | Nx                                                                                             |
-| Web           | React, TypeScript, Carbon (`@carbon/react`), PWA, Service Worker, IndexedDB                    |
+| Web           | React, TypeScript, Carbon (`@carbon/react`), PWA, Service Worker, IndexedDB; **desktop-first** (MVP) |
 | Styles        | **SCSS** + **CSS Modules** (`.module.scss`); Carbon via `@use '@carbon/react'`                 |
 | i18n          | Multilingual UI (`en`, `ru`); deploy-time default + in-app switch                              |
 | Theme         | Carbon-compatible `light` / `dark` / `system` (default `system`)                               |
@@ -65,16 +67,33 @@ Forbidden: UI → PostgreSQL / NestJS internals; Domain → React / browser APIs
 
 ## Working the Task Queue
 
-1. Open `TASKS.md`. Take the **first unchecked** task in the highest non-empty priority (`P0` → `P1` → `P2` → `P3`) that has no unresolved `**Blocked by**`. Prefer finishing MVP (`P1`) before Post-MVP (`P2`/`P3`); see SPEC §1.
+1. Open `TASKS.md`. Take the **first unchecked** task in the highest non-empty priority (`P0` → `P1` → `P2` → `P3`) that has no unresolved `**Blocked by**`. Prefer finishing MVP (`P1`) before Post-MVP (`P2`/`P3`); see SPEC §1. Work **feature by feature**: backend (contracts + API) for that feature, then its frontend, then the next feature. Do not batch all backend before any frontend.
 2. Claim the task line with an `(@agent-id)` suffix while working; remove the claim if you stop unfinished.
 3. Stay within that task’s scope. For complex tasks fill in `**Plan**` before coding; remove `**Plan**` when done.
 4. When **Acceptance** is met — mark `- [x]`. After merge, prefer deleting completed tasks (history lives in git).
 5. Do not start a task with unfinished blockers.
 6. Ambiguity that risks financial data loss or sync conflicts — stop and ask.
+7. A needed hack/workaround is a stop: highlight it, propose options, wait (see **Hacks and workarounds**).
+
+## Hacks and workarounds
+
+Do **not** silently land a hack, workaround, or library-internal override to “just make it work.” That includes (not exhaustive): targeting Carbon/internal class names (`:global(.cds--…)`), fighting a design-system layout with CSS, `@ts-ignore` / `any` to paper over types, one-off flags, duplicated contracts, or bypassing an existing project pattern.
+
+When the proper API or composition is missing, unclear, or would require a workaround:
+
+1. **Stop.** Do not apply the hack.
+2. **Highlight** the gap (what does not fit the intended API/pattern).
+3. **Describe** why a workaround looks necessary.
+4. **Propose options** (correct API/composition, product/UX decision, defer, accepted exception).
+5. **Wait** for the next instruction before coding.
+
+An exception is allowed only when the user explicitly chooses one of the proposed options.
 
 ## API / Schema Changes
 
-1. Shared contract → 2. Backend → 3. Frontend client → 4. Tests → 5. Account for offline clients with an old queue (`schemaVersion` / sync protocol).
+1. Shared contract → 2. Backend (schema, API, authz, tests) → 3. Frontend client built against those contracts → 4. Tests → 5. Account for offline clients with an old queue (`schemaVersion` / sync protocol).
+
+Do not start feature UI until step 2 exists for that feature.
 
 Change the DB schema only via migrations.
 
@@ -84,7 +103,7 @@ Change the DB schema only via migrations.
 
 ## Definition of Done (unless the task narrows it)
 
-As needed: domain / contracts / schema; API and UI; offline/pending mutation path; idempotency; authz on backend; decimal-safe money; loading/error/empty in UI; tests for non-trivial logic; lint + typecheck; Nx boundaries respected.
+As needed: domain / contracts / schema; API then UI (UI only after the API exists); offline/pending mutation path; idempotency; authz on backend; decimal-safe money; loading/error/empty in UI; desktop UX (mobile layout is not an MVP DoD item); tests for non-trivial logic; lint + typecheck; Nx boundaries respected.
 
 ## Must NOT
 
@@ -95,8 +114,12 @@ As needed: domain / contracts / schema; API and UI; offline/pending mutation pat
 - Non-idempotent sync / silent overwrite of concurrent edits
 - Physically delete sync entities without a tombstone when sync requires one
 - Duplicate contracts; paper over gaps with `any` / `@ts-ignore`
+- Silently apply hacks/workarounds (CSS against library internals, type escapes, pattern bypasses) instead of stopping to propose options
 - Require network to read local data
 - Treat `navigator.onLine === true` as proof of real connectivity
+- Treat a mobile/tablet layout as an MVP deliverable
+- Start feature UI before that feature’s contracts and backend API exist
+- Introduce multiple financial spaces, per-user spaces, or account membership/roles in MVP
 
 ## Critical Questions (sync / money)
 

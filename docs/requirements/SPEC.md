@@ -14,8 +14,8 @@ Build in this order: **MVP first** (usable income/expense tracking), then **Post
 Minimum product that is useful day to day:
 
 ```text
-Multi-user login (JWT; users via admin/DB seed)
-Accounts (explicit currency per account)
+One financial space; 1–n users (JWT; users via admin/DB seed)
+Accounts in that space (explicit currency; no per-user ownership — users agree among themselves who uses which account)
 Income / expense categories
 Income, expense, transfer
 createdBy attribution + filters (all / me / selected users)
@@ -25,6 +25,7 @@ Conflict handling for concurrent edits
 PWA app shell (install / offline startup)
 i18n (en, ru) + theme preferences (light / dark / system)
 Decimal-safe Money end-to-end
+Desktop-first UI (lg+). Mobile/tablet layout is not an MVP acceptance criterion
 ```
 
 ### Post-MVP — after MVP works
@@ -39,14 +40,14 @@ Audit trail storage beyond sync logs
 Category subcategories / icons / colors
 Admin UI to create users
 Background Sync API (optional enhancement)
+Mobile / tablet layout (decision after MVP; not designed in MVP)
+Multiple financial spaces / personal vs shared partitions (undecided — see §9; may never be built)
 ```
 
 ### Explicitly out of scope (do not build)
 
 ```text
 Budgets / spending limits as a product feature
-Personal vs shared finance split
-AccountMember / shared-account roles
 ```
 
 Sections below that describe Post-MVP features are requirements for later work, not MVP delivery criteria. Architecture must not block them, but must not add unused tables, APIs, or abstractions ahead of time.
@@ -58,8 +59,8 @@ Sections below that describe Post-MVP features are requirements for later work, 
 The application must follow these principles:
 
 - Offline-first.
-- Mobile-first.
-- API contract-first.
+- Desktop-first (MVP). A dedicated mobile/tablet layout is Post-MVP and is decided after MVP works.
+- API contract-first. Work **feature by feature**: **contracts → backend → frontend** for that feature, then the next feature (do not start a feature’s UI before its contract and API exist; do not batch all backend before any frontend).
 - Type-safe communication between FE and BE.
 - Domain-driven design without unnecessary complexity.
 - Modular architecture.
@@ -128,7 +129,7 @@ Style stack:
 - take tokens/spacing/theme from Carbon SCSS modules; do not hand-duplicate them;
 - do not introduce styled-components / Emotion / Tailwind as the primary approach (conflicts with Carbon SCSS and adds needless complexity).
 
-Frontend must be mobile-first.
+Frontend must be **desktop-first**. Design, implement, and accept UI against a wide viewport (Carbon `lg` and above): side navigation, data tables, multi-column forms. A dedicated mobile or tablet experience is **out of MVP scope**; do not spend MVP time on a phone layout, bottom navigation, or mobile-only IA. After MVP, decide whether and how to add it (§50).
 
 Do not build a custom UI system when Carbon already provides the needed component.
 
@@ -252,6 +253,16 @@ Backend DTOs must be compatible with the shared contract.
 
 Frontend API clients must also use the shared contract.
 
+Implementation order for every API-backed feature (complete that feature’s UI before starting the next feature’s backend, unless a listed blocker says otherwise):
+
+```text
+1. Shared contract (libs/contracts)
+2. Backend (schema/migration, API, authz, tests)
+3. Frontend built against those contracts
+```
+
+Do not start feature UI, and do not invent parallel frontend DTOs, before the contract and backend for that feature exist.
+
 ---
 
 ## 7. Domain Model
@@ -350,7 +361,9 @@ Contracts must define request/response types for these operations.
 
 ## 9. Multi-user Attribution and Visibility
 
-The application is a single financial space used by **N authenticated users** (household / small team). There is **no** separate “personal vs shared finances” product model: no Shared Accounts, no `AccountMember` roles.
+MVP is **one financial space** with **1–n authenticated users** (household / small team). There is no per-user space, no tenant switcher, and no “my finances vs shared finances” product split.
+
+Users may create as many **accounts** as they need inside that single space (for example one card that is “mine” and one that is “ours”). Who uses which account is a **social agreement**, not an authorization model: the app does not assign account owners, membership, or visibility per account.
 
 ### Attribution
 
@@ -378,13 +391,19 @@ Only me
 Selected users (multi-select)
 ```
 
-Filtering changes **what is shown**, not who owns the underlying accounts. Accounts, categories, and balances belong to the common app space; attribution lives on operations.
+Filtering changes **what is shown**, not who owns the underlying accounts. Accounts, categories, and balances belong to the single app space; they have no owner. Attribution lives on operations (`createdBy`).
 
 ### Authorization (MVP)
 
-Any authenticated user of the app may read and mutate financial data in that space (subject to normal auth + optimistic concurrency). Preferences remain per-user (`/users/me/...`).
+Any authenticated user of the app may read and mutate all financial data in that one space (subject to normal auth + optimistic concurrency). Preferences remain per-user (`/users/me/...`).
 
-Do **not** introduce account-level membership/roles unless a later product decision requires them.
+Do **not** introduce `Space` / workspace entities, account-level membership, or `AccountMember` roles in MVP.
+
+### Post-MVP — multiple spaces (undecided)
+
+After MVP, we may decide whether the product needs more than one financial space (for example separate households, or enforced personal vs shared partitions). **No decision has been made.** It may never be needed; users splitting money via ordinary accounts may be enough.
+
+Do not pre-build tables, APIs, or UI for multiple spaces. If the topic is reopened, treat it as a new product decision, not as deferred MVP scope.
 
 ---
 
@@ -413,6 +432,8 @@ Account C → EUR
 ```
 
 Do not assume all accounts use one currency.
+
+Accounts are not owned by a user. They live in the single app space (§9). Any authenticated user may create, edit, and use any account. If people want “personal” vs “shared” money, they create separate accounts and agree among themselves which to use — the app does not enforce that split.
 
 ---
 
@@ -670,7 +691,7 @@ deletedAt
 
 Requirements when built:
 
-- CRUD in the common app financial space (same multi-user authz as §9).
+- CRUD in the single app financial space (same multi-user authz as §9).
 - Progress visible (current vs target; percent or remaining).
 - Money fields decimal-safe; currency explicit.
 - Soft-delete / sync rules if the entity is synced offline.
@@ -1112,7 +1133,7 @@ and avoid downloading the entire database after every reconnect.
 
 ## 35. PWA
 
-The application must be a full PWA.
+The application must be a full PWA (installability and offline startup, including on desktop). PWA does **not** imply a mobile-first layout; MVP UI remains desktop-first (§4, §50).
 
 Must support:
 
@@ -1222,7 +1243,7 @@ authenticated user
 permission for the resource/action
 ```
 
-For MVP financial data (§9), any authenticated app user may access the common financial space. Still reject unauthenticated and malformed requests; never trust the frontend alone.
+For MVP financial data (§9), any authenticated app user may access **all** accounts, categories, and transactions in the single financial space. Still reject unauthenticated and malformed requests; never trust the frontend alone. Do not implement per-account or per-space ACL in MVP.
 
 User preferences endpoints must allow only the authenticated owner (`/users/me/...`).
 
@@ -1463,33 +1484,36 @@ Failed
 
 ---
 
-## 50. Responsive / Mobile-first
+## 50. Desktop-first (MVP)
 
-Design primary UX first for:
+Design, implement, and accept primary UX for:
 
 ```text
-mobile
+desktop  ← MVP (Carbon lg and above)
 ```
 
-Then:
+Defer until after MVP (then decide whether to build):
 
 ```text
 tablet
-desktop
+mobile
 ```
 
-Pay special attention to:
+MVP chrome is a desktop shell (e.g. Carbon SideNav, header, content). Do not treat a phone layout as an MVP deliverable. Do not add a separate mobile navigation pattern (bottom nav, hamburger-only IA) as MVP work. A window that happens to be narrower may still render, but a first-class mobile/tablet experience is out of MVP scope and is not a release blocker.
 
-- touch targets;
-- bottom navigation;
+Pay special attention (MVP, desktop):
+
+- data tables and dense lists;
 - forms;
-- keyboard;
+- keyboard (not only pointer);
 - numeric inputs;
 - date pickers;
 - currency inputs;
-- charts;
+- charts (Post-MVP);
 - offline indicators;
-- language and theme controls (reachable in mobile layout).
+- language and theme controls in the desktop chrome.
+
+Touch-target and mobile-keyboard polish belong with the Post-MVP mobile decision, not MVP acceptance.
 
 ---
 
@@ -1500,7 +1524,7 @@ Money input must:
 - support decimal values;
 - respect currency precision;
 - not use floating point;
-- work correctly with mobile keyboards;
+- work correctly with keyboard input on desktop (mobile keyboards are Post-MVP);
 - prevent invalid values.
 
 For example:
@@ -1519,10 +1543,12 @@ But currency precision must not be hard-coded globally.
 The user should understand:
 
 ```text
-Which transactions are mine
+Which transactions are mine (createdBy)
 Which transactions were created by another user
 How to filter: all / only me / selected users
 ```
+
+This is attribution of **operations**, not ownership of accounts. Do not imply that an account “belongs” to a user in the UI.
 
 When listing or inspecting operations, show:
 
@@ -1874,10 +1900,12 @@ Domain layer must not depend on infrastructure.
 When changing the API:
 
 1. Update the shared contract first.
-2. Update the Backend implementation.
-3. Update the Frontend client.
+2. Update the Backend implementation (schema, API, authz, tests).
+3. Only then update the Frontend client, built against those contracts.
 4. Update tests.
 5. Check backward compatibility if needed for offline clients.
+
+Do not implement feature UI in parallel with, or ahead of, the backend for that feature.
 
 Be especially careful changing:
 
@@ -1946,7 +1974,10 @@ Do not:
 - treat `navigator.onLine === true` as proof of full Internet connectivity;
 - hard-code UI copy for a single language when i18n is required;
 - implement theme colors that diverge from Carbon theme tokens;
-- store locale/theme only in the browser when cross-browser persistence is required (use backend user preferences).
+- store locale/theme only in the browser when cross-browser persistence is required (use backend user preferences);
+- treat a mobile/tablet layout as an MVP deliverable or spend MVP time on a phone-first IA;
+- start feature UI before that feature’s shared contract and backend API exist;
+- introduce multiple financial spaces, per-user spaces, or account membership/roles in MVP (§9).
 
 ---
 
@@ -1967,7 +1998,7 @@ A feature is done only if:
 - [ ] Money calculations are decimal-safe.
 - [ ] Currency is handled correctly.
 - [ ] Loading/error/empty states implemented.
-- [ ] Mobile UX checked.
+- [ ] Desktop UX checked (wide viewport). Missing mobile layout does not block MVP.
 - [ ] Unit tests added.
 - [ ] Integration tests added when needed.
 - [ ] E2E tests added for the critical user flow.
@@ -1995,9 +2026,9 @@ For each task use this workflow:
    ↓
 5. Update contracts/domain
    ↓
-6. Implement backend
+6. Implement backend (schema, API, tests)
    ↓
-7. Implement frontend
+7. Implement frontend against those contracts
    ↓
 8. Implement offline/sync behavior
    ↓
@@ -2008,7 +2039,7 @@ For each task use this workflow:
 11. Review architecture
 ```
 
-Do not jump straight to writing code.
+Do not jump straight to writing code. Do not start step 7 until step 5–6 exist for that feature.
 
 ---
 
@@ -2101,7 +2132,7 @@ Filter: only me (as A) → only A’s expense
 Filter: selected users [B] → only B’s expense
 ```
 
-Both may work in the same financial space at the same time.
+Both work in the **same** (only) financial space at the same time. Accounts are not partitioned by user.
 
 #### Scenario 3 — Concurrent edit
 

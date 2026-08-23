@@ -4,20 +4,25 @@
      Spec: https://github.com/tasksmd/tasks.md
      policy: Work one unblocked task at a time; claim with (@agent-id) on the task line.
      policy: Before coding, read AGENTS.md and the SPEC sections named in Details.
-     policy: Contracts → backend → frontend → tests for API changes. Migrations for all schema changes.
+     policy: Work feature by feature: that feature’s contracts + backend, then its frontend, then the next feature. Do not batch all backend before any frontend. Do not start a feature’s UI until that feature’s contract and API exist. Migrations for all schema changes.
+     policy: Desktop-first for MVP (Carbon lg+). Mobile/tablet layout is Post-MVP — decide after MVP; do not spend MVP time on a phone layout.
      policy: No floating-point money. Idempotent mutations. Soft-delete synced entities.
      policy: Mark Acceptance met before checking the box. Prefer deleting completed tasks on merge.
-     policy: P1 = MVP income/expense (+ offline). P2/P3 = Post-MVP. Do not start P2 until MVP path is usable. -->
+     policy: P1 = MVP income/expense (online, desktop). P2/P3 = Post-MVP. Do not start P2 until MVP path is usable.
+     policy: Post-MVP platform order (P2): PWA → Offline-first, then feature work. Mobile/tablet layout stays in P3. -->
 
 ## P0
 
 <!-- Empty while greenfield: nothing production-broken yet. Promote blockers here when the app runs. -->
 
-## P1 — MVP (income / expense + offline)
+## P1 — MVP (income / expense, online desktop)
 
 <!-- policy: Implement in listed order. Do not skip ahead past Blocked by.
-     Goal: log in, manage accounts/categories, record income/expense/transfer with attribution,
-     work offline and sync. No budgets, analytics charts, debts, or savings goals here. -->
+     policy: Each subsection is one feature: BE (contracts + API) then FE for that feature, then the next subsection.
+     Goal: one financial space, 1–n users; log in, manage accounts/categories, record income/expense/transfer with attribution.
+     Online + desktop shell only. No offline/sync, PWA, mobile layout, budgets, analytics charts, debts, savings goals, or per-user spaces here. -->
+
+### Foundation
 
 - [x] Scaffold Nx monorepo with `apps/web` and `apps/api`
   - **ID**: scaffold-nx-monorepo
@@ -50,6 +55,8 @@
   - **Blocked by**: contracts-skeleton
   - **Estimate**: 2-3h
 
+### Auth
+
 - [ ] Users schema + admin seed (no public registration)
   - **ID**: users-schema
   - **Tags**: backend, auth, database
@@ -66,13 +73,51 @@
   - **Blocked by**: users-schema, contracts-skeleton
   - **Estimate**: 3-4h
 
+- [ ] Web app shell — Carbon, routing, login, JWT storage
+  - **ID**: web-shell-auth
+  - **Tags**: frontend, auth, ui
+  - **Details**: Desktop-first shell (Carbon `lg+`, SideNav + header); login page; authenticated layout; token storage per SPEC XSS model. Do not build a mobile/bottom-nav layout. SPEC §4, §37–38, §50.
+  - **Acceptance**: User can log in against API; protected routes redirect; Carbon desktop chrome; wide viewport is the acceptance surface.
+  - **Blocked by**: auth-jwt, scaffold-nx-monorepo
+  - **Estimate**: 3-4h
+
+### Preferences
+
+- [ ] User preferences API — locale + theme
+  - **ID**: user-preferences-api
+  - **Tags**: backend, users, preferences
+  - **Details**: Persist `locale` (`en`|`ru`) and `theme` (`light`|`dark`|`system`, default `system`); GET/PUT (or PATCH) `/users/me/preferences`; contracts; migration; owner-only. SPEC §6, §8, §40, §56.
+  - **Acceptance**: Authenticated user read/update preferences; defaults when missing; unauthorized denied; contracts + tests.
+  - **Blocked by**: users-schema, contracts-skeleton, auth-jwt
+  - **Estimate**: 2-3h
+
+- [ ] i18n (en/ru) + Carbon theme switch + preference sync
+  - **ID**: i18n-theme-ui
+  - **Tags**: frontend, i18n, theme, ui
+  - **Details**: Multilingual UI; deploy-time default locale; in-app language + theme switch; load/save preferences via the preferences API. SPEC §4, §8, §47–48, §50.
+  - **Acceptance**: Both locales; theme toggle with Carbon tokens; `system` follows OS; preference survives reload and second browser when online.
+  - **Blocked by**: web-shell-auth, user-preferences-api
+  - **Estimate**: 4-6h
+
+### Accounts
+
 - [ ] Accounts domain + API
   - **ID**: accounts-api
   - **Tags**: backend, accounts
-  - **Details**: Account CRUD with explicit currency, `version`, soft delete; authenticated users access the common financial space. SPEC §9–10, §28, §32, §39.
+  - **Details**: Account CRUD with explicit currency, `version`, soft delete; one app space; any authenticated user may CRUD any account (no owner / membership). Users may create separate accounts and agree among themselves who uses which. SPEC §9–10, §28, §32, §39.
   - **Acceptance**: Authenticated user CRUD accounts; currency required; version bumps on update; unauthenticated denied; contracts + migration + tests.
   - **Blocked by**: auth-jwt, money-currency-domain
   - **Estimate**: 4h
+
+- [ ] Accounts UI (online CRUD)
+  - **ID**: accounts-ui
+  - **Tags**: frontend, accounts
+  - **Details**: List/create/edit accounts using the accounts API/contracts; money/currency inputs without float; show per-account balance. No account owner/membership UI. Desktop tables/forms. SPEC §9–10, §18, §51.
+  - **Acceptance**: Full CRUD online against contracts; currency + balance shown; empty/loading/error; usable on a wide viewport.
+  - **Blocked by**: web-shell-auth, accounts-api
+  - **Estimate**: 2h
+
+### Categories
 
 - [ ] Categories API (income + expense)
   - **ID**: categories-api
@@ -81,6 +126,16 @@
   - **Acceptance**: CRUD works; type separation enforced; authz; tests.
   - **Blocked by**: auth-jwt
   - **Estimate**: 2-3h
+
+- [ ] Categories UI (online CRUD)
+  - **ID**: categories-ui
+  - **Tags**: frontend, categories
+  - **Details**: List/create/edit income and expense categories using the categories API/contracts. Desktop tables/forms. SPEC §17, §51.
+  - **Acceptance**: Full CRUD online against contracts; type separation visible; empty/loading/error; usable on a wide viewport.
+  - **Blocked by**: web-shell-auth, categories-api
+  - **Estimate**: 2h
+
+### Transactions
 
 - [ ] Transactions API — income and expense (+ attribution filters)
   - **ID**: transactions-income-expense
@@ -98,52 +153,46 @@
   - **Blocked by**: transactions-income-expense
   - **Estimate**: 3-4h
 
-- [ ] Web app shell — Carbon, routing, login, JWT storage
-  - **ID**: web-shell-auth
-  - **Tags**: frontend, auth, ui
-  - **Details**: Mobile-first shell; Carbon; login page; authenticated layout; token storage per SPEC XSS model; offline-readable session once logged in. SPEC §4, §37–38, §50.
-  - **Acceptance**: User can log in against API; protected routes redirect; Carbon chrome; narrow viewport OK.
-  - **Blocked by**: auth-jwt, scaffold-nx-monorepo
-  - **Estimate**: 3-4h
-
-- [ ] Accounts + categories UI (online CRUD)
-  - **ID**: accounts-categories-ui
-  - **Tags**: frontend, accounts, categories
-  - **Details**: List/create/edit accounts and categories; money/currency inputs without float; show per-account balance. SPEC §10, §17–18, §51.
-  - **Acceptance**: Full CRUD online; currency + balance shown; empty/loading/error; mobile-usable forms.
-  - **Blocked by**: web-shell-auth, accounts-api, categories-api
-  - **Estimate**: 4h
-
 - [ ] Transactions UI — income, expense, transfer + visibility filters
   - **ID**: transactions-ui
   - **Tags**: frontend, transactions
-  - **Details**: Create/list transactions; transfer flow; decimal money input; dates; show `createdBy`; filter all / me / selected users. SPEC §9, §14–16, §46, §51–52.
-  - **Acceptance**: Record income/expense/transfer; lists paginate; amounts correct; attribution + filters work; mobile forms usable.
-  - **Blocked by**: accounts-categories-ui, transactions-transfer
+  - **Details**: Create/list transactions against existing APIs/contracts; transfer flow; decimal money input; dates; show `createdBy`; filter all / me / selected users. Desktop tables/forms. SPEC §9, §14–16, §46, §51–52.
+  - **Acceptance**: Record income/expense/transfer; lists paginate; amounts correct; attribution + filters work; usable on a wide viewport.
+  - **Blocked by**: accounts-ui, categories-ui, transactions-transfer
   - **Estimate**: 4-6h
 
-- [ ] User preferences API — locale + theme
-  - **ID**: user-preferences-api
-  - **Tags**: backend, users, preferences
-  - **Details**: Persist `locale` (`en`|`ru`) and `theme` (`light`|`dark`|`system`, default `system`); GET/PUT (or PATCH) `/users/me/preferences`; contracts; migration; owner-only. SPEC §6, §8, §40, §56.
-  - **Acceptance**: Authenticated user read/update preferences; defaults when missing; unauthorized denied; contracts + tests.
-  - **Blocked by**: users-schema, contracts-skeleton, auth-jwt
-  - **Estimate**: 2-3h
+## P2 — Post-MVP
 
-- [ ] i18n (en/ru) + Carbon theme switch + preference sync
-  - **ID**: i18n-theme-ui
-  - **Tags**: frontend, i18n, theme, ui
-  - **Details**: Multilingual UI; deploy-time default locale; in-app language + theme switch; load/save preferences; local cache for offline. SPEC §4, §8, §47–48, §50.
-  - **Acceptance**: Both locales; theme toggle with Carbon tokens; `system` follows OS; preference survives reload and second browser when online.
-  - **Blocked by**: web-shell-auth, user-preferences-api
-  - **Estimate**: 4-6h
+<!-- After MVP income/expense (online desktop) path is usable.
+     policy: Platform order first — PWA → Offline-first — then feature work below.
+     policy: Same as P1 — each feature is API then UI. Do not start the UI task until that feature’s API task is done. -->
+
+### PWA
+
+- [ ] PWA installability + service worker app shell
+  - **ID**: pwa-shell
+  - **Tags**: frontend, pwa
+  - **Details**: Installable PWA (including desktop); SW caches app shell; offline startup of the shell; do not assume Background Sync API. PWA does not imply a mobile layout. SPEC §35, §50.
+  - **Acceptance**: Installability criteria met; app opens offline after first visit; shell loads without network.
+  - **Blocked by**: web-shell-auth
+  - **Estimate**: 3-4h
+
+### Offline-first
+
+- [ ] Sync API — push + pull with cursor and idempotency
+  - **ID**: sync-api
+  - **Tags**: backend, sync
+  - **Details**: Push idempotent by `operationId`; pull after cursor/sequence; structured conflicts. SPEC §25–27, §30–34, §66.
+  - **Acceptance**: Duplicate push is no-op; pull incremental; conflict payload includes versions; tests for duplicate and cursor.
+  - **Blocked by**: transactions-transfer
+  - **Estimate**: 6-8h
 
 - [ ] IndexedDB local DB + repository layer
   - **ID**: indexeddb-repositories
   - **Tags**: frontend, offline
   - **Details**: IndexedDB; repositories for accounts/categories/transactions; UI must not touch IDB directly. SPEC §22–23, §47.
   - **Acceptance**: Domain data survives reload offline; repository API used by app layer; no finance domain solely in localStorage.
-  - **Blocked by**: accounts-categories-ui, transactions-ui
+  - **Blocked by**: accounts-ui, categories-ui, transactions-ui, pwa-shell
   - **Estimate**: 4-6h
 
 - [ ] Offline mutation queue
@@ -154,49 +203,39 @@
   - **Blocked by**: indexeddb-repositories
   - **Estimate**: 4-6h
 
-- [ ] Sync API — push + pull with cursor and idempotency
-  - **ID**: sync-api
-  - **Tags**: backend, sync
-  - **Details**: Push idempotent by `operationId`; pull after cursor/sequence; structured conflicts. SPEC §25–27, §30–34, §66.
-  - **Acceptance**: Duplicate push is no-op; pull incremental; conflict payload includes versions; tests for duplicate and cursor.
-  - **Blocked by**: transactions-transfer
-  - **Estimate**: 6-8h
-
 - [ ] Sync engine client (online/offline cycle)
   - **ID**: sync-engine-client
   - **Tags**: frontend, sync
-  - **Details**: Detect connectivity; push; ack; pull; apply; update cursor; triggers: online, startup, visibility, manual, periodic. Expired JWT → AUTH_REQUIRED without wiping local data. SPEC §27, §35, §37.
+  - **Details**: Detect connectivity; push; ack; pull; apply; update cursor; triggers: online, startup, visibility, manual, periodic. Expired JWT → AUTH_REQUIRED without wiping local data. Built against the sync API contract. SPEC §27, §35, §37.
   - **Acceptance**: Offline→online drains queue; remote changes appear; expired JWT blocks sync but local read works.
   - **Blocked by**: offline-mutation-queue, sync-api
   - **Estimate**: 6-8h
 
 - [ ] Conflict handling UX + optimistic concurrency wiring
   - **ID**: sync-conflicts
-  - **Tags**: sync, frontend, backend
-  - **Details**: Surface SYNC_CONFLICT; no silent overwrite; client can reconcile. SPEC §28–30, §74.
+  - **Tags**: sync, frontend
+  - **Details**: Surface SYNC_CONFLICT from the sync API; no silent overwrite; client can reconcile. SPEC §28–30, §74.
   - **Acceptance**: Concurrent update on same account yields conflict; data preserved; regression test or reproducible script.
   - **Blocked by**: sync-engine-client
   - **Estimate**: 4-6h
 
-- [ ] PWA installability + service worker app shell
-  - **ID**: pwa-shell
-  - **Tags**: frontend, pwa
-  - **Details**: Installable PWA; SW caches app shell; offline startup; do not assume Background Sync API. SPEC §35.
-  - **Acceptance**: Installability criteria met; app opens offline after first visit; shell loads without network.
-  - **Blocked by**: web-shell-auth
-  - **Estimate**: 3-4h
+### Features
 
-## P2 — Post-MVP features
+- [ ] Savings goals API
+  - **ID**: savings-goals-api
+  - **Tags**: backend, savings-goals
+  - **Details**: CRUD goals: name, target Money, current progress (explicit amount or linked account — one clear model), optional deadline, status, `createdBy`. Soft-delete if synced. Contracts + migration. SPEC §1, §19.
+  - **Acceptance**: Create/update/complete goal via API; decimal-safe; contracts + migration + tests; no Budget feature reinvented.
+  - **Blocked by**: money-currency-domain, accounts-api
+  - **Estimate**: 1d
 
-<!-- After MVP income/expense + offline path is usable. -->
-
-- [ ] Savings goals (API + UI)
-  - **ID**: savings-goals
-  - **Tags**: savings-goals, frontend, backend
-  - **Details**: CRUD goals: name, target Money, current progress (explicit amount or linked account — one clear model), optional deadline, status, `createdBy`. Soft-delete if synced. SPEC §1, §19.
-  - **Acceptance**: Create/update/complete goal; progress shown; decimal-safe; contracts + migration + basic UI; no Budget feature reinvented.
-  - **Blocked by**: transactions-ui, money-currency-domain
-  - **Estimate**: 1-2d
+- [ ] Savings goals UI
+  - **ID**: savings-goals-ui
+  - **Tags**: frontend, savings-goals
+  - **Details**: Desktop UI against the savings-goals API/contracts. SPEC §1, §19, §50.
+  - **Acceptance**: Create/update/complete goal in UI; progress shown; empty/loading/error; wide viewport.
+  - **Blocked by**: savings-goals-api, web-shell-auth
+  - **Estimate**: 1d
 
 - [ ] Exchange rates model for historical-safe conversion
   - **ID**: exchange-rates
@@ -206,37 +245,53 @@
   - **Blocked by**: money-currency-domain
   - **Estimate**: 1d
 
-- [ ] Capital / report totals with conversion
-  - **ID**: capital-analytics
-  - **Tags**: analytics, money
-  - **Details**: Totals in chosen report currency; never sum mixed currencies without conversion. SPEC §13, §18, §21.
-  - **Acceptance**: Multi-currency fixture shows correct converted totals; UI via Carbon Charts where appropriate.
-  - **Blocked by**: transactions-ui, exchange-rates
-  - **Estimate**: 1-2d
+- [ ] Capital / report totals API with conversion
+  - **ID**: capital-analytics-api
+  - **Tags**: analytics, money, backend
+  - **Details**: Totals in chosen report currency; never sum mixed currencies without conversion. Contracts + API. SPEC §13, §18, §21.
+  - **Acceptance**: Multi-currency fixture shows correct converted totals; contracts + tests.
+  - **Blocked by**: transactions-income-expense, exchange-rates
+  - **Estimate**: 1d
 
 - [ ] Income/expense analytics charts
   - **ID**: analytics-charts
   - **Tags**: analytics, frontend
-  - **Details**: Month→income/expense; by-category; filters date/account/createdBy/category. SPEC §21. Carbon Charts.
-  - **Acceptance**: Charts render for sample dataset; empty states handled.
-  - **Blocked by**: capital-analytics
+  - **Details**: Month→income/expense; by-category; filters date/account/createdBy/category. Built against capital/analytics contracts. SPEC §21. Carbon Charts. Desktop-first.
+  - **Acceptance**: Charts render for sample dataset; empty states handled; wide viewport.
+  - **Blocked by**: capital-analytics-api, web-shell-auth
   - **Estimate**: 1d
 
-- [ ] Debts / loans / installments / mortgages (domain + API + basic UI)
-  - **ID**: debts-loans
-  - **Tags**: debts
-  - **Details**: Do not collapse distinct behaviors without need; principal, remaining, schedule, status. SPEC §20.
-  - **Acceptance**: At least one obligation type fully CRUD + remaining/next payment; schema allows others.
+- [ ] Debts / loans / installments / mortgages API
+  - **ID**: debts-loans-api
+  - **Tags**: backend, debts
+  - **Details**: Do not collapse distinct behaviors without need; principal, remaining, schedule, status. Contracts + migration. SPEC §20.
+  - **Acceptance**: At least one obligation type fully CRUD + remaining/next payment via API; schema allows others; tests.
   - **Blocked by**: accounts-api, money-currency-domain
-  - **Estimate**: 2-3d
+  - **Estimate**: 1-2d
 
-- [ ] Import + export (JSON/CSV) with validation preview
-  - **ID**: import-export
-  - **Tags**: import, export
-  - **Details**: Validate before apply; preview/errors/duplicates; transactional import unless partial chosen. SPEC §44–45.
-  - **Acceptance**: Round-trip on sample data; invalid file rejected with structured errors.
+- [ ] Debts / loans basic UI
+  - **ID**: debts-loans-ui
+  - **Tags**: frontend, debts
+  - **Details**: Desktop UI against the debts API/contracts. SPEC §20, §50.
+  - **Acceptance**: CRUD + remaining/next payment in UI; empty/loading/error; wide viewport.
+  - **Blocked by**: debts-loans-api, web-shell-auth
+  - **Estimate**: 1d
+
+- [ ] Import + export API (JSON/CSV) with validation preview
+  - **ID**: import-export-api
+  - **Tags**: backend, import, export
+  - **Details**: Validate before apply; preview/errors/duplicates; transactional import unless partial chosen. Contracts. SPEC §44–45.
+  - **Acceptance**: Round-trip on sample data via API; invalid file rejected with structured errors; tests.
   - **Blocked by**: transactions-income-expense
-  - **Estimate**: 2d
+  - **Estimate**: 1d
+
+- [ ] Import + export UI
+  - **ID**: import-export-ui
+  - **Tags**: frontend, import, export
+  - **Details**: Desktop UI against the import/export API/contracts; preview before apply. SPEC §44–45, §50.
+  - **Acceptance**: Round-trip from UI on sample data; structured errors shown; wide viewport.
+  - **Blocked by**: import-export-api, web-shell-auth
+  - **Estimate**: 1d
 
 - [ ] Audit trail for financial mutations
   - **ID**: audit-trail
@@ -251,7 +306,7 @@
 - [ ] Category subcategories, icons, colors
   - **ID**: category-ux-extensions
   - **Tags**: categories, frontend
-  - **Details**: SPEC §17 Post-MVP.
+  - **Details**: SPEC §17 Post-MVP. Requires category API to already expose (or be extended with) the fields — extend contracts + backend first if missing, then UI.
   - **Acceptance**: Subcategory create/list; icon/color persisted and shown.
   - **Blocked by**: categories-api
   - **Estimate**: 1d
@@ -267,7 +322,23 @@
 - [ ] Admin UI to create users (optional; DB seed remains valid)
   - **ID**: admin-user-ui
   - **Tags**: auth, frontend
-  - **Details**: SPEC §8 — public registration still not required.
+  - **Details**: SPEC §8 — public registration still not required. Use existing auth/user contracts; extend backend first if an admin-create endpoint is missing.
   - **Acceptance**: Authorized admin can create user from UI; password hashed server-side.
   - **Blocked by**: auth-jwt, web-shell-auth
   - **Estimate**: 4h
+
+- [ ] Mobile / tablet layout (decision after MVP)
+  - **ID**: mobile-layout
+  - **Tags**: frontend, ui
+  - **Details**: Not in MVP. After the desktop product is usable, decide whether to add a first-class narrow-viewport layout (navigation, forms, tables). SPEC §4, §50.
+  - **Acceptance**: Decision recorded; if building, usable layout at `sm`/`md` without regressing desktop.
+  - **Blocked by**: web-shell-auth, transactions-ui
+  - **Estimate**: TBD after MVP
+
+- [ ] Multiple financial spaces / personal vs shared partitions (undecided)
+  - **ID**: multi-space-undecided
+  - **Tags**: product, authz
+  - **Details**: Not in MVP. After the single-space product is usable, decide whether more than one financial space (or enforced personal vs shared partitions, `AccountMember`, etc.) is needed. **No decision yet; this may never be built.** Do not design schema or APIs until a product decision exists. SPEC §9.
+  - **Acceptance**: Written product decision (build / skip). If skip — no code. If build — new tasks with a real model; not this placeholder.
+  - **Blocked by**: accounts-ui, transactions-ui
+  - **Estimate**: TBD after MVP
