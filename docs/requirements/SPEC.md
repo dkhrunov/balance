@@ -1,7 +1,7 @@
 # Balance — Product & Architecture Spec
 
 Full functional and technical specification of the application.
-Agent operating rules live in the root [`AGENTS.md`](../../AGENTS.md). Work queue lives in [`TASKS.md`](../../TASKS.md).
+Agent operating rules live in the root [`AGENTS.md`](../../AGENTS.md). Work queue lives in [`TASKS.md`](../../TASKS.md). Data model ERD: [`ERD.md`](./ERD.md).
 
 ---
 
@@ -266,6 +266,8 @@ Do not start feature UI, and do not invent parallel frontend DTOs, before the co
 ---
 
 ## 7. Domain Model
+
+Entity-relationship diagram (tables, relationships, sync fields): [`ERD.md`](./ERD.md).
 
 ### MVP entities
 
