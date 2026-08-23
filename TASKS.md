@@ -39,7 +39,7 @@
   - **Blocked by**: scaffold-nx-monorepo
   - **Estimate**: 1h
 
-- [ ] Shared `libs/contracts` package skeleton
+- [x] Shared `libs/contracts` package skeleton
   - **ID**: contracts-skeleton
   - **Tags**: contracts
   - **Details**: Workspace TS library; MVP folders only: auth, users, accounts, transactions, categories, currencies, sync, common errors/pagination. No budgets/debts/analytics stubs. SPEC §1, §6, §65.
