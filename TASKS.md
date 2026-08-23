@@ -47,7 +47,7 @@
   - **Blocked by**: scaffold-nx-monorepo
   - **Estimate**: 1-2h
 
-- [ ] Money + currency domain primitives
+- [x] Money + currency domain primitives
   - **ID**: money-currency-domain
   - **Tags**: domain, money
   - **Details**: Decimal-safe `Money` (`amount: string` + currency); RUB/USD/EUR; precision helpers; unit tests. Never use JS number for arithmetic. SPEC §11–12.
@@ -220,6 +220,14 @@
   - **Estimate**: 4-6h
 
 ### Features
+
+- [ ] Server-managed currency catalog
+  - **ID**: currency-catalog-api
+  - **Tags**: money, currencies, backend
+  - **Details**: Replace the MVP’s compile-time currency registry with a database-backed catalog and read API so supported ISO currencies can be added without a client release. Persist code, precision, display metadata, and active status; cache the catalog on clients for offline validation. A currency’s precision must become immutable once money in that currency exists—do not reinterpret historical amounts by editing it. Define a restricted management path before allowing catalog mutations. Contracts + migration + tests.
+  - **Acceptance**: Client can fetch/cache active currencies; a new supported currency is usable after server update; precision changes for a referenced currency are rejected; existing amounts remain correctly interpreted.
+  - **Blocked by**: accounts-api, sync-engine-client
+  - **Estimate**: 1-2d
 
 - [ ] Savings goals API
   - **ID**: savings-goals-api

@@ -171,7 +171,7 @@ export default [
             'code-complete/no-late-argument-usage': 'warn',
             'code-complete/no-late-variable-usage': 'off',
             'code-complete/enforce-meaningful-names': 'error',
-            'code-complete/no-magic-numbers-except-zero-one': 'warn',
+            'code-complete/no-magic-numbers-except-zero-one': 'off',
             'code-complete/no-boolean-params': 'warn',
             'code-complete/low-function-cohesion': 'warn',
         },

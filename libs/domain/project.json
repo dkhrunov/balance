@@ -21,6 +21,13 @@
                 "command": "tsc --noEmit -p tsconfig.lib.json",
                 "cwd": "libs/domain"
             }
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "vitest run --config vitest.config.mts",
+                "cwd": "libs/domain"
+            }
         }
     }
 }
