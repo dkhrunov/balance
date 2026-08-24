@@ -249,6 +249,27 @@ Contracts must describe:
 - currency information;
 - user preferences (locale, theme).
 
+### Public module boundaries
+
+`libs/contracts` exposes each feature folder as a secondary entry point:
+
+```text
+@balance/contracts/auth
+@balance/contracts/users
+@balance/contracts/accounts
+@balance/contracts/categories
+@balance/contracts/transactions
+@balance/contracts/currencies
+@balance/contracts/common
+@balance/contracts/sync
+```
+
+Configure these as workspace TypeScript aliases. New feature code must import from
+its feature entry point rather than the root barrel; `@balance/contracts` may remain
+as a compatibility export. Add `package.json` `exports` only when the libraries need
+to be published or resolved directly by Node at runtime; aliases are sufficient inside
+the Nx workspace.
+
 Backend DTOs must be compatible with the shared contract.
 
 Frontend API clients must also use the shared contract.
@@ -281,6 +302,21 @@ Currency
 SyncOperation
 SyncCursor
 ```
+
+### Public domain module boundaries
+
+`libs/domain` exposes secondary entry points only for stable domain concepts, for
+example:
+
+```text
+@balance/domain/money
+@balance/domain/currency
+```
+
+Do not create a domain entry point mechanically for every API feature. JWT, password
+hashing, HTTP cookies, and database repositories are infrastructure concerns, not
+domain modules. When a bounded context grows independent behavior and dependency
+needs, prefer a separate Nx library over relying only on a secondary entry point.
 
 ### Post-MVP entities (add when the feature is built)
 
@@ -322,6 +358,34 @@ Never store passwords in plaintext.
 Use a modern password hashing algorithm, e.g. Argon2 or bcrypt.
 
 JWT payload must not contain sensitive data.
+
+### MVP token session model
+
+MVP uses short-lived access JWTs and rotating refresh tokens:
+
+- the access JWT and refresh token are sent only in `HttpOnly`, `Secure`,
+  `SameSite=Strict` cookies (the `Secure` attribute may be disabled only for local
+  HTTP development); frontend JavaScript must not receive, inspect, or persist either
+  token;
+- `POST /auth/login` creates a session, sets both cookies, and returns public user
+  identity; `GET /auth/me` restores identity after a reload while the access token is
+  valid;
+- `POST /auth/refresh` validates the refresh token, rejects expired or revoked
+  sessions, rotates the refresh token, and sets a new access JWT and refresh cookie;
+- refresh tokens are cryptographically random opaque values. Persist only their
+  hashes, user/session identifiers, expiry, revocation and rotation metadata in
+  PostgreSQL; never place a refresh token in a JWT payload or log it;
+- refresh-token reuse after rotation revokes the affected session and requires a new
+  login. `POST /auth/logout` revokes the current session and clears both cookies;
+- access-token and refresh-token lifetimes are server configuration, with the access
+  lifetime shorter than the refresh lifetime;
+- after both tokens expire or the refresh token is revoked, online requests receive
+  an authentication failure and the user must authenticate again. Offline clients
+  retain local data and the sync engine enters `AUTH_REQUIRED` as defined in §37.
+
+Cookie-authenticated unsafe requests, including `/auth/refresh`, must have CSRF
+protection: validate an allowlisted `Origin` and configure CORS with explicit allowed
+origins and credentials.
 
 ### User Preferences
 

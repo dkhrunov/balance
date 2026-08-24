@@ -47,7 +47,7 @@ Senior/Staff engineer: architecture integrity, FE↔BE type-safety, offline-firs
 | Styles        | **SCSS** + **CSS Modules** (`.module.scss`); Carbon via `@use '@carbon/react'`                 |
 | i18n          | Multilingual UI (`en`, `ru`); deploy-time default + in-app switch                              |
 | Theme         | Carbon-compatible `light` / `dark` / `system` (default `system`)                               |
-| API           | NestJS, PostgreSQL, Docker, JWT                                                                |
+| API           | NestJS, PostgreSQL (`pg`), `@ts-safeql/sql-tag`, Docker, JWT                                   |
 | Tests (web)   | Unit/component: **Vitest** + React Testing Library; E2E: **Playwright**                        |
 | Tests (api)   | Unit/integration: **Jest** (+ Nest testing / supertest); E2E of critical flows: **Playwright** |
 | Shared        | `libs/contracts`, `libs/domain` (+ feature/sync libs as needed)                                |
@@ -97,6 +97,27 @@ Do not start feature UI until step 2 exists for that feature.
 
 Change the DB schema only via migrations.
 
+## PostgreSQL data access (API)
+
+- Use raw **`pg`** in `apps/api`; do not add an ORM (TypeORM, Prisma, Sequelize, etc.).
+- In TypeScript under `apps/api/src`, write parameterized queries with **`sql` from `@ts-safeql/sql-tag`** and type row results explicitly, e.g. `pool.query<UserRow>(sql\`...\`)`.
+- Do not interpolate user input into SQL strings; the tag generates `$1`, `$2`, … placeholders.
+- `@ts-safeql/eslint-plugin` validates tagged SQL against the live Postgres schema during lint — keep Postgres up when running `nx lint api`.
+- Schema changes belong in **`apps/api/migrations/*.sql`** only; apply with `npm run db:migrate`.
+- **Exceptions:** CLI scripts (`apps/api/scripts/*.mjs`) and migration SQL files may use plain `$1` + values or raw SQL files without `sql`-tag; they are not covered by SafeQL lint.
+
+Example:
+
+```typescript
+import { sql } from '@ts-safeql/sql-tag';
+
+const result = await pool.query<UserRow>(sql`
+    SELECT id, email
+    FROM users
+    WHERE email = ${email}
+`);
+```
+
 ## Priority When Requirements Conflict
 
 1. Data integrity → 2. Security → 3. Financial correctness → 4. Sync correctness → 5. Type safety → 6. Domain consistency → 7. UX → 8. Performance → 9. Developer convenience
@@ -120,6 +141,7 @@ As needed: domain / contracts / schema; API then UI (UI only after the API exist
 - Treat a mobile/tablet layout as an MVP deliverable
 - Start feature UI before that feature’s contracts and backend API exist
 - Introduce multiple financial spaces, per-user spaces, or account membership/roles in MVP
+- Use string-concatenated or untyped SQL in `apps/api/src` when a parameterized `sql`-tag query is appropriate
 
 ## Critical Questions (sync / money)
 
