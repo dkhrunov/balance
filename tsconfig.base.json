@@ -16,7 +16,18 @@
         "strict": false,
         "paths": {
             "@balance/contracts": ["./libs/contracts/src/index.ts"],
-            "@balance/domain": ["./libs/domain/src/index.ts"]
+            "@balance/contracts/auth": ["./libs/contracts/src/lib/auth/index.ts"],
+            "@balance/contracts/users": ["./libs/contracts/src/lib/users/index.ts"],
+            "@balance/contracts/accounts": ["./libs/contracts/src/lib/accounts/index.ts"],
+            "@balance/contracts/categories": ["./libs/contracts/src/lib/categories/index.ts"],
+            "@balance/contracts/transactions": ["./libs/contracts/src/lib/transactions/index.ts"],
+            "@balance/contracts/currencies": ["./libs/contracts/src/lib/currencies/index.ts"],
+            "@balance/contracts/common": ["./libs/contracts/src/lib/common/index.ts"],
+            "@balance/contracts/sync": ["./libs/contracts/src/lib/sync/index.ts"],
+            "@balance/domain": ["./libs/domain/src/index.ts"],
+            "@balance/domain/money": ["./libs/domain/src/lib/money/index.ts"],
+            "@balance/domain/currency": ["./libs/domain/src/lib/currency/index.ts"],
+            "@balance/domain/duration": ["./libs/domain/src/lib/duration/index.ts"]
         }
     },
     "exclude": ["node_modules", "tmp"]

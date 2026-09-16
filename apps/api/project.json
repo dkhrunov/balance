@@ -71,6 +71,13 @@
                 "command": "tsc --noEmit -p tsconfig.app.json",
                 "cwd": "apps/api"
             }
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "jest --config jest.config.cjs",
+                "cwd": "apps/api"
+            }
         }
     }
 }

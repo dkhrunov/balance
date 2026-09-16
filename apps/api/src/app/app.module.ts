@@ -4,17 +4,16 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from '../database/database.module';
+import { AuthModule } from '../auth';
 
 @Module({
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: [
-                join(process.cwd(), 'apps/api/.env'),
-                join(process.cwd(), '.env'),
-            ],
+            envFilePath: [join(process.cwd(), 'apps/api/.env')],
         }),
         DatabaseModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [AppService],

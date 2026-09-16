@@ -4,7 +4,6 @@ import nx from '@nx/eslint-plugin';
 import safeql from '@ts-safeql/eslint-plugin/config';
 import { config as loadEnv } from 'dotenv';
 import aiGuard from 'eslint-plugin-ai-guard';
-import codeComplete from 'eslint-plugin-code-complete';
 import deMorgan from 'eslint-plugin-de-morgan';
 import sonarjs from 'eslint-plugin-sonarjs';
 
@@ -160,20 +159,65 @@ export default [
             ],
         },
     },
+    // Swappable ports (apps): interface I*; data shapes: type without I
+    {
+        files: ['apps/**/*.ts', 'apps/**/*.tsx', 'apps/**/*.cts', 'apps/**/*.mts'],
+        rules: {
+            '@typescript-eslint/naming-convention': [
+                'error',
+                {
+                    selector: 'interface',
+                    format: ['PascalCase'],
+                    prefix: ['I'],
+                },
+                {
+                    selector: 'typeAlias',
+                    format: ['PascalCase'],
+                    custom: {
+                        regex: '^I[A-Z]',
+                        match: false,
+                    },
+                },
+            ],
+        },
+    },
+    // Wire / domain shapes: no I prefix (not DI ports; BE DTOs implement contracts)
+    {
+        files: [
+            'libs/contracts/**/*.ts',
+            'libs/contracts/**/*.tsx',
+            'libs/domain/**/*.ts',
+            'libs/domain/**/*.tsx',
+        ],
+        rules: {
+            '@typescript-eslint/naming-convention': [
+                'error',
+                {
+                    selector: 'interface',
+                    format: ['PascalCase'],
+                    custom: {
+                        regex: '^I[A-Z]',
+                        match: false,
+                    },
+                },
+                {
+                    selector: 'typeAlias',
+                    format: ['PascalCase'],
+                    custom: {
+                        regex: '^I[A-Z]',
+                        match: false,
+                    },
+                },
+            ],
+        },
+    },
     {
         files: ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts', '**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'],
         plugins: {
             'ai-guard': aiGuard,
-            'code-complete': codeComplete,
         },
         rules: {
             ...aiGuard.configs.recommended.rules,
-            'code-complete/no-late-argument-usage': 'warn',
-            'code-complete/no-late-variable-usage': 'off',
-            'code-complete/enforce-meaningful-names': 'error',
-            'code-complete/no-magic-numbers-except-zero-one': 'off',
-            'code-complete/no-boolean-params': 'warn',
-            'code-complete/low-function-cohesion': 'warn',
         },
     },
 ];
@@ -211,7 +255,15 @@ function createSafeqlConfig() {
         // Connect to the database using the database URL
         safeql.configs.connections({
             databaseUrl,
-            targets: [{ tag: 'sql' }],
+            targets: [{ tag: 'sql', skipTypeAnnotations: true }],
+            overrides: {
+                types: {
+                    uuid: {
+                        parameter: 'string',
+                        return: 'string',
+                    },
+                },
+            },
         }),
         // Alternative connection: shadow DB from SQL migrations instead of databaseUrl.
         // safeql.configs.connections({

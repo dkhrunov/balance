@@ -1,7 +1,3 @@
-/**
- * Placeholder for authentication wire contracts.
- * Login and token DTOs are added with the JWT authentication feature.
- */
-export interface AuthContractPlaceholder {
-    readonly feature: 'auth';
-}
+export { LoginRequest } from './login-request';
+export { CurrentUserResponse, LoginResponse } from './auth-responses';
+export { AUTH_ERROR_CODES, AuthErrorCode } from './auth-error-codes';

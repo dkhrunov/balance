@@ -57,7 +57,7 @@
 
 ### Auth
 
-- [ ] Users schema + admin seed (no public registration)
+- [x] Users schema + admin seed (no public registration)
   - **ID**: users-schema
   - **Tags**: backend, auth, database
   - **Details**: User entity with password hash fields, `defaultCurrency`; migration; seed/admin path to create users in DB only. SPEC §8, §40, §67.
@@ -65,7 +65,7 @@
   - **Blocked by**: docker-postgres, money-currency-domain
   - **Estimate**: 2h
 
-- [ ] JWT authentication API (login, validate, identity)
+- [x] JWT authentication API (login, validate, identity)
   - **ID**: auth-jwt
   - **Tags**: backend, auth
   - **Details**: Login endpoint; access token; guards; Argon2 or bcrypt; JWT payload without sensitive data; structured errors. Contracts for auth request/response. SPEC §8, §36–39.
@@ -73,7 +73,7 @@
   - **Blocked by**: users-schema, contracts-skeleton
   - **Estimate**: 3-4h
 
-- [ ] Web app shell — Carbon, routing, login, JWT storage
+- [x] Web app shell — Carbon, routing, login, JWT storage
   - **ID**: web-shell-auth
   - **Tags**: frontend, auth, ui
   - **Details**: Desktop-first shell (Carbon `lg+`, SideNav + header); login page; authenticated layout; token storage per SPEC XSS model. Do not build a mobile/bottom-nav layout. SPEC §4, §37–38, §50.

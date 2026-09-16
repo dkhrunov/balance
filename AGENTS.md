@@ -12,6 +12,15 @@ Personal multi-user finance tracking web app. **One financial space**, 1–n use
 
 Senior/Staff engineer: architecture integrity, FE↔BE type-safety, offline-first, correct sync, financial precision. Do not rewrite working code without need.
 
+## Skills (read before coding)
+
+- `apps/api/**`, Nest modules, use cases, ports, repositories, migrations touching feature modules: read [`.cursor/skills/hexagonal-architecture/SKILL.md`](./.cursor/skills/hexagonal-architecture/SKILL.md)
+- `apps/web/**`, React UI structure, FSD layers/slices, placement of auth/layout/pages: read [`.cursor/skills/feature-sliced-design/SKILL.md`](./.cursor/skills/feature-sliced-design/SKILL.md)
+- `apps/web/**`, React performance (waterfalls, bundle, re-renders, data fetching): read [`.cursor/skills/vercel-react-best-practices/SKILL.md`](./.cursor/skills/vercel-react-best-practices/SKILL.md)
+- Carbon / IBM Products UI: [`.cursor/skills/carbon-builder/SKILL.md`](./.cursor/skills/carbon-builder/SKILL.md)
+
+Do not apply FSD or Vercel React rules to `apps/api`. Do not apply Nest hexagonal layout to `apps/web`.
+
 ## Before Changing Code
 
 1. Read the chosen task in `TASKS.md` and the cited sections of `docs/requirements/SPEC.md` (start with §1 Product Scope).
@@ -37,33 +46,40 @@ Senior/Staff engineer: architecture integrity, FE↔BE type-safety, offline-firs
 - No silent hacks or workarounds. If the proper API/pattern does not fit, stop, describe the gap, propose options, and wait for the next instruction (see **Hacks and workarounds**).
 - Do not add Redis/queues/WebSockets “for later” without a concrete need and an evaluation against Postgres/NestJS.
 - Locale and theme are user preferences persisted on the backend (cross-session, cross-browser); see SPEC §4 and §8.
+- Public API documentation: every **public** surface of an architectural component — exported interfaces, classes, functions, hooks, providers, domain types — must have **JSDoc** (purpose, parameters, return value; note non-obvious behavior and invariants where relevant). Private helpers need JSDoc only when the logic is complex or non-obvious.
 
 ## Target Stack
 
-| Layer         | Technologies                                                                                   |
-| ------------- | ---------------------------------------------------------------------------------------------- |
-| Monorepo      | Nx                                                                                             |
+| Layer         | Technologies                                                                                         |
+| ------------- | ---------------------------------------------------------------------------------------------------- |
+| Monorepo      | Nx                                                                                                   |
 | Web           | React, TypeScript, Carbon (`@carbon/react`), PWA, Service Worker, IndexedDB; **desktop-first** (MVP) |
-| Styles        | **SCSS** + **CSS Modules** (`.module.scss`); Carbon via `@use '@carbon/react'`                 |
-| i18n          | Multilingual UI (`en`, `ru`); deploy-time default + in-app switch                              |
-| Theme         | Carbon-compatible `light` / `dark` / `system` (default `system`)                               |
-| API           | NestJS, PostgreSQL (`pg`), `@ts-safeql/sql-tag`, Docker, JWT                                   |
-| Tests (web)   | Unit/component: **Vitest** + React Testing Library; E2E: **Playwright**                        |
-| Tests (api)   | Unit/integration: **Jest** (+ Nest testing / supertest); E2E of critical flows: **Playwright** |
-| Shared        | `libs/contracts`, `libs/domain` (+ feature/sync libs as needed)                                |
-| Env / secrets | Only in `apps/web` and `apps/api` (`.env`); not a shared lib                                   |
+| Styles        | **SCSS** + **CSS Modules** (`.module.scss`); Carbon via `@use '@carbon/react'`                       |
+| i18n          | Multilingual UI (`en`, `ru`); deploy-time default + in-app switch                                    |
+| Theme         | Carbon-compatible `light` / `dark` / `system` (default `system`)                                     |
+| API           | NestJS, PostgreSQL (`pg`), `@ts-safeql/sql-tag`, Docker, JWT                                         |
+| Tests (web)   | Unit/component: **Vitest** + React Testing Library; E2E: **Playwright**                              |
+| Tests (api)   | Unit/integration: **Jest** (+ Nest testing / supertest); E2E of critical flows: **Playwright**       |
+| Shared        | `libs/contracts`, `libs/domain` (+ feature/sync libs as needed)                                      |
+| Env / secrets | Only in `apps/web` and `apps/api` (`.env`); not a shared lib                                         |
 
 Adapt paths to the actual workspace layout.
 
-## Dependency Direction
+## TypeScript style
 
-```text
-apps → features → application → domain
-                              ↑
-                    infrastructure implementations
-```
+- Use plain `import { … } from '…'` for both types and values. Do **not** use `import type { … }` or inline `type` in import lists (`import { type Foo }`).
 
-Forbidden: UI → PostgreSQL / NestJS internals; Domain → React / browser APIs; contracts that depend on Nest/React.
+## Replaceable units
+
+For swappable modules (use cases, repositories, session/auth facades, and other ports):
+
+**contract (`interface I*`) → implementation → token**
+
+- Swappable contracts use `interface I*` (`ILoginUseCase`, `ISession`). Data shapes and wire types (`LoginRequest`, `UserRecord`, `@balance/contracts`) use `interface`/`type` **without** the `I` prefix; prefer `type` for data. ESLint enforces the `I` prefix only in `apps/**`.
+- Resolve by **token**; consumers are typed as the `I*` contract, not the concrete class. Define the contract first, then the implementation, then the binding.
+- **Backend token:** Nest injection token (`Symbol` / string) in `*.module.ts`.
+- **Frontend token:** React `Context` + Provider + hook — not Nest-style `Symbol` DI. Plain imports are fine for trivial single-implementation helpers that are not swapped in tests.
+- Export the contract and the public resolve path (Nest token / React hook); do not export the implementation unless the module or tests need it.
 
 ## Working the Task Queue
 
@@ -142,14 +158,11 @@ As needed: domain / contracts / schema; API then UI (UI only after the API exist
 - Start feature UI before that feature’s contracts and backend API exist
 - Introduce multiple financial spaces, per-user spaces, or account membership/roles in MVP
 - Use string-concatenated or untyped SQL in `apps/api/src` when a parameterized `sql`-tag query is appropriate
-
-## Critical Questions (sync / money)
-
-Offline? Two users at once? Duplicate delivery? JWT expired offline? Old queue after deploy? Aggregating different currencies? Network drop mid-request?
+- Use `import type` or inline `type` in import lists
 
 ## Commands
 
-Requires **Node 22+** (`nvm use`, see `.nvmrc`).
+Requires **Node 22+**.
 
 ```bash
 # Local Postgres (required for API)

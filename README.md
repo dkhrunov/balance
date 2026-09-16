@@ -44,6 +44,15 @@ API connection settings live in `apps/api/.env` (copy from `apps/api/.env.exampl
 cp apps/api/.env.example apps/api/.env
 ```
 
+Apply schema migrations before starting the API. To create the initial local user, set
+the `SEED_ADMIN_*` values in `apps/api/.env` and run the seed command; it never stores
+the supplied password in plaintext.
+
+```bash
+npm run db:migrate
+npm run db:seed:admin
+```
+
 Stop / remove the container (volume kept):
 
 ```bash
