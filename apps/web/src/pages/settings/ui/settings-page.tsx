@@ -1,35 +1,16 @@
-import { Button, Column, Dropdown, Grid, InlineNotification, OnChangeData, Stack } from '@carbon/react';
+import { Column, Grid, InlineNotification, Stack } from '@carbon/react';
 import { breakpoints } from '@carbon/layout';
 import { useTranslation } from 'react-i18next';
-import { isLocale } from '../../../shared/i18n';
 import {
-    LocaleItem,
-    ThemeItem,
-    useLocaleItems,
+    LocaleSwitcher,
+    ThemeSwitcher,
     usePreferences,
-    useThemeItems,
 } from '../../../shared/preferences';
-import { isTheme } from '../../../shared/theme';
 import { PageShell } from '../../../shared/ui/page';
 
 export function SettingsPage() {
     const { t } = useTranslation();
     const { locale, theme, setLocale, setTheme, error, isSyncing } = usePreferences();
-    const localeItems = useLocaleItems();
-    const themeItems = useThemeItems();
-
-
-    const onChangeLocale = ({ selectedItem }: OnChangeData<LocaleItem>) => {
-        if (isLocale(selectedItem?.id)) {
-            setLocale(selectedItem.id);
-        }
-    };
-
-    const onChangeTheme = ({ selectedItem }: OnChangeData<ThemeItem>) => {
-        if (isTheme(selectedItem?.id)) {
-            setTheme(selectedItem.id);
-        }
-    };
 
     return (
         <PageShell title={t('settings.title')} subtitle={t('settings.subtitle')}>
@@ -48,29 +29,22 @@ export function SettingsPage() {
                                 hideCloseButton
                             />
                         ) : null}
-                        <Dropdown
+                        <LocaleSwitcher
                             id="settings-locale"
-                            titleText={t('settings.language')}
-                            label={t('settings.languagePlaceholder')}
-                            items={localeItems}
-                            itemToString={(item) => (item ? item.text : '')}
-                            selectedItem={localeItems.find((item) => item.id === locale)}
-                            onChange={onChangeLocale}
+                            locale={locale}
+                            onChange={setLocale}
                             disabled={isSyncing}
+                            size="md"
+                            showLabel
                         />
-                        <Dropdown
+                        <ThemeSwitcher
                             id="settings-theme"
-                            titleText={t('settings.theme')}
-                            label={t('settings.themePlaceholder')}
-                            items={themeItems}
-                            itemToString={(item) => (item ? item.text : '')}
-                            selectedItem={themeItems.find((item) => item.id === theme)}
-                            onChange={onChangeTheme}
+                            theme={theme}
+                            onChange={setTheme}
                             disabled={isSyncing}
+                            size="md"
+                            showLabel
                         />
-                        <Button kind="tertiary" disabled>
-                            {t('settings.syncNow')}
-                        </Button>
                     </Stack>
                 </Column>
             </Grid>

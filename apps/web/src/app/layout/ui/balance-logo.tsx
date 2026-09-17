@@ -2,8 +2,8 @@ import { useActiveTheme } from '../../../shared/preferences';
 import styles from './layout.module.scss';
 
 const LOGO_SRC = {
-    light: '/balance-icon-dark.png',
-    dark: '/balance-icon-light.png',
+    light: '/balance-icon-light.png',
+    dark: '/balance-icon-dark.png',
 } as const;
 
 export function BalanceLogo() {

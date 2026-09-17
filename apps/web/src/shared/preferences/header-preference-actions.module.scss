@@ -1,0 +1,30 @@
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
+
+.group {
+    display: inline-flex;
+    align-items: stretch;
+
+    /**
+     * Local exception (header preference chrome only): Carbon ghost buttons
+     * use `$link-primary` for labels. Keep interactive/selected backgrounds,
+     * but render label/icon as primary text/icon tokens.
+     */
+    :global(.cds--btn) {
+        color: $text-primary;
+    }
+
+    :global(.cds--btn:hover),
+    :global(.cds--btn:active) {
+        color: $text-primary;
+    }
+
+    :global(.cds--btn svg) {
+        fill: $icon-primary;
+    }
+}
+
+.localeLabel {
+    @include type-style('label-01');
+    color: inherit;
+}

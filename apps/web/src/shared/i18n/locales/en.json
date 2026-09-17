@@ -41,7 +41,6 @@
         "themeDark": "Dark",
         "localeEn": "English",
         "localeRu": "Русский",
-        "syncNow": "Sync now (prototype)",
         "saveError": "Could not save preferences. Check your connection and try again."
     }
 }

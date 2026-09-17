@@ -1,0 +1,20 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+
+.root {
+    flex-shrink: 0;
+    align-self: center;
+    background-color: $border-subtle;
+}
+
+.vertical {
+    block-size: $spacing-06;
+    inline-size: 1px;
+    margin-inline: $spacing-03;
+}
+
+.horizontal {
+    block-size: 1px;
+    inline-size: $spacing-06;
+    margin-block: $spacing-03;
+}

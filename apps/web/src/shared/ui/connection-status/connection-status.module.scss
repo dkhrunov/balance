@@ -1,0 +1,29 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
+
+.root {
+    display: flex;
+    align-items: center;
+    gap: $spacing-03;
+}
+
+.dot {
+    width: $spacing-03;
+    height: $spacing-03;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.label {
+    @include type-style('label-01');
+    color: $text-primary;
+}
+
+.online .dot {
+    background-color: $support-success;
+}
+
+.offline .dot {
+    background-color: $support-error;
+}
