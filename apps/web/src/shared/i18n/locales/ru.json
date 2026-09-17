@@ -1,0 +1,47 @@
+{
+    "common": {
+        "appName": "Balance",
+        "loading": "Загрузка…",
+        "online": "Онлайн",
+        "offline": "Офлайн"
+    },
+    "nav": {
+        "transactions": "Операции",
+        "accounts": "Счета",
+        "categories": "Категории",
+        "settings": "Настройки",
+        "openMenu": "Открыть меню",
+        "closeMenu": "Закрыть меню",
+        "sideNav": "Боковая навигация",
+        "account": "Аккаунт",
+        "profile": "Профиль",
+        "logOut": "Выйти"
+    },
+    "login": {
+        "subtitle": "Войдите в общее финансовое пространство.",
+        "email": "Email",
+        "password": "Пароль",
+        "submit": "Войти",
+        "submitting": "Вход…",
+        "cannotSignIn": "Не удалось войти",
+        "hint": "Учётные записи создаёт администратор. Используйте выданные для этого пространства учётные данные.",
+        "enterCredentials": "Введите email и пароль.",
+        "invalidCredentials": "Неверный email или пароль.",
+        "genericError": "Не удалось войти. Проверьте соединение и попробуйте снова."
+    },
+    "settings": {
+        "title": "Настройки",
+        "subtitle": "Язык, тема и сессия.",
+        "language": "Язык",
+        "languagePlaceholder": "Выберите язык",
+        "theme": "Тема",
+        "themePlaceholder": "Выберите тему",
+        "themeSystem": "Системная",
+        "themeLight": "Светлая",
+        "themeDark": "Тёмная",
+        "localeEn": "English",
+        "localeRu": "Русский",
+        "syncNow": "Синхронизировать (прототип)",
+        "saveError": "Не удалось сохранить настройки. Проверьте соединение и попробуйте снова."
+    }
+}

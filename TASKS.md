@@ -83,7 +83,7 @@
 
 ### Preferences
 
-- [ ] User preferences API — locale + theme
+- [x] User preferences API — locale + theme
   - **ID**: user-preferences-api
   - **Tags**: backend, users, preferences
   - **Details**: Persist `locale` (`en`|`ru`) and `theme` (`light`|`dark`|`system`, default `system`); GET/PUT (or PATCH) `/users/me/preferences`; contracts; migration; owner-only. SPEC §6, §8, §40, §56.
@@ -91,7 +91,7 @@
   - **Blocked by**: users-schema, contracts-skeleton, auth-jwt
   - **Estimate**: 2-3h
 
-- [ ] i18n (en/ru) + Carbon theme switch + preference sync
+- [x] i18n (en/ru) + Carbon theme switch + preference sync
   - **ID**: i18n-theme-ui
   - **Tags**: frontend, i18n, theme, ui
   - **Details**: Multilingual UI; deploy-time default locale; in-app language + theme switch; load/save preferences via the preferences API. SPEC §4, §8, §47–48, §50.

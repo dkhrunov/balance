@@ -9,12 +9,13 @@ import {
 } from 'react';
 import { LoginRequest } from '@balance/contracts/auth';
 import { UserIdentity } from '@balance/contracts/users';
-import { noopSessionExpiredHandler, registerSessionExpiredHandler } from '../api';
 import {
     getCurrentUser,
     login as loginRequest,
     logout as logoutRequest,
-} from './auth-client';
+    noopSessionExpiredHandler,
+    registerSessionExpiredHandler,
+} from '../api';
 
 type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -60,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         let cancelled = false;
 
-        void restoreSession().then((restoredUser) => {
+        restoreSession().then((restoredUser) => {
             if (cancelled) {
                 return;
             }

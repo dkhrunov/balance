@@ -33,6 +33,14 @@
     padding-inline: $spacing-05;
 }
 
+.preferenceControls {
+    display: flex;
+    align-items: center;
+    gap: $spacing-03;
+    min-inline-size: 16rem;
+    padding-inline-end: $spacing-03;
+}
+
 .connectionStatusDot {
     width: $spacing-03;
     height: $spacing-03;

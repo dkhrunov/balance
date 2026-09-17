@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { DatabaseModule } from '../database/database.module';
-import { UsersModule } from '../users';
+import { UsersModule } from '../users/users.module';
 import {
     ACCESS_TOKEN_SERVICE,
     AUTH_CONFIG,
@@ -25,7 +25,7 @@ import {
 } from './adapters/outbound';
 
 @Module({
-    imports: [JwtModule.register({}), DatabaseModule, UsersModule],
+    imports: [JwtModule.register({}), DatabaseModule, forwardRef(() => UsersModule)],
     controllers: [AuthController],
     providers: [
         AuthCookieService,
@@ -40,6 +40,12 @@ import {
         CsrfOriginGuard,
         AuthGuard,
     ],
-    exports: [AuthGuard],
+    exports: [
+        AuthGuard,
+        CsrfOriginGuard,
+        AuthCookieService,
+        AUTH_CONFIG,
+        GET_CURRENT_USER_USE_CASE,
+    ],
 })
 export class AuthModule {}

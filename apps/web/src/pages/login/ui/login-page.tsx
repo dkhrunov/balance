@@ -12,6 +12,7 @@ import {
     TextInput,
 } from '@carbon/react';
 import { breakpoints } from '@carbon/layout';
+import { useTranslation } from 'react-i18next';
 import { ApiError } from '../../../shared/api';
 import { useAuth } from '../../../shared/auth';
 import styles from './login-page.module.scss';
@@ -24,15 +25,14 @@ const LOGIN_LG_SPAN = breakpoints.lg.columns / 4;
 const LOGIN_LG_OFFSET = (breakpoints.lg.columns - LOGIN_LG_SPAN) / 2;
 const LG_COLUMN = { span: LOGIN_LG_SPAN, offset: LOGIN_LG_OFFSET };
 
-
 export function LoginPage() {
+    const { t } = useTranslation();
     const { status, login } = useAuth();
     const location = useLocation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
 
     if (status === 'authenticated') {
         return <Navigate to={getReturnPath(location.state)} replace />;
@@ -53,7 +53,7 @@ export function LoginPage() {
         setError(null);
 
         if (!email.trim() || !password) {
-            setError('Enter email and password.');
+            setError(t('login.enterCredentials'));
             return;
         }
 
@@ -63,7 +63,7 @@ export function LoginPage() {
             await login({ email, password });
             setPassword('');
         } catch (reason) {
-            setError(getLoginError(reason));
+            setError(getLoginError(reason, t));
             setPassword('');
         } finally {
             setIsSubmitting(false);
@@ -79,8 +79,8 @@ export function LoginPage() {
                     lg={LG_COLUMN}
                 >
                     <header className={styles.brand}>
-                        <h1 className={styles.title}>Balance</h1>
-                        <p className={styles.subtitle}>Sign in to your finance space.</p>
+                        <h1 className={styles.title}>{t('common.appName')}</h1>
+                        <p className={styles.subtitle}>{t('login.subtitle')}</p>
                     </header>
 
                     <form onSubmit={onSubmit} noValidate>
@@ -88,7 +88,7 @@ export function LoginPage() {
                             {error ? (
                                 <InlineNotification
                                     kind="error"
-                                    title="Cannot sign in"
+                                    title={t('login.cannotSignIn')}
                                     subtitle={error}
                                     lowContrast
                                     hideCloseButton
@@ -96,7 +96,7 @@ export function LoginPage() {
                             ) : null}
                             <TextInput
                                 id="login-email"
-                                labelText="Email"
+                                labelText={t('login.email')}
                                 autoComplete="username"
                                 value={email}
                                 disabled={isSubmitting}
@@ -104,7 +104,7 @@ export function LoginPage() {
                             />
                             <PasswordInput
                                 id="login-password"
-                                labelText="Password"
+                                labelText={t('login.password')}
                                 autoComplete="current-password"
                                 value={password}
                                 disabled={isSubmitting}
@@ -121,17 +121,14 @@ export function LoginPage() {
                                     {isSubmitting ? (
                                         <InlineLoading
                                             status="active"
-                                            description="Logging in..."
+                                            description={t('login.submitting')}
                                         />
                                     ) : (
-                                        'Log in'
+                                        t('login.submit')
                                     )}
                                 </Button>
                             </ButtonSet>
-                            <p className={styles.hint}>
-                                Accounts are created by an administrator. Use the credentials
-                                provided for this financial space.
-                            </p>
+                            <p className={styles.hint}>{t('login.hint')}</p>
                         </Stack>
                     </form>
                 </Column>
@@ -167,10 +164,10 @@ function isReturnLocation(value: unknown): value is {
         && typeof from.hash === 'string';
 }
 
-function getLoginError(reason: unknown): string {
+function getLoginError(reason: unknown, t: (key: string) => string): string {
     if (reason instanceof ApiError && reason.code === 'AUTH_INVALID_CREDENTIALS') {
-        return 'Email or password is incorrect.';
+        return t('login.invalidCredentials');
     }
 
-    return 'Unable to sign in. Check your connection and try again.';
+    return t('login.genericError');
 }

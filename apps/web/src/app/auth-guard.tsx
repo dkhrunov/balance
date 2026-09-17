@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { InlineLoading } from '@carbon/react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/auth';
 
 /**
@@ -9,9 +10,10 @@ import { useAuth } from '../shared/auth';
 export function AuthGuard() {
     const { status } = useAuth();
     const location = useLocation();
+    const { t } = useTranslation();
 
     if (status === 'loading') {
-        return <InlineLoading description="Checking session…" />;
+        return <InlineLoading description={t('common.loading')} />;
     }
 
     if (status === 'unauthenticated') {

@@ -1,8 +1,10 @@
 export {
-    ThemePreferenceProvider,
-    useThemePreference,
-    useActiveTheme,
-    isThemePreference,
-    THEME_PREFERENCE_STORAGE_KEY,
-} from './theme-preference';
-export type { ThemePreference, ActiveTheme } from './theme-preference';
+    applyTheme,
+    isTheme,
+    persistTheme,
+    readTheme,
+    resolveActiveTheme,
+    THEME_STORAGE_KEY,
+} from './theme';
+export type { ActiveTheme } from './theme';
+export type { Theme } from '@balance/contracts/users';

@@ -1,4 +1,4 @@
-import { useActiveTheme } from '../../../shared/theme';
+import { useActiveTheme } from '../../../shared/preferences';
 import styles from './layout.module.scss';
 
 const LOGO_SRC = {

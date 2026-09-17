@@ -1,8 +1,10 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { InlineLoading } from '@carbon/react';
+import { useTranslation } from 'react-i18next';
 import { AuthProvider } from '../shared/auth';
-import { ThemePreferenceProvider } from '../shared/theme';
+import { I18nProvider } from '../shared/i18n';
+import { PreferencesProvider } from '../shared/preferences';
 import { AuthGuard } from './auth-guard';
 import { Layout } from './layout';
 
@@ -25,32 +27,38 @@ const ProfilePage = lazy(() =>
     import('../pages/profile').then((module) => ({ default: module.ProfilePage })),
 );
 
-const Loader = <InlineLoading description="Loading…" />;
+function AppLoader() {
+    const { t } = useTranslation();
+
+    return <InlineLoading description={t('common.loading')} />;
+}
 
 export function App() {
     return (
-        <ThemePreferenceProvider>
+        <I18nProvider>
             <AuthProvider>
-                <BrowserRouter>
-                    <Suspense fallback={Loader}>
-                        <Routes>
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route element={<AuthGuard />}>
-                                <Route element={<Layout />}>
-                                    <Route path="/transactions" element={<TransactionsPage />} />
-                                    <Route path="/accounts" element={<AccountsPage />} />
-                                    <Route path="/categories" element={<CategoriesPage />} />
-                                    <Route path="/settings" element={<SettingsPage />} />
-                                    <Route path="/profile" element={<ProfilePage />} />
+                <PreferencesProvider>
+                    <BrowserRouter>
+                        <Suspense fallback={<AppLoader />}>
+                            <Routes>
+                                <Route path="/login" element={<LoginPage />} />
+                                <Route element={<AuthGuard />}>
+                                    <Route element={<Layout />}>
+                                        <Route path="/transactions" element={<TransactionsPage />} />
+                                        <Route path="/accounts" element={<AccountsPage />} />
+                                        <Route path="/categories" element={<CategoriesPage />} />
+                                        <Route path="/settings" element={<SettingsPage />} />
+                                        <Route path="/profile" element={<ProfilePage />} />
+                                    </Route>
                                 </Route>
-                            </Route>
-                            <Route path="/" element={<Navigate to="/transactions" replace />} />
-                            <Route path="*" element={<Navigate to="/transactions" replace />} />
-                        </Routes>
-                    </Suspense>
-                </BrowserRouter>
+                                <Route path="/" element={<Navigate to="/transactions" replace />} />
+                                <Route path="*" element={<Navigate to="/transactions" replace />} />
+                            </Routes>
+                        </Suspense>
+                    </BrowserRouter>
+                </PreferencesProvider>
             </AuthProvider>
-        </ThemePreferenceProvider>
+        </I18nProvider>
     );
 }
 

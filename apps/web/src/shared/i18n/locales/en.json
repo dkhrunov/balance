@@ -1,0 +1,47 @@
+{
+    "common": {
+        "appName": "Balance",
+        "loading": "Loading…",
+        "online": "Online",
+        "offline": "Offline"
+    },
+    "nav": {
+        "transactions": "Transactions",
+        "accounts": "Accounts",
+        "categories": "Categories",
+        "settings": "Settings",
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu",
+        "sideNav": "Side navigation",
+        "account": "Account",
+        "profile": "Profile",
+        "logOut": "Log out"
+    },
+    "login": {
+        "subtitle": "Sign in to your finance space.",
+        "email": "Email",
+        "password": "Password",
+        "submit": "Log in",
+        "submitting": "Logging in...",
+        "cannotSignIn": "Cannot sign in",
+        "hint": "Accounts are created by an administrator. Use the credentials provided for this financial space.",
+        "enterCredentials": "Enter email and password.",
+        "invalidCredentials": "Email or password is incorrect.",
+        "genericError": "Unable to sign in. Check your connection and try again."
+    },
+    "settings": {
+        "title": "Settings",
+        "subtitle": "Language, theme, and session.",
+        "language": "Language",
+        "languagePlaceholder": "Choose language",
+        "theme": "Theme",
+        "themePlaceholder": "Choose theme",
+        "themeSystem": "System",
+        "themeLight": "Light",
+        "themeDark": "Dark",
+        "localeEn": "English",
+        "localeRu": "Русский",
+        "syncNow": "Sync now (prototype)",
+        "saveError": "Could not save preferences. Check your connection and try again."
+    }
+}

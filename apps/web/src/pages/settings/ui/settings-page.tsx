@@ -1,30 +1,38 @@
-import { Button, Column, Dropdown, Grid, OnChangeData, Stack } from '@carbon/react';
+import { Button, Column, Dropdown, Grid, InlineNotification, OnChangeData, Stack } from '@carbon/react';
 import { breakpoints } from '@carbon/layout';
-import { isThemePreference, useThemePreference } from '../../../shared/theme';
+import { useTranslation } from 'react-i18next';
+import { isLocale } from '../../../shared/i18n';
+import {
+    LocaleItem,
+    ThemeItem,
+    useLocaleItems,
+    usePreferences,
+    useThemeItems,
+} from '../../../shared/preferences';
+import { isTheme } from '../../../shared/theme';
 import { PageShell } from '../../../shared/ui/page';
 
-const localeItems = [
-    { id: 'en', text: 'English' },
-    { id: 'ru', text: 'Русский' },
-];
-
-const themeItems = [
-    { id: 'system', text: 'System' },
-    { id: 'light', text: 'Light' },
-    { id: 'dark', text: 'Dark' },
-];
-
 export function SettingsPage() {
-    const { preference, setPreference } = useThemePreference();
+    const { t } = useTranslation();
+    const { locale, theme, setLocale, setTheme, error, isSyncing } = usePreferences();
+    const localeItems = useLocaleItems();
+    const themeItems = useThemeItems();
 
-    const onChangeTheme = ({ selectedItem }: OnChangeData<(typeof themeItems)[number]>) => {
-        if (isThemePreference(selectedItem?.id)) {
-            setPreference(selectedItem.id);
+
+    const onChangeLocale = ({ selectedItem }: OnChangeData<LocaleItem>) => {
+        if (isLocale(selectedItem?.id)) {
+            setLocale(selectedItem.id);
+        }
+    };
+
+    const onChangeTheme = ({ selectedItem }: OnChangeData<ThemeItem>) => {
+        if (isTheme(selectedItem?.id)) {
+            setTheme(selectedItem.id);
         }
     };
 
     return (
-        <PageShell title="Settings" subtitle="Language, theme, and session.">
+        <PageShell title={t('settings.title')} subtitle={t('settings.subtitle')}>
             <Grid>
                 <Column
                     sm={breakpoints.sm.columns}
@@ -32,25 +40,36 @@ export function SettingsPage() {
                     lg={breakpoints.lg.columns / 4}
                 >
                     <Stack gap={4}>
+                        {error ? (
+                            <InlineNotification
+                                kind="error"
+                                title={t('settings.saveError')}
+                                lowContrast
+                                hideCloseButton
+                            />
+                        ) : null}
                         <Dropdown
                             id="settings-locale"
-                            titleText="Language"
-                            label="Choose language"
+                            titleText={t('settings.language')}
+                            label={t('settings.languagePlaceholder')}
                             items={localeItems}
                             itemToString={(item) => (item ? item.text : '')}
-                            initialSelectedItem={localeItems[0]}
+                            selectedItem={localeItems.find((item) => item.id === locale)}
+                            onChange={onChangeLocale}
+                            disabled={isSyncing}
                         />
                         <Dropdown
                             id="settings-theme"
-                            titleText="Theme"
-                            label="Choose theme"
+                            titleText={t('settings.theme')}
+                            label={t('settings.themePlaceholder')}
                             items={themeItems}
                             itemToString={(item) => (item ? item.text : '')}
-                            initialSelectedItem={themeItems.find((item) => item.id === preference)}
+                            selectedItem={themeItems.find((item) => item.id === theme)}
                             onChange={onChangeTheme}
+                            disabled={isSyncing}
                         />
                         <Button kind="tertiary" disabled>
-                            Sync now (prototype)
+                            {t('settings.syncNow')}
                         </Button>
                     </Stack>
                 </Column>
