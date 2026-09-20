@@ -101,7 +101,7 @@
 
 ### Accounts
 
-- [ ] Accounts domain + API
+- [x] Accounts domain + API
   - **ID**: accounts-api
   - **Tags**: backend, accounts
   - **Details**: Account CRUD with explicit currency, `version`, soft delete; one app space; any authenticated user may CRUD any account (no owner / membership). Users may create separate accounts and agree among themselves who uses which. SPEC §9–10, §28, §32, §39.
