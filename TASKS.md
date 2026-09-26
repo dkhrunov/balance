@@ -119,7 +119,7 @@
 
 ### Categories
 
-- [ ] Categories API (income + expense)
+- [x] Categories API (income + expense)
   - **ID**: categories-api
   - **Tags**: backend, categories
   - **Details**: Separate income/expense categories; CRUD; soft delete; contracts. No subcategory/icon schema in MVP. SPEC §17.
