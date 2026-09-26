@@ -2,6 +2,8 @@ CREATE TABLE categories (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     type text NOT NULL CHECK (type IN ('INCOME', 'EXPENSE')),
     name text NOT NULL CHECK (char_length(trim(name)) BETWEEN 1 AND 120),
+    icon text NOT NULL DEFAULT 'Wallet'
+        CHECK (char_length(icon) BETWEEN 1 AND 64),
     version int NOT NULL DEFAULT 1 CHECK (version >= 1),
     created_by uuid NOT NULL REFERENCES users(id),
     updated_by uuid NOT NULL REFERENCES users(id),

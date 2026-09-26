@@ -1,4 +1,6 @@
 import {
+    CATEGORY_ICON_MAX_LENGTH,
+    CATEGORY_ICON_MIN_LENGTH,
     CATEGORY_NAME_MAX_LENGTH,
     CATEGORY_NAME_MIN_LENGTH,
     UpdateCategoryRequest,
@@ -11,6 +13,11 @@ export class UpdateCategoryDto implements UpdateCategoryRequest {
     @MinLength(CATEGORY_NAME_MIN_LENGTH)
     @MaxLength(CATEGORY_NAME_MAX_LENGTH)
     public name: string;
+
+    @IsString()
+    @MinLength(CATEGORY_ICON_MIN_LENGTH)
+    @MaxLength(CATEGORY_ICON_MAX_LENGTH)
+    public icon: string;
 
     @IsInt()
     @Min(1)

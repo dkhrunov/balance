@@ -75,6 +75,7 @@ export class CategoriesController {
         const payload: CreateCategoryRequest = {
             type: body.type,
             name: body.name,
+            icon: body.icon,
         };
 
         return this.createCategoryUseCase.execute(request.auth.user.id, payload);
@@ -89,6 +90,7 @@ export class CategoriesController {
     ): Promise<Category> {
         const payload: UpdateCategoryRequest = {
             name: body.name,
+            icon: body.icon,
             version: body.version,
         };
 

@@ -23,6 +23,7 @@ export class PgCategoriesRepository implements ICategoriesRepository {
                     id,
                     type,
                     name,
+                    icon,
                     version,
                     created_by AS "createdBy",
                     updated_by AS "updatedBy",
@@ -44,6 +45,7 @@ export class PgCategoriesRepository implements ICategoriesRepository {
                 id,
                 type,
                 name,
+                icon,
                 version,
                 created_by AS "createdBy",
                 updated_by AS "updatedBy",
@@ -65,6 +67,7 @@ export class PgCategoriesRepository implements ICategoriesRepository {
                 id,
                 type,
                 name,
+                icon,
                 version,
                 created_by AS "createdBy",
                 updated_by AS "updatedBy",
@@ -85,12 +88,14 @@ export class PgCategoriesRepository implements ICategoriesRepository {
             INSERT INTO categories (
                 type,
                 name,
+                icon,
                 created_by,
                 updated_by
             )
             VALUES (
                 ${input.type},
                 ${input.name},
+                ${input.icon},
                 ${input.actorUserId}::uuid,
                 ${input.actorUserId}::uuid
             )
@@ -98,6 +103,7 @@ export class PgCategoriesRepository implements ICategoriesRepository {
                 id,
                 type,
                 name,
+                icon,
                 version,
                 created_by AS "createdBy",
                 updated_by AS "updatedBy",
@@ -115,6 +121,7 @@ export class PgCategoriesRepository implements ICategoriesRepository {
             UPDATE categories
             SET
                 name = ${input.name},
+                icon = ${input.icon},
                 version = version + 1,
                 updated_by = ${input.actorUserId}::uuid,
                 updated_at = now()
@@ -125,6 +132,7 @@ export class PgCategoriesRepository implements ICategoriesRepository {
                 id,
                 type,
                 name,
+                icon,
                 version,
                 created_by AS "createdBy",
                 updated_by AS "updatedBy",
@@ -157,6 +165,7 @@ export class PgCategoriesRepository implements ICategoriesRepository {
                 id,
                 type,
                 name,
+                icon,
                 version,
                 created_by AS "createdBy",
                 updated_by AS "updatedBy",
@@ -195,6 +204,7 @@ export class PgCategoriesRepository implements ICategoriesRepository {
             id: record.id,
             type: record.type,
             name: record.name,
+            icon: record.icon,
             version: record.version,
             createdBy: record.createdBy,
             updatedBy: record.updatedBy,

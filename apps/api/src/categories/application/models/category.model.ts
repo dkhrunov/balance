@@ -5,6 +5,7 @@ export type CategoryModel = {
     readonly id: string;
     readonly type: CategoryType;
     readonly name: string;
+    readonly icon: string;
     readonly version: number;
     readonly createdBy: string;
     readonly updatedBy: string;

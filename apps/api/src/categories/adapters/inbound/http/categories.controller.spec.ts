@@ -111,6 +111,7 @@ describe('CategoriesController', () => {
         expect(createdExpense.body).toMatchObject({
             type: 'EXPENSE',
             name: 'Food',
+            icon: 'Wallet',
             version: 1,
             createdBy: userId,
             updatedBy: userId,
@@ -122,8 +123,10 @@ describe('CategoriesController', () => {
             .post('/api/categories')
             .set('Origin', origin)
             .set('Cookie', authCookies)
-            .send({ type: 'INCOME', name: 'Salary' })
+            .send({ type: 'INCOME', name: 'Salary', icon: 'Money' })
             .expect(201);
+
+        expect(createdIncome.body.icon).toBe('Money');
 
         const listed = await request(app.getHttpServer())
             .get('/api/categories')
@@ -154,11 +157,12 @@ describe('CategoriesController', () => {
             .put(`/api/categories/${createdExpense.body.id}`)
             .set('Origin', origin)
             .set('Cookie', authCookies)
-            .send({ name: 'Groceries', version: 1 })
+            .send({ name: 'Groceries', icon: 'ShoppingCart', version: 1 })
             .expect(200);
 
         expect(updated.body).toMatchObject({
             name: 'Groceries',
+            icon: 'ShoppingCart',
             type: 'EXPENSE',
             version: 2,
         });
@@ -206,14 +210,14 @@ describe('CategoriesController', () => {
             .put(`/api/categories/${created.body.id}`)
             .set('Origin', origin)
             .set('Cookie', authCookies)
-            .send({ name: 'Bonus 2', version: 1 })
+            .send({ name: 'Bonus 2', icon: 'Money', version: 1 })
             .expect(200);
 
         await request(app.getHttpServer())
             .put(`/api/categories/${created.body.id}`)
             .set('Origin', origin)
             .set('Cookie', authCookies)
-            .send({ name: 'Bonus 3', version: 1 })
+            .send({ name: 'Bonus 3', icon: 'Money', version: 1 })
             .expect(409)
             .expect(({ body }) => {
                 expect(body.code).toBe('CATEGORY_VERSION_CONFLICT');

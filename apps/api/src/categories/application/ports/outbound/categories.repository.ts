@@ -11,13 +11,15 @@ export type CategoryMutationResult =
 export type CreateCategoryRecord = {
     readonly type: CategoryType;
     readonly name: string;
+    readonly icon: string;
     readonly actorUserId: string;
 };
 
-/** Input for renaming an active category with optimistic concurrency. */
+/** Input for updating an active category with optimistic concurrency. */
 export type UpdateCategoryRecord = {
     readonly id: string;
     readonly name: string;
+    readonly icon: string;
     readonly expectedVersion: number;
     readonly actorUserId: string;
 };
@@ -56,7 +58,7 @@ export interface ICategoriesRepository {
     create(input: CreateCategoryRecord): Promise<CategoryModel>;
 
     /**
-     * Renames an active category when `expectedVersion` matches.
+     * Updates name and icon on an active category when `expectedVersion` matches.
      *
      * @param input Update fields, expected version, and actor.
      */

@@ -5,6 +5,7 @@ export type CategoryRecord = {
     id: string;
     type: CategoryType;
     name: string;
+    icon: string;
     version: number;
     createdBy: string;
     updatedBy: string;

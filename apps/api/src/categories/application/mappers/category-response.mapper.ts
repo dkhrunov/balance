@@ -12,6 +12,7 @@ export function toCategoryResponse(category: CategoryModel): Category {
         id: category.id,
         type: category.type,
         name: category.name,
+        icon: category.icon,
         version: category.version,
         createdBy: category.createdBy,
         updatedBy: category.updatedBy,

@@ -2,6 +2,8 @@ import { BadRequestException, ConflictException, Inject, Injectable, NotFoundExc
 import {
     Category,
     CATEGORY_ERROR_CODES,
+    CATEGORY_ICON_MAX_LENGTH,
+    CATEGORY_ICON_MIN_LENGTH,
     CATEGORY_NAME_MAX_LENGTH,
     CATEGORY_NAME_MIN_LENGTH,
     UpdateCategoryRequest,
@@ -31,9 +33,20 @@ export class UpdateCategoryUseCase implements IUpdateCategoryUseCase {
             });
         }
 
+        const icon = request.icon.trim();
+
+        if (icon.length < CATEGORY_ICON_MIN_LENGTH || icon.length > CATEGORY_ICON_MAX_LENGTH) {
+            throw new BadRequestException({
+                code: CATEGORY_ERROR_CODES.validationFailed,
+                message: `Category icon must be between ${CATEGORY_ICON_MIN_LENGTH} and ${CATEGORY_ICON_MAX_LENGTH} characters`,
+                details: {},
+            });
+        }
+
         const result = await this.categoriesRepository.updateActive({
             id: categoryId,
             name,
+            icon,
             expectedVersion: request.version,
             actorUserId,
         });

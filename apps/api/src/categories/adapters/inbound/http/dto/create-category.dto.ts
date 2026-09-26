@@ -1,10 +1,12 @@
 import {
+    CATEGORY_ICON_MAX_LENGTH,
+    CATEGORY_ICON_MIN_LENGTH,
     CATEGORY_NAME_MAX_LENGTH,
     CATEGORY_NAME_MIN_LENGTH,
     CATEGORY_TYPES,
     CreateCategoryRequest,
 } from '@balance/contracts/categories';
-import { IsIn, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsIn, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 /** HTTP body for `POST /categories`; compatible with {@link CreateCategoryRequest}. */
 export class CreateCategoryDto implements CreateCategoryRequest {
@@ -15,4 +17,10 @@ export class CreateCategoryDto implements CreateCategoryRequest {
     @MinLength(CATEGORY_NAME_MIN_LENGTH)
     @MaxLength(CATEGORY_NAME_MAX_LENGTH)
     public name: string;
+
+    @IsOptional()
+    @IsString()
+    @MinLength(CATEGORY_ICON_MIN_LENGTH)
+    @MaxLength(CATEGORY_ICON_MAX_LENGTH)
+    public icon?: string;
 }
