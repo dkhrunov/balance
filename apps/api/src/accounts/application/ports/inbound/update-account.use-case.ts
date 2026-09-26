@@ -1,6 +1,6 @@
 import { Account, UpdateAccountRequest } from '@balance/contracts/accounts';
 
-/** Renames an active account with optimistic concurrency. */
+/** Updates name and icon on an active account with optimistic concurrency. */
 export interface IUpdateAccountUseCase {
     /**
      * @param actorUserId Authenticated user performing the update.

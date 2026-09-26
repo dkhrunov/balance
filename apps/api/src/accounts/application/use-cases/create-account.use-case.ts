@@ -1,5 +1,11 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { Account, ACCOUNT_ERROR_CODES, CreateAccountRequest } from '@balance/contracts/accounts';
+import {
+    Account,
+    ACCOUNT_ERROR_CODES,
+    ACCOUNT_ICON_MAX_LENGTH,
+    CreateAccountRequest,
+    DEFAULT_ACCOUNT_ICON,
+} from '@balance/contracts/accounts';
 import { Money, MoneyValidationError } from '@balance/domain/money';
 import { toAccountResponse } from '../mappers/account-response.mapper';
 import { ICreateAccountUseCase } from '../ports/inbound/create-account.use-case';
@@ -22,6 +28,16 @@ export class CreateAccountUseCase implements ICreateAccountUseCase {
             });
         }
 
+        const icon = (request.icon ?? DEFAULT_ACCOUNT_ICON).trim();
+
+        if (icon.length < 1 || icon.length > ACCOUNT_ICON_MAX_LENGTH) {
+            throw new BadRequestException({
+                code: ACCOUNT_ERROR_CODES.validationFailed,
+                message: `Account icon must be between 1 and ${ACCOUNT_ICON_MAX_LENGTH} characters`,
+                details: {},
+            });
+        }
+
         let money: Money;
 
         try {
@@ -40,6 +56,7 @@ export class CreateAccountUseCase implements ICreateAccountUseCase {
 
         const account = await this.accountsRepository.create({
             name,
+            icon,
             currency: money.currency,
             initialBalance: money.amount,
             actorUserId,

@@ -1,6 +1,6 @@
-import { CreateAccountRequest } from '@balance/contracts/accounts';
+import { ACCOUNT_ICON_MAX_LENGTH, CreateAccountRequest } from '@balance/contracts/accounts';
 import { CURRENCY_CODES } from '@balance/contracts/currencies';
-import { IsIn, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsIn, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 /** HTTP body for `POST /accounts`; compatible with {@link CreateAccountRequest}. */
 export class CreateAccountDto implements CreateAccountRequest {
@@ -15,4 +15,10 @@ export class CreateAccountDto implements CreateAccountRequest {
     @IsString()
     @MinLength(1)
     public initialBalance: string;
+
+    @IsOptional()
+    @IsString()
+    @MinLength(1)
+    @MaxLength(ACCOUNT_ICON_MAX_LENGTH)
+    public icon?: string;
 }

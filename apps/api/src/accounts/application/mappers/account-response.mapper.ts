@@ -11,6 +11,7 @@ export function toAccountResponse(account: AccountModel): Account {
     return {
         id: account.id,
         name: account.name,
+        icon: account.icon,
         currency: account.currency,
         initialBalance: account.initialBalance,
         version: account.version,

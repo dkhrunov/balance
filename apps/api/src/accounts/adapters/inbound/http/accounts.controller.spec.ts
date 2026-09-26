@@ -110,6 +110,7 @@ describe('AccountsController', () => {
 
         expect(created.body).toMatchObject({
             name: 'Cash',
+            icon: 'Wallet',
             currency: 'RUB',
             initialBalance: '100.50',
             version: 1,
@@ -141,11 +142,12 @@ describe('AccountsController', () => {
             .put(`/api/accounts/${created.body.id}`)
             .set('Origin', origin)
             .set('Cookie', authCookies)
-            .send({ name: 'Wallet', version: 1 })
+            .send({ name: 'Wallet', icon: 'CreditCard', version: 1 })
             .expect(200);
 
         expect(updated.body).toMatchObject({
             name: 'Wallet',
+            icon: 'CreditCard',
             version: 2,
             updatedBy: userId,
             currency: 'RUB',
@@ -194,14 +196,14 @@ describe('AccountsController', () => {
             .put(`/api/accounts/${created.body.id}`)
             .set('Origin', origin)
             .set('Cookie', authCookies)
-            .send({ name: 'Bank 2', version: 1 })
+            .send({ name: 'Bank 2', icon: 'Wallet', version: 1 })
             .expect(200);
 
         await request(app.getHttpServer())
             .put(`/api/accounts/${created.body.id}`)
             .set('Origin', origin)
             .set('Cookie', authCookies)
-            .send({ name: 'Bank 3', version: 1 })
+            .send({ name: 'Bank 3', icon: 'Wallet', version: 1 })
             .expect(409)
             .expect(({ body }) => {
                 expect(body.code).toBe('ACCOUNT_VERSION_CONFLICT');
@@ -236,5 +238,23 @@ describe('AccountsController', () => {
             .expect(({ body }) => {
                 expect(body.code).toBe('ACCOUNT_VALIDATION_FAILED');
             });
+
+        await request(app.getHttpServer())
+            .post('/api/accounts')
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({ name: 'Cash', currency: 'RUB', initialBalance: '0', icon: '' })
+            .expect(400);
+    });
+
+    it('creates an account with an explicit icon', async () => {
+        const created = await request(app.getHttpServer())
+            .post('/api/accounts')
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({ name: 'Card', currency: 'EUR', initialBalance: '10', icon: 'CreditCard' })
+            .expect(201);
+
+        expect(created.body.icon).toBe('CreditCard');
     });
 });

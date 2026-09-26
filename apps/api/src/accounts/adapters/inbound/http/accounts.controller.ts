@@ -75,6 +75,7 @@ export class AccountsController {
             name: body.name,
             currency: body.currency,
             initialBalance: body.initialBalance,
+            icon: body.icon,
         };
 
         return this.createAccountUseCase.execute(request.auth.user.id, payload);
@@ -89,6 +90,7 @@ export class AccountsController {
     ): Promise<Account> {
         const payload: UpdateAccountRequest = {
             name: body.name,
+            icon: body.icon,
             version: body.version,
         };
 

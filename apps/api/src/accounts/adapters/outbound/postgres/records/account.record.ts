@@ -1,9 +1,11 @@
+import { AccountIcon } from '@balance/contracts/accounts';
 import { CurrencyCode } from '@balance/contracts/currencies';
 
 /** Row shape returned from `accounts` queries (camelCase aliases). */
 export type AccountRecord = {
     id: string;
     name: string;
+    icon: AccountIcon;
     currency: CurrencyCode;
     initialBalance: string;
     version: number;

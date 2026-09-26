@@ -6,8 +6,8 @@
         "node": ">=22"
     },
     "scripts": {
-        "start:web": "nx serve web",
         "start:api": "nx serve api",
+        "start:web": "nx serve web",
         "db:up": "docker compose up -d",
         "db:down": "docker compose down",
         "db:migrate": "node apps/api/scripts/migrate.mjs",

@@ -20,6 +20,7 @@ export class PgAccountsRepository implements IAccountsRepository {
             SELECT
                 id,
                 name,
+                icon,
                 currency_code AS "currency",
                 initial_balance::text AS "initialBalance",
                 version,
@@ -42,6 +43,7 @@ export class PgAccountsRepository implements IAccountsRepository {
             SELECT
                 id,
                 name,
+                icon,
                 currency_code AS "currency",
                 initial_balance::text AS "initialBalance",
                 version,
@@ -63,6 +65,7 @@ export class PgAccountsRepository implements IAccountsRepository {
         const result = await this.database.getPool().query<AccountRecord>(sql`
             INSERT INTO accounts (
                 name,
+                icon,
                 currency_code,
                 initial_balance,
                 created_by,
@@ -70,6 +73,7 @@ export class PgAccountsRepository implements IAccountsRepository {
             )
             VALUES (
                 ${input.name},
+                ${input.icon},
                 ${input.currency},
                 ${input.initialBalance}::numeric,
                 ${input.actorUserId}::uuid,
@@ -78,6 +82,7 @@ export class PgAccountsRepository implements IAccountsRepository {
             RETURNING
                 id,
                 name,
+                icon,
                 currency_code AS "currency",
                 initial_balance::text AS "initialBalance",
                 version,
@@ -97,6 +102,7 @@ export class PgAccountsRepository implements IAccountsRepository {
             UPDATE accounts
             SET
                 name = ${input.name},
+                icon = ${input.icon},
                 version = version + 1,
                 updated_by = ${input.actorUserId}::uuid,
                 updated_at = now()
@@ -106,6 +112,7 @@ export class PgAccountsRepository implements IAccountsRepository {
             RETURNING
                 id,
                 name,
+                icon,
                 currency_code AS "currency",
                 initial_balance::text AS "initialBalance",
                 version,
@@ -139,6 +146,7 @@ export class PgAccountsRepository implements IAccountsRepository {
             RETURNING
                 id,
                 name,
+                icon,
                 currency_code AS "currency",
                 initial_balance::text AS "initialBalance",
                 version,
@@ -178,6 +186,7 @@ export class PgAccountsRepository implements IAccountsRepository {
         return {
             id: record.id,
             name: record.name,
+            icon: record.icon,
             currency: record.currency,
             initialBalance: record.initialBalance,
             version: record.version,

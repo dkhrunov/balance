@@ -1,4 +1,5 @@
 import { CurrencyCode } from '../currencies';
+import { AccountIcon } from './account-icon';
 
 /** Body for `POST /accounts`. */
 export interface CreateAccountRequest {
@@ -6,4 +7,6 @@ export interface CreateAccountRequest {
     readonly currency: CurrencyCode;
     /** Decimal-safe amount in {@link currency}. */
     readonly initialBalance: string;
+    /** Optional Carbon icon name; defaults to `Wallet` when omitted. */
+    readonly icon?: AccountIcon;
 }

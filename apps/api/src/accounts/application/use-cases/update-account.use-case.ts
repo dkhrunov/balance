@@ -1,5 +1,10 @@
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Account, ACCOUNT_ERROR_CODES, UpdateAccountRequest } from '@balance/contracts/accounts';
+import {
+    Account,
+    ACCOUNT_ERROR_CODES,
+    ACCOUNT_ICON_MAX_LENGTH,
+    UpdateAccountRequest,
+} from '@balance/contracts/accounts';
 import { toAccountResponse } from '../mappers/account-response.mapper';
 import { IUpdateAccountUseCase } from '../ports/inbound/update-account.use-case';
 import { ACCOUNTS_REPOSITORY, IAccountsRepository } from '../ports/outbound/accounts.repository';
@@ -21,9 +26,20 @@ export class UpdateAccountUseCase implements IUpdateAccountUseCase {
             });
         }
 
+        const icon = request.icon.trim();
+
+        if (icon.length < 1 || icon.length > ACCOUNT_ICON_MAX_LENGTH) {
+            throw new BadRequestException({
+                code: ACCOUNT_ERROR_CODES.validationFailed,
+                message: `Account icon must be between 1 and ${ACCOUNT_ICON_MAX_LENGTH} characters`,
+                details: {},
+            });
+        }
+
         const result = await this.accountsRepository.updateActive({
             id: accountId,
             name,
+            icon,
             expectedVersion: request.version,
             actorUserId,
         });

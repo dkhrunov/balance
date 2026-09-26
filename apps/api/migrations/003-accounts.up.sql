@@ -1,6 +1,8 @@
 CREATE TABLE accounts (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name text NOT NULL CHECK (char_length(trim(name)) BETWEEN 1 AND 120),
+    icon text NOT NULL DEFAULT 'Wallet'
+        CHECK (char_length(icon) BETWEEN 1 AND 64),
     -- TODO: store currencies in the database instead of hardcoding them here
     currency_code text NOT NULL CHECK (currency_code IN ('RUB', 'USD', 'EUR')),
     initial_balance numeric(20, 2) NOT NULL,

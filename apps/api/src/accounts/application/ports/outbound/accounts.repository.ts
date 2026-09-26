@@ -9,15 +9,17 @@ export type AccountMutationResult =
 /** Input for inserting a new account row. */
 export type CreateAccountRecord = {
     readonly name: string;
+    readonly icon: AccountModel['icon'];
     readonly currency: AccountModel['currency'];
     readonly initialBalance: string;
     readonly actorUserId: string;
 };
 
-/** Input for renaming an active account with optimistic concurrency. */
+/** Input for updating an active account with optimistic concurrency. */
 export type UpdateAccountRecord = {
     readonly id: string;
     readonly name: string;
+    readonly icon: AccountModel['icon'];
     readonly expectedVersion: number;
     readonly actorUserId: string;
 };
@@ -54,7 +56,7 @@ export interface IAccountsRepository {
     create(input: CreateAccountRecord): Promise<AccountModel>;
 
     /**
-     * Renames an active account when `expectedVersion` matches.
+     * Updates name and icon on an active account when `expectedVersion` matches.
      *
      * @param input Update fields, expected version, and actor.
      */
