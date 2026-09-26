@@ -11,7 +11,9 @@ describe('Duration', () => {
 
     it('includes the field name in validation errors', () => {
         expect(() => new Duration('bad')).toThrow(DurationValidationError);
-        expect(() => new Duration('bad')).toThrow('Duration must use a positive integer with s, m, h, or d suffix');
+        expect(() => new Duration('bad')).toThrow(
+            `Duration must use a positive integer with ${['s', 'm', 'h', 'd'].join(' or ')} suffix`,
+        );
     });
 
     it('rejects zero, negative, and out-of-range values', () => {

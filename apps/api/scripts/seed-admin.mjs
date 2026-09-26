@@ -18,13 +18,20 @@ if (!isValidEmail(email)) {
     throw new Error('SEED_ADMIN_EMAIL must be a valid email address');
 }
 
-if (displayName.length === 0 || displayName.length > 120) {
-    throw new Error('SEED_ADMIN_DISPLAY_NAME must be between 1 and 120 characters');
+// Keep in sync with libs/contracts (DISPLAY_NAME_*, CURRENCY_CODES).
+const DISPLAY_NAME_MIN_LENGTH = 1;
+const DISPLAY_NAME_MAX_LENGTH = 120;
+const CURRENCY_CODES = ['RUB', 'USD', 'EUR'];
+
+if (displayName.length < DISPLAY_NAME_MIN_LENGTH || displayName.length > DISPLAY_NAME_MAX_LENGTH) {
+    throw new Error(
+        `SEED_ADMIN_DISPLAY_NAME must be between ${DISPLAY_NAME_MIN_LENGTH} and ${DISPLAY_NAME_MAX_LENGTH} characters`,
+    );
 }
 
 // TODO: store currencies in the database instead of hardcoding them here
-if (!['RUB', 'USD', 'EUR'].includes(defaultCurrencyCode)) {
-    throw new Error('SEED_ADMIN_DEFAULT_CURRENCY must be RUB, USD, or EUR');
+if (!CURRENCY_CODES.includes(defaultCurrencyCode)) {
+    throw new Error(`SEED_ADMIN_DEFAULT_CURRENCY must be ${CURRENCY_CODES.join(' or ')}`);
 }
 
 const pool = new pg.Pool({

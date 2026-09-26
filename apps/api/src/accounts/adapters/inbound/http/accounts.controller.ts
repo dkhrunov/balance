@@ -1,15 +1,4 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Inject,
-    Param,
-    Post,
-    Put,
-    Req,
-    UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import {
     Account,
     CreateAccountRequest,
@@ -17,10 +6,7 @@ import {
     ListAccountsResponse,
     UpdateAccountRequest,
 } from '@balance/contracts/accounts';
-import {
-    AuthenticatedRequest,
-    AuthGuard,
-} from '../../../../auth/adapters/inbound/http/guards/auth.guard';
+import { AuthenticatedRequest, AuthGuard } from '../../../../auth/adapters/inbound/http/guards/auth.guard';
 import { CsrfOriginGuard } from '../../../../auth/adapters/inbound/http/guards/csrf-origin.guard';
 import {
     CREATE_ACCOUNT_USE_CASE,
@@ -55,7 +41,7 @@ export class AccountsController {
 
     @Get()
     @UseGuards(AuthGuard)
-    public listAccounts(): Promise<ListAccountsResponse> {
+    public getAccounts(): Promise<ListAccountsResponse> {
         return this.listAccountsUseCase.execute();
     }
 
@@ -67,10 +53,7 @@ export class AccountsController {
 
     @Post()
     @UseGuards(CsrfOriginGuard, AuthGuard)
-    public createAccount(
-        @Req() request: AuthenticatedRequest,
-        @Body() body: CreateAccountDto,
-    ): Promise<Account> {
+    public createAccount(@Req() request: AuthenticatedRequest, @Body() body: CreateAccountDto): Promise<Account> {
         const payload: CreateAccountRequest = {
             name: body.name,
             currency: body.currency,

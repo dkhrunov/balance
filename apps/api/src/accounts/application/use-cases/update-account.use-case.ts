@@ -3,13 +3,14 @@ import {
     Account,
     ACCOUNT_ERROR_CODES,
     ACCOUNT_ICON_MAX_LENGTH,
+    ACCOUNT_ICON_MIN_LENGTH,
+    ACCOUNT_NAME_MAX_LENGTH,
+    ACCOUNT_NAME_MIN_LENGTH,
     UpdateAccountRequest,
 } from '@balance/contracts/accounts';
 import { toAccountResponse } from '../mappers/account-response.mapper';
 import { IUpdateAccountUseCase } from '../ports/inbound/update-account.use-case';
 import { ACCOUNTS_REPOSITORY, IAccountsRepository } from '../ports/outbound/accounts.repository';
-
-const ACCOUNT_NAME_MAX_LENGTH = 120;
 
 @Injectable()
 export class UpdateAccountUseCase implements IUpdateAccountUseCase {
@@ -18,20 +19,20 @@ export class UpdateAccountUseCase implements IUpdateAccountUseCase {
     public async execute(actorUserId: string, accountId: string, request: UpdateAccountRequest): Promise<Account> {
         const name = request.name.trim();
 
-        if (name.length < 1 || name.length > ACCOUNT_NAME_MAX_LENGTH) {
+        if (name.length < ACCOUNT_NAME_MIN_LENGTH || name.length > ACCOUNT_NAME_MAX_LENGTH) {
             throw new BadRequestException({
                 code: ACCOUNT_ERROR_CODES.validationFailed,
-                message: 'Account name must be between 1 and 120 characters',
+                message: `Account name must be between ${ACCOUNT_NAME_MIN_LENGTH} and ${ACCOUNT_NAME_MAX_LENGTH} characters`,
                 details: {},
             });
         }
 
         const icon = request.icon.trim();
 
-        if (icon.length < 1 || icon.length > ACCOUNT_ICON_MAX_LENGTH) {
+        if (icon.length < ACCOUNT_ICON_MIN_LENGTH || icon.length > ACCOUNT_ICON_MAX_LENGTH) {
             throw new BadRequestException({
                 code: ACCOUNT_ERROR_CODES.validationFailed,
-                message: `Account icon must be between 1 and ${ACCOUNT_ICON_MAX_LENGTH} characters`,
+                message: `Account icon must be between ${ACCOUNT_ICON_MIN_LENGTH} and ${ACCOUNT_ICON_MAX_LENGTH} characters`,
                 details: {},
             });
         }

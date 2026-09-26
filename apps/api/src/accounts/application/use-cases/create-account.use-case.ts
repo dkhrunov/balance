@@ -3,6 +3,9 @@ import {
     Account,
     ACCOUNT_ERROR_CODES,
     ACCOUNT_ICON_MAX_LENGTH,
+    ACCOUNT_ICON_MIN_LENGTH,
+    ACCOUNT_NAME_MAX_LENGTH,
+    ACCOUNT_NAME_MIN_LENGTH,
     CreateAccountRequest,
     DEFAULT_ACCOUNT_ICON,
 } from '@balance/contracts/accounts';
@@ -11,8 +14,6 @@ import { toAccountResponse } from '../mappers/account-response.mapper';
 import { ICreateAccountUseCase } from '../ports/inbound/create-account.use-case';
 import { ACCOUNTS_REPOSITORY, IAccountsRepository } from '../ports/outbound/accounts.repository';
 
-const ACCOUNT_NAME_MAX_LENGTH = 120;
-
 @Injectable()
 export class CreateAccountUseCase implements ICreateAccountUseCase {
     public constructor(@Inject(ACCOUNTS_REPOSITORY) private readonly accountsRepository: IAccountsRepository) {}
@@ -20,20 +21,20 @@ export class CreateAccountUseCase implements ICreateAccountUseCase {
     public async execute(actorUserId: string, request: CreateAccountRequest): Promise<Account> {
         const name = request.name.trim();
 
-        if (name.length < 1 || name.length > ACCOUNT_NAME_MAX_LENGTH) {
+        if (name.length < ACCOUNT_NAME_MIN_LENGTH || name.length > ACCOUNT_NAME_MAX_LENGTH) {
             throw new BadRequestException({
                 code: ACCOUNT_ERROR_CODES.validationFailed,
-                message: 'Account name must be between 1 and 120 characters',
+                message: `Account name must be between ${ACCOUNT_NAME_MIN_LENGTH} and ${ACCOUNT_NAME_MAX_LENGTH} characters`,
                 details: {},
             });
         }
 
         const icon = (request.icon ?? DEFAULT_ACCOUNT_ICON).trim();
 
-        if (icon.length < 1 || icon.length > ACCOUNT_ICON_MAX_LENGTH) {
+        if (icon.length < ACCOUNT_ICON_MIN_LENGTH || icon.length > ACCOUNT_ICON_MAX_LENGTH) {
             throw new BadRequestException({
                 code: ACCOUNT_ERROR_CODES.validationFailed,
-                message: `Account icon must be between 1 and ${ACCOUNT_ICON_MAX_LENGTH} characters`,
+                message: `Account icon must be between ${ACCOUNT_ICON_MIN_LENGTH} and ${ACCOUNT_ICON_MAX_LENGTH} characters`,
                 details: {},
             });
         }

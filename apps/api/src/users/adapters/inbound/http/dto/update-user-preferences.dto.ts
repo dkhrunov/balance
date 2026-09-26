@@ -1,11 +1,11 @@
-import { UpdateUserPreferencesRequest } from '@balance/contracts/users';
+import { LOCALES, THEMES, UpdateUserPreferencesRequest } from '@balance/contracts/users';
 import { IsIn } from 'class-validator';
 
 /** HTTP body for `PUT /users/me/preferences`; compatible with {@link UpdateUserPreferencesRequest}. */
 export class UpdateUserPreferencesDto implements UpdateUserPreferencesRequest {
-    @IsIn(['en', 'ru'])
+    @IsIn([...LOCALES])
     public locale: UpdateUserPreferencesRequest['locale'];
 
-    @IsIn(['light', 'dark', 'system'])
+    @IsIn([...THEMES])
     public theme: UpdateUserPreferencesRequest['theme'];
 }

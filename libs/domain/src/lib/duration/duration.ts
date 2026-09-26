@@ -49,7 +49,9 @@ export class Duration {
         const match = DURATION_PATTERN.exec(value);
 
         if (!match) {
-            throw new DurationValidationError('Duration must use a positive integer with s, m, h, or d suffix');
+            throw new DurationValidationError(
+                `Duration must use a positive integer with ${Object.keys(UNITS_IN_SECONDS).join(' or ')} suffix`,
+            );
         }
 
         const multiplier = UNITS_IN_SECONDS[match[2]];
