@@ -13,6 +13,7 @@ module.exports = {
         '^@balance/contracts/users$': '<rootDir>/../../libs/contracts/src/lib/users/index.ts',
         '^@balance/contracts/accounts$': '<rootDir>/../../libs/contracts/src/lib/accounts/index.ts',
         '^@balance/contracts/categories$': '<rootDir>/../../libs/contracts/src/lib/categories/index.ts',
+        '^@balance/contracts/transactions$': '<rootDir>/../../libs/contracts/src/lib/transactions/index.ts',
         '^@balance/contracts/common$': '<rootDir>/../../libs/contracts/src/lib/common/index.ts',
         '^@balance/contracts/currencies$': '<rootDir>/../../libs/contracts/src/lib/currencies/index.ts',
         '^@balance/domain/money$': '<rootDir>/../../libs/domain/src/lib/money/index.ts',

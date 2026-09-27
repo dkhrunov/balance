@@ -137,10 +137,10 @@
 
 ### Transactions
 
-- [ ] Transactions API — income and expense (+ attribution filters)
+- [x] Transactions API — income and expense (+ attribution filters)
   - **ID**: transactions-income-expense
   - **Tags**: backend, transactions
-  - **Details**: Create/list/get/soft-delete income/expense with accountId, categoryId, Money, transactionDate, description, `createdBy`, versioning. List filter: all | me | selected userIds. Pagination (cursor preferred). SPEC §9, §14–16, §29, §57.
+  - **Details**: Create/list/get/soft-delete income/expense with accountId, categoryId, Money, transactionDate, optional description (max 64), `createdBy`, versioning. List filter: all | me | selected userIds. Pagination (cursor preferred). SPEC §9, §14–16, §29, §57.
   - **Acceptance**: Decimal-safe amounts; `createdBy` set; filters return correct subsets; category type matches; pagination; tests.
   - **Blocked by**: accounts-api, categories-api
   - **Estimate**: 4-6h

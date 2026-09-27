@@ -647,7 +647,7 @@ categoryId
 amount
 currency
 date
-description
+description (optional, max 64 characters; short note for historical lists)
 createdAt
 updatedAt
 createdBy
@@ -676,7 +676,7 @@ categoryId
 amount
 currency
 date
-description
+description (optional, max 64 characters; short note for historical lists)
 createdAt
 updatedAt
 createdBy

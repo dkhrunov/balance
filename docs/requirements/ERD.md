@@ -88,7 +88,7 @@ erDiagram
         numeric amount
         string currencyCode FK
         date transactionDate
-        string description
+        string description "optional, max 64"
         uuid createdBy FK
         uuid updatedBy FK
         int version
