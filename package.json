@@ -13,6 +13,7 @@
         "db:migrate": "node apps/api/scripts/migrate.mjs",
         "db:migrate:down": "node apps/api/scripts/migrate.mjs --down",
         "db:seed:admin": "node apps/api/scripts/seed-admin.mjs",
+        "db:seed:categories": "node apps/api/scripts/seed-default-categories.mjs",
         "build": "nx run-many -t build --projects=web,api",
         "graph": "nx graph",
         "lint": "nx run-many -t lint",

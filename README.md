@@ -50,8 +50,12 @@ the supplied password in plaintext.
 
 ```bash
 npm run db:migrate
-npm run db:seed:admin
+npm run db:seed:admin          # creates admin + shared default expense categories
+# or only categories (idempotent; needs an existing user):
+npm run db:seed:categories
 ```
+
+Default category names follow `SEED_CATEGORIES_LOCALE` (`en` | `ru`, default `en`) in `apps/api/.env`.
 
 Stop / remove the container (volume kept):
 

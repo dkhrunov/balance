@@ -3,6 +3,10 @@ import { fileURLToPath } from 'node:url';
 import { config as loadEnv } from 'dotenv';
 import argon2 from 'argon2';
 import pg from 'pg';
+import {
+    resolveSeedCategoriesLocale,
+    seedDefaultCategories,
+} from './seed-default-categories.mjs';
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 const apiDirectory = dirname(scriptDirectory);
@@ -48,11 +52,26 @@ try {
             INSERT INTO users (email, display_name, password_hash, default_currency_code)
             VALUES ($1, $2, $3, $4)
             ON CONFLICT (email) DO NOTHING
+            RETURNING id
         `,
         [email, displayName, password, defaultCurrencyCode],
     );
 
     console.log(result.rowCount === 1 ? `Created user ${email}` : `User ${email} already exists`);
+
+    const userId =
+        result.rows[0]?.id
+        ?? (await pool.query(`SELECT id FROM users WHERE email = $1 LIMIT 1`, [email])).rows[0]?.id;
+
+    if (!userId) {
+        throw new Error(`Could not resolve user id for ${email}`);
+    }
+
+    const locale = resolveSeedCategoriesLocale();
+    const { created, skipped } = await seedDefaultCategories(pool, userId, locale);
+    console.log(
+        `Default expense categories (${locale}): created ${created}, already present ${skipped}`,
+    );
 } finally {
     await pool.end();
 }
