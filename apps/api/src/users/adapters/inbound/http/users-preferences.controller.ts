@@ -1,10 +1,10 @@
-import { Controller, Get, Inject, Put, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Put, Body, UseGuards } from '@nestjs/common';
 import {
     GetUserPreferencesResponse,
     UpdateUserPreferencesRequest,
+    UserIdentity,
 } from '@balance/contracts/users';
-import { AuthenticatedRequest, AuthGuard } from '../../../../auth/adapters/inbound/http/guards/auth.guard';
-import { CsrfOriginGuard } from '../../../../auth/adapters/inbound/http/guards/csrf-origin.guard';
+import { AuthGuard, CurrentUser, CsrfOriginGuard } from '../../../../auth/adapters/inbound';
 import {
     GET_USER_PREFERENCES_USE_CASE,
     IGetUserPreferencesUseCase,
@@ -24,14 +24,14 @@ export class UsersPreferencesController {
 
     @Get('preferences')
     @UseGuards(AuthGuard)
-    public getPreferences(@Req() request: AuthenticatedRequest): Promise<GetUserPreferencesResponse> {
-        return this.getUserPreferencesUseCase.execute(request.auth.user.id);
+    public getPreferences(@CurrentUser() user: UserIdentity): Promise<GetUserPreferencesResponse> {
+        return this.getUserPreferencesUseCase.execute(user.id);
     }
 
     @Put('preferences')
     @UseGuards(CsrfOriginGuard, AuthGuard)
     public updatePreferences(
-        @Req() request: AuthenticatedRequest,
+        @CurrentUser() user: UserIdentity,
         @Body() body: UpdateUserPreferencesDto,
     ): Promise<GetUserPreferencesResponse> {
         const preferences: UpdateUserPreferencesRequest = {
@@ -39,7 +39,6 @@ export class UsersPreferencesController {
             theme: body.theme,
         };
 
-        return this.updateUserPreferencesUseCase.execute(request.auth.user.id, preferences);
+        return this.updateUserPreferencesUseCase.execute(user.id, preferences);
     }
 }
-

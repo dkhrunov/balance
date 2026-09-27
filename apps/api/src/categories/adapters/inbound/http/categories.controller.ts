@@ -9,7 +9,6 @@ import {
     Post,
     Put,
     Query,
-    Req,
     UseGuards,
 } from '@nestjs/common';
 import {
@@ -22,8 +21,8 @@ import {
     ListCategoriesResponse,
     UpdateCategoryRequest,
 } from '@balance/contracts/categories';
-import { AuthenticatedRequest, AuthGuard } from '../../../../auth/adapters/inbound/http/guards/auth.guard';
-import { CsrfOriginGuard } from '../../../../auth/adapters/inbound/http/guards/csrf-origin.guard';
+import { UserIdentity } from '@balance/contracts/users';
+import { AuthGuard, CurrentUser, CsrfOriginGuard } from '../../../../auth/adapters/inbound';
 import {
     CREATE_CATEGORY_USE_CASE,
     DELETE_CATEGORY_USE_CASE,
@@ -71,20 +70,20 @@ export class CategoriesController {
 
     @Post()
     @UseGuards(CsrfOriginGuard, AuthGuard)
-    public createCategory(@Req() request: AuthenticatedRequest, @Body() body: CreateCategoryDto): Promise<Category> {
+    public createCategory(@CurrentUser() user: UserIdentity, @Body() body: CreateCategoryDto): Promise<Category> {
         const payload: CreateCategoryRequest = {
             type: body.type,
             name: body.name,
             icon: body.icon,
         };
 
-        return this.createCategoryUseCase.execute(request.auth.user.id, payload);
+        return this.createCategoryUseCase.execute(user.id, payload);
     }
 
     @Put(':id')
     @UseGuards(CsrfOriginGuard, AuthGuard)
     public updateCategory(
-        @Req() request: AuthenticatedRequest,
+        @CurrentUser() user: UserIdentity,
         @Param('id') categoryId: string,
         @Body() body: UpdateCategoryDto,
     ): Promise<Category> {
@@ -94,13 +93,13 @@ export class CategoriesController {
             version: body.version,
         };
 
-        return this.updateCategoryUseCase.execute(request.auth.user.id, categoryId, payload);
+        return this.updateCategoryUseCase.execute(user.id, categoryId, payload);
     }
 
     @Delete(':id')
     @UseGuards(CsrfOriginGuard, AuthGuard)
     public deleteCategory(
-        @Req() request: AuthenticatedRequest,
+        @CurrentUser() user: UserIdentity,
         @Param('id') categoryId: string,
         @Body() body: DeleteCategoryDto,
     ): Promise<Category> {
@@ -108,7 +107,7 @@ export class CategoriesController {
             version: body.version,
         };
 
-        return this.deleteCategoryUseCase.execute(request.auth.user.id, categoryId, payload);
+        return this.deleteCategoryUseCase.execute(user.id, categoryId, payload);
     }
 
     private parseOptionalType(type: string | undefined): CategoryType | undefined {

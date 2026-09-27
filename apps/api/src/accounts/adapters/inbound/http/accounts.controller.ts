@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common';
 import {
     Account,
     CreateAccountRequest,
@@ -6,8 +6,8 @@ import {
     ListAccountsResponse,
     UpdateAccountRequest,
 } from '@balance/contracts/accounts';
-import { AuthenticatedRequest, AuthGuard } from '../../../../auth/adapters/inbound/http/guards/auth.guard';
-import { CsrfOriginGuard } from '../../../../auth/adapters/inbound/http/guards/csrf-origin.guard';
+import { UserIdentity } from '@balance/contracts/users';
+import { AuthGuard, CurrentUser, CsrfOriginGuard } from '../../../../auth/adapters/inbound';
 import {
     CREATE_ACCOUNT_USE_CASE,
     DELETE_ACCOUNT_USE_CASE,
@@ -53,7 +53,7 @@ export class AccountsController {
 
     @Post()
     @UseGuards(CsrfOriginGuard, AuthGuard)
-    public createAccount(@Req() request: AuthenticatedRequest, @Body() body: CreateAccountDto): Promise<Account> {
+    public createAccount(@CurrentUser() user: UserIdentity, @Body() body: CreateAccountDto): Promise<Account> {
         const payload: CreateAccountRequest = {
             name: body.name,
             currency: body.currency,
@@ -61,13 +61,13 @@ export class AccountsController {
             icon: body.icon,
         };
 
-        return this.createAccountUseCase.execute(request.auth.user.id, payload);
+        return this.createAccountUseCase.execute(user.id, payload);
     }
 
     @Put(':id')
     @UseGuards(CsrfOriginGuard, AuthGuard)
     public updateAccount(
-        @Req() request: AuthenticatedRequest,
+        @CurrentUser() user: UserIdentity,
         @Param('id') accountId: string,
         @Body() body: UpdateAccountDto,
     ): Promise<Account> {
@@ -77,13 +77,13 @@ export class AccountsController {
             version: body.version,
         };
 
-        return this.updateAccountUseCase.execute(request.auth.user.id, accountId, payload);
+        return this.updateAccountUseCase.execute(user.id, accountId, payload);
     }
 
     @Delete(':id')
     @UseGuards(CsrfOriginGuard, AuthGuard)
     public deleteAccount(
-        @Req() request: AuthenticatedRequest,
+        @CurrentUser() user: UserIdentity,
         @Param('id') accountId: string,
         @Body() body: DeleteAccountDto,
     ): Promise<Account> {
@@ -91,6 +91,6 @@ export class AccountsController {
             version: body.version,
         };
 
-        return this.deleteAccountUseCase.execute(request.auth.user.id, accountId, payload);
+        return this.deleteAccountUseCase.execute(user.id, accountId, payload);
     }
 }

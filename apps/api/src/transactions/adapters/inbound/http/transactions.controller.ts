@@ -8,7 +8,6 @@ import {
     Param,
     Post,
     Query,
-    Req,
     UseGuards,
 } from '@nestjs/common';
 import {
@@ -22,8 +21,8 @@ import {
     TransactionCreatedByFilter,
     TransactionType,
 } from '@balance/contracts/transactions';
-import { AuthenticatedRequest, AuthGuard } from '../../../../auth/adapters/inbound/http/guards/auth.guard';
-import { CsrfOriginGuard } from '../../../../auth/adapters/inbound/http/guards/csrf-origin.guard';
+import { UserIdentity } from '@balance/contracts/users';
+import { AuthGuard, CurrentUser, CsrfOriginGuard } from '../../../../auth/adapters/inbound';
 import {
     CREATE_TRANSACTION_USE_CASE,
     DELETE_TRANSACTION_USE_CASE,
@@ -53,7 +52,7 @@ export class TransactionsController {
     @Get()
     @UseGuards(AuthGuard)
     public listTransactions(
-        @Req() request: AuthenticatedRequest,
+        @CurrentUser() user: UserIdentity,
         @Query('createdBy') createdByRaw?: string,
         @Query('accountId') accountId?: string,
         @Query('type') typeRaw?: string,
@@ -68,7 +67,7 @@ export class TransactionsController {
             limit: this.parseOptionalLimit(limitRaw),
         };
 
-        return this.listTransactionsUseCase.execute(request.auth.user.id, payload);
+        return this.listTransactionsUseCase.execute(user.id, payload);
     }
 
     @Get(':id')
@@ -80,7 +79,7 @@ export class TransactionsController {
     @Post()
     @UseGuards(CsrfOriginGuard, AuthGuard)
     public createTransaction(
-        @Req() request: AuthenticatedRequest,
+        @CurrentUser() user: UserIdentity,
         @Body() body: CreateTransactionDto,
     ): Promise<Transaction> {
         const payload: CreateTransactionRequest = {
@@ -93,13 +92,13 @@ export class TransactionsController {
             description: body.description,
         };
 
-        return this.createTransactionUseCase.execute(request.auth.user.id, payload);
+        return this.createTransactionUseCase.execute(user.id, payload);
     }
 
     @Delete(':id')
     @UseGuards(CsrfOriginGuard, AuthGuard)
     public deleteTransaction(
-        @Req() request: AuthenticatedRequest,
+        @CurrentUser() user: UserIdentity,
         @Param('id') transactionId: string,
         @Body() body: DeleteTransactionDto,
     ): Promise<Transaction> {
@@ -107,7 +106,7 @@ export class TransactionsController {
             version: body.version,
         };
 
-        return this.deleteTransactionUseCase.execute(request.auth.user.id, transactionId, payload);
+        return this.deleteTransactionUseCase.execute(user.id, transactionId, payload);
     }
 
     private parseCreatedByFilter(createdByRaw: string | undefined): TransactionCreatedByFilter | undefined {

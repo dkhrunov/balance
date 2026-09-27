@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CurrentUserResponse, LoginResponse } from '@balance/contracts/auth';
+import { UserIdentity } from '@balance/contracts/users';
 import { AuthCookieService } from '../../outbound/http/auth-cookie.service';
 import {
     ILoginUseCase,
@@ -10,8 +11,9 @@ import {
     IRefreshUseCase,
     REFRESH_USE_CASE,
 } from '../../../application';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { CsrfOriginGuard } from './guards/csrf-origin.guard';
-import { AuthenticatedRequest, AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { LoginRequestDto } from './dto/login-request.dto';
 
 @Controller('auth')
@@ -55,7 +57,7 @@ export class AuthController {
 
     @Get('me')
     @UseGuards(AuthGuard)
-    public getCurrentUser(@Req() request: AuthenticatedRequest): CurrentUserResponse {
-        return request.auth;
+    public getCurrentUser(@CurrentUser() user: UserIdentity): CurrentUserResponse {
+        return { user };
     }
 }
