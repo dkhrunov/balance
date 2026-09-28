@@ -145,7 +145,7 @@
   - **Blocked by**: accounts-api, categories-api
   - **Estimate**: 4-6h
 
-- [ ] Transactions API — transfers between accounts
+- [x] Transactions API — transfers between accounts
   - **ID**: transactions-transfer
   - **Tags**: backend, transactions
   - **Details**: Transfer is not a plain expense; atomic DB transaction; linked legs or dedicated model; no silent FX across currencies. SPEC §14, §41.

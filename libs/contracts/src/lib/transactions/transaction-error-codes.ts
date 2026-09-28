@@ -5,6 +5,7 @@ export const TRANSACTION_ERROR_CODES = {
     validationFailed: 'TRANSACTION_VALIDATION_FAILED',
     categoryTypeMismatch: 'TRANSACTION_CATEGORY_TYPE_MISMATCH',
     currencyMismatch: 'TRANSACTION_CURRENCY_MISMATCH',
+    sameAccount: 'TRANSACTION_TRANSFER_SAME_ACCOUNT',
 } as const;
 
 export type TransactionErrorCode =

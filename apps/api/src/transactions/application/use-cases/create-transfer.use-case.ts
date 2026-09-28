@@ -1,32 +1,32 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { GET_ACCOUNT_USE_CASE, IGetAccountUseCase } from '../../../accounts';
-import { GET_CATEGORY_USE_CASE, IGetCategoryUseCase } from '../../../categories';
 import {
-    CreateTransactionRequest,
-    SIMPLE_TRANSACTION_TYPES,
+    CreateTransferRequest,
+    CreateTransferResponse,
     TRANSACTION_DESCRIPTION_MAX_LENGTH,
     TRANSACTION_ERROR_CODES,
-    Transaction,
 } from '@balance/contracts/transactions';
 import { Money, MoneyValidationError } from '@balance/domain/money';
 import { toTransactionResponse } from '../mappers/transaction-response.mapper';
-import { ICreateTransactionUseCase } from '../ports/inbound/create-transaction.use-case';
-import { ITransactionsRepository, TRANSACTIONS_REPOSITORY } from '../ports/outbound/transactions.repository';
+import { ICreateTransferUseCase } from '../ports/inbound/create-transfer.use-case';
+import {
+    ITransactionsRepository,
+    TRANSACTIONS_REPOSITORY,
+} from '../ports/outbound/transactions.repository';
 import { isIsoDate } from '../transaction-cursor';
 
 @Injectable()
-export class CreateTransactionUseCase implements ICreateTransactionUseCase {
+export class CreateTransferUseCase implements ICreateTransferUseCase {
     public constructor(
         @Inject(TRANSACTIONS_REPOSITORY) private readonly transactionsRepository: ITransactionsRepository,
         @Inject(GET_ACCOUNT_USE_CASE) private readonly getAccountUseCase: IGetAccountUseCase,
-        @Inject(GET_CATEGORY_USE_CASE) private readonly getCategoryUseCase: IGetCategoryUseCase,
     ) {}
 
-    public async execute(actorUserId: string, request: CreateTransactionRequest): Promise<Transaction> {
-        if (!(SIMPLE_TRANSACTION_TYPES as readonly string[]).includes(request.type)) {
+    public async execute(actorUserId: string, request: CreateTransferRequest): Promise<CreateTransferResponse> {
+        if (request.fromAccountId === request.toAccountId) {
             throw new BadRequestException({
-                code: TRANSACTION_ERROR_CODES.validationFailed,
-                message: `Transaction type must be ${SIMPLE_TRANSACTION_TYPES.join(' or ')}`,
+                code: TRANSACTION_ERROR_CODES.sameAccount,
+                message: 'Transfer requires two different accounts',
                 details: {},
             });
         }
@@ -73,30 +73,30 @@ export class CreateTransactionUseCase implements ICreateTransactionUseCase {
             });
         }
 
-        const account = await this.getAccountUseCase.execute(request.accountId);
+        const [fromAccount, toAccount] = await Promise.all([
+            this.getAccountUseCase.execute(request.fromAccountId),
+            this.getAccountUseCase.execute(request.toAccountId),
+        ]);
 
-        if (account.currency !== money.currency) {
+        if (fromAccount.currency !== money.currency || toAccount.currency !== money.currency) {
             throw new BadRequestException({
                 code: TRANSACTION_ERROR_CODES.currencyMismatch,
-                message: 'Transaction currency must match the account currency',
+                message: 'Transfer currency must match both account currencies; FX is not supported',
                 details: {},
             });
         }
 
-        const category = await this.getCategoryUseCase.execute(request.categoryId);
-
-        if (category.type !== request.type) {
+        if (fromAccount.currency !== toAccount.currency) {
             throw new BadRequestException({
-                code: TRANSACTION_ERROR_CODES.categoryTypeMismatch,
-                message: 'Category type must match the transaction type',
+                code: TRANSACTION_ERROR_CODES.currencyMismatch,
+                message: 'Transfer requires both accounts to use the same currency; FX is not supported',
                 details: {},
             });
         }
 
-        const transaction = await this.transactionsRepository.create({
-            type: request.type,
-            accountId: account.id,
-            categoryId: category.id,
+        const pair = await this.transactionsRepository.createTransfer({
+            fromAccountId: fromAccount.id,
+            toAccountId: toAccount.id,
             amount: money.amount,
             currency: money.currency,
             transactionDate: request.transactionDate,
@@ -104,6 +104,10 @@ export class CreateTransactionUseCase implements ICreateTransactionUseCase {
             actorUserId,
         });
 
-        return toTransactionResponse(transaction);
+        return {
+            transferGroupId: pair.transferGroupId,
+            out: toTransactionResponse(pair.out),
+            in: toTransactionResponse(pair.in),
+        };
     }
 }

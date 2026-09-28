@@ -6,7 +6,8 @@ export type TransactionModel = {
     readonly id: string;
     readonly type: TransactionType;
     readonly accountId: string;
-    readonly categoryId: string;
+    readonly categoryId: string | null;
+    readonly transferGroupId: string | null;
     readonly amount: string;
     readonly currency: CurrencyCode;
     readonly transactionDate: string;

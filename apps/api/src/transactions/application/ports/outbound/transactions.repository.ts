@@ -1,5 +1,5 @@
 import { CurrencyCode } from '@balance/contracts/currencies';
-import { TransactionType } from '@balance/contracts/transactions';
+import { SimpleTransactionType, TransactionType } from '@balance/contracts/transactions';
 import { TransactionModel } from '../../models/transaction.model';
 
 /** Result of an optimistic-concurrency mutation against the transactions store. */
@@ -15,7 +15,7 @@ export type TransactionListCursor = {
     readonly id: string;
 };
 
-/** Filters and pagination for listing active income/expense rows. */
+/** Filters and pagination for listing active transactions. */
 export type ListTransactionsQuery = {
     readonly createdByUserIds: readonly string[] | null;
     readonly accountId: string | null;
@@ -26,7 +26,7 @@ export type ListTransactionsQuery = {
 
 /** Input for inserting a new income/expense row. */
 export type CreateTransactionRecord = {
-    readonly type: TransactionType;
+    readonly type: SimpleTransactionType;
     readonly accountId: string;
     readonly categoryId: string;
     readonly amount: string;
@@ -34,6 +34,24 @@ export type CreateTransactionRecord = {
     readonly transactionDate: string;
     readonly description: string;
     readonly actorUserId: string;
+};
+
+/** Input for inserting both legs of a same-currency transfer atomically. */
+export type CreateTransferRecord = {
+    readonly fromAccountId: string;
+    readonly toAccountId: string;
+    readonly amount: string;
+    readonly currency: CurrencyCode;
+    readonly transactionDate: string;
+    readonly description: string;
+    readonly actorUserId: string;
+};
+
+/** Both legs returned after an atomic transfer insert. */
+export type CreatedTransferPair = {
+    readonly transferGroupId: string;
+    readonly out: TransactionModel;
+    readonly in: TransactionModel;
 };
 
 /** Input for soft-deleting an active transaction with optimistic concurrency. */
@@ -44,13 +62,13 @@ export type SoftDeleteTransactionRecord = {
 };
 
 /**
- * Persistence port for income and expense transactions.
+ * Persistence port for financial transactions (income, expense, transfer legs).
  */
 export interface ITransactionsRepository {
     /**
      * Lists active transactions with attribution / account filters and keyset pagination.
      *
-     * @param query Filters, cursor, and page size (fetches `limit + 1` rows when possible).
+     * @param query Filters, cursor, and page size.
      */
     listActive(query: ListTransactionsQuery): Promise<readonly TransactionModel[]>;
 
@@ -70,7 +88,15 @@ export interface ITransactionsRepository {
     create(input: CreateTransactionRecord): Promise<TransactionModel>;
 
     /**
+     * Inserts TRANSFER_OUT and TRANSFER_IN legs in one database transaction.
+     *
+     * @param input Transfer fields and actor.
+     */
+    createTransfer(input: CreateTransferRecord): Promise<CreatedTransferPair>;
+
+    /**
      * Soft-deletes an active transaction when `expectedVersion` matches.
+     * Transfer legs soft-delete the whole `transferGroup` atomically.
      *
      * @param input Delete target, expected version, and actor.
      */

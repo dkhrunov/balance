@@ -5,7 +5,9 @@ import { AccountsModule } from '../accounts';
 import { CategoriesModule } from '../categories';
 import {
     CREATE_TRANSACTION_USE_CASE,
+    CREATE_TRANSFER_USE_CASE,
     CreateTransactionUseCase,
+    CreateTransferUseCase,
     DELETE_TRANSACTION_USE_CASE,
     DeleteTransactionUseCase,
     GET_TRANSACTION_USE_CASE,
@@ -25,12 +27,14 @@ import { PgTransactionsRepository } from './adapters/outbound';
         { provide: LIST_TRANSACTIONS_USE_CASE, useClass: ListTransactionsUseCase },
         { provide: GET_TRANSACTION_USE_CASE, useClass: GetTransactionUseCase },
         { provide: CREATE_TRANSACTION_USE_CASE, useClass: CreateTransactionUseCase },
+        { provide: CREATE_TRANSFER_USE_CASE, useClass: CreateTransferUseCase },
         { provide: DELETE_TRANSACTION_USE_CASE, useClass: DeleteTransactionUseCase },
     ],
     exports: [
         LIST_TRANSACTIONS_USE_CASE,
         GET_TRANSACTION_USE_CASE,
         CREATE_TRANSACTION_USE_CASE,
+        CREATE_TRANSFER_USE_CASE,
         DELETE_TRANSACTION_USE_CASE,
     ],
 })

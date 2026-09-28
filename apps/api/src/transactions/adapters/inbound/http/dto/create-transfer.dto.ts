@@ -1,6 +1,5 @@
 import {
-    CreateTransactionRequest,
-    SIMPLE_TRANSACTION_TYPES,
+    CreateTransferRequest,
     TRANSACTION_DESCRIPTION_MAX_LENGTH,
 } from '@balance/contracts/transactions';
 import { CURRENCY_CODES } from '@balance/contracts/currencies';
@@ -8,22 +7,19 @@ import { IsIn, IsOptional, IsString, IsUUID, Matches, MaxLength } from 'class-va
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
-/** HTTP body for `POST /transactions`; compatible with {@link CreateTransactionRequest}. */
-export class CreateTransactionDto implements CreateTransactionRequest {
-    @IsIn([...SIMPLE_TRANSACTION_TYPES])
-    public type: CreateTransactionRequest['type'];
+/** HTTP body for `POST /transactions/transfers`; compatible with {@link CreateTransferRequest}. */
+export class CreateTransferDto implements CreateTransferRequest {
+    @IsUUID()
+    public fromAccountId: string;
 
     @IsUUID()
-    public accountId: string;
-
-    @IsUUID()
-    public categoryId: string;
+    public toAccountId: string;
 
     @IsString()
     public amount: string;
 
     @IsIn([...CURRENCY_CODES])
-    public currency: CreateTransactionRequest['currency'];
+    public currency: CreateTransferRequest['currency'];
 
     @IsString()
     @Matches(ISO_DATE_PATTERN)

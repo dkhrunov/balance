@@ -6,7 +6,8 @@ export type TransactionRecord = {
     id: string;
     type: TransactionType;
     accountId: string;
-    categoryId: string;
+    categoryId: string | null;
+    transferGroupId: string | null;
     amount: string;
     currency: CurrencyCode;
     transactionDate: string;

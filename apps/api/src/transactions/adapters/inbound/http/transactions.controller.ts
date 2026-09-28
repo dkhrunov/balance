@@ -12,6 +12,8 @@ import {
 } from '@nestjs/common';
 import {
     CreateTransactionRequest,
+    CreateTransferRequest,
+    CreateTransferResponse,
     DeleteTransactionRequest,
     ListTransactionsRequest,
     ListTransactionsResponse,
@@ -25,15 +27,18 @@ import { UserIdentity } from '@balance/contracts/users';
 import { AuthGuard, CurrentUser, CsrfOriginGuard } from '../../../../auth/adapters/inbound';
 import {
     CREATE_TRANSACTION_USE_CASE,
+    CREATE_TRANSFER_USE_CASE,
     DELETE_TRANSACTION_USE_CASE,
     GET_TRANSACTION_USE_CASE,
     ICreateTransactionUseCase,
+    ICreateTransferUseCase,
     IDeleteTransactionUseCase,
     IGetTransactionUseCase,
     IListTransactionsUseCase,
     LIST_TRANSACTIONS_USE_CASE,
 } from '../../../application';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { CreateTransferDto } from './dto/create-transfer.dto';
 import { DeleteTransactionDto } from './dto/delete-transaction.dto';
 
 @Controller('transactions')
@@ -45,6 +50,8 @@ export class TransactionsController {
         private readonly getTransactionUseCase: IGetTransactionUseCase,
         @Inject(CREATE_TRANSACTION_USE_CASE)
         private readonly createTransactionUseCase: ICreateTransactionUseCase,
+        @Inject(CREATE_TRANSFER_USE_CASE)
+        private readonly createTransferUseCase: ICreateTransferUseCase,
         @Inject(DELETE_TRANSACTION_USE_CASE)
         private readonly deleteTransactionUseCase: IDeleteTransactionUseCase,
     ) {}
@@ -70,12 +77,6 @@ export class TransactionsController {
         return this.listTransactionsUseCase.execute(user.id, payload);
     }
 
-    @Get(':id')
-    @UseGuards(AuthGuard)
-    public getTransaction(@Param('id') transactionId: string): Promise<Transaction> {
-        return this.getTransactionUseCase.execute(transactionId);
-    }
-
     @Post()
     @UseGuards(CsrfOriginGuard, AuthGuard)
     public createTransaction(
@@ -93,6 +94,30 @@ export class TransactionsController {
         };
 
         return this.createTransactionUseCase.execute(user.id, payload);
+    }
+
+    @Post('transfers')
+    @UseGuards(CsrfOriginGuard, AuthGuard)
+    public createTransfer(
+        @CurrentUser() user: UserIdentity,
+        @Body() body: CreateTransferDto,
+    ): Promise<CreateTransferResponse> {
+        const payload: CreateTransferRequest = {
+            fromAccountId: body.fromAccountId,
+            toAccountId: body.toAccountId,
+            amount: body.amount,
+            currency: body.currency,
+            transactionDate: body.transactionDate,
+            description: body.description,
+        };
+
+        return this.createTransferUseCase.execute(user.id, payload);
+    }
+
+    @Get(':id')
+    @UseGuards(AuthGuard)
+    public getTransaction(@Param('id') transactionId: string): Promise<Transaction> {
+        return this.getTransactionUseCase.execute(transactionId);
     }
 
     @Delete(':id')

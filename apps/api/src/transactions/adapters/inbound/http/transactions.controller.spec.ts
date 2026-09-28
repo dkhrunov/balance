@@ -36,6 +36,8 @@ describe('TransactionsController', () => {
     let userId: string;
     let otherUserId: string;
     let accountId: string;
+    let secondAccountId: string;
+    let usdAccountId: string;
     let incomeCategoryId: string;
     let expenseCategoryId: string;
 
@@ -92,6 +94,22 @@ describe('TransactionsController', () => {
             .expect(201);
         accountId = account.body.id;
 
+        const secondAccount = await request(app.getHttpServer())
+            .post('/api/accounts')
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({ name: 'Bank', currency: 'RUB', initialBalance: '200.00' })
+            .expect(201);
+        secondAccountId = secondAccount.body.id;
+
+        const usdAccount = await request(app.getHttpServer())
+            .post('/api/accounts')
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({ name: 'USD card', currency: 'USD', initialBalance: '50.00' })
+            .expect(201);
+        usdAccountId = usdAccount.body.id;
+
         const incomeCategory = await request(app.getHttpServer())
             .post('/api/categories')
             .set('Origin', origin)
@@ -115,6 +133,12 @@ describe('TransactionsController', () => {
             WHERE created_by IN (${userId}::uuid, ${otherUserId}::uuid)
         `);
         await database.getPool().query(sql`
+            DELETE FROM transfer_groups
+            WHERE id NOT IN (
+                SELECT transfer_group_id FROM transactions WHERE transfer_group_id IS NOT NULL
+            )
+        `);
+        await database.getPool().query(sql`
             DELETE FROM categories WHERE created_by = ${userId}::uuid
         `);
         await database.getPool().query(sql`
@@ -130,6 +154,12 @@ describe('TransactionsController', () => {
         await database.getPool().query(sql`
             DELETE FROM transactions
             WHERE created_by IN (${userId}::uuid, ${otherUserId}::uuid)
+        `);
+        await database.getPool().query(sql`
+            DELETE FROM transfer_groups
+            WHERE id NOT IN (
+                SELECT transfer_group_id FROM transactions WHERE transfer_group_id IS NOT NULL
+            )
         `);
     });
 
@@ -362,5 +392,99 @@ describe('TransactionsController', () => {
             .set('Cookie', authCookies)
             .send({ version: 1 })
             .expect(404);
+    });
+
+    it('creates an atomic same-currency transfer and soft-deletes both legs together', async () => {
+        const transfer = await request(app.getHttpServer())
+            .post('/api/transactions/transfers')
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({
+                fromAccountId: accountId,
+                toAccountId: secondAccountId,
+                amount: '25.5',
+                currency: 'RUB',
+                transactionDate: '2026-09-10',
+                description: 'Move cash',
+            })
+            .expect(201);
+
+        expect(transfer.body.transferGroupId).toBeTruthy();
+        expect(transfer.body.out).toMatchObject({
+            type: 'TRANSFER_OUT',
+            accountId,
+            categoryId: null,
+            transferGroupId: transfer.body.transferGroupId,
+            amount: '25.50',
+            currency: 'RUB',
+            description: 'Move cash',
+        });
+        expect(transfer.body.in).toMatchObject({
+            type: 'TRANSFER_IN',
+            accountId: secondAccountId,
+            categoryId: null,
+            transferGroupId: transfer.body.transferGroupId,
+            amount: '25.50',
+            currency: 'RUB',
+        });
+
+        const listed = await request(app.getHttpServer())
+            .get('/api/transactions?type=TRANSFER_OUT')
+            .set('Cookie', authCookies)
+            .expect(200);
+
+        expect(listed.body.items).toHaveLength(1);
+        expect(listed.body.items[0].id).toBe(transfer.body.out.id);
+
+        await request(app.getHttpServer())
+            .delete(`/api/transactions/${transfer.body.out.id}`)
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({ version: 1 })
+            .expect(200);
+
+        await request(app.getHttpServer())
+            .get(`/api/transactions/${transfer.body.out.id}`)
+            .set('Cookie', authCookies)
+            .expect(404);
+
+        await request(app.getHttpServer())
+            .get(`/api/transactions/${transfer.body.in.id}`)
+            .set('Cookie', authCookies)
+            .expect(404);
+    });
+
+    it('rejects transfer to the same account or across currencies', async () => {
+        await request(app.getHttpServer())
+            .post('/api/transactions/transfers')
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({
+                fromAccountId: accountId,
+                toAccountId: accountId,
+                amount: '10',
+                currency: 'RUB',
+                transactionDate: '2026-09-10',
+            })
+            .expect(400)
+            .expect(({ body }) => {
+                expect(body.code).toBe('TRANSACTION_TRANSFER_SAME_ACCOUNT');
+            });
+
+        await request(app.getHttpServer())
+            .post('/api/transactions/transfers')
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({
+                fromAccountId: accountId,
+                toAccountId: usdAccountId,
+                amount: '10',
+                currency: 'RUB',
+                transactionDate: '2026-09-10',
+            })
+            .expect(400)
+            .expect(({ body }) => {
+                expect(body.code).toBe('TRANSACTION_CURRENCY_MISMATCH');
+            });
     });
 });

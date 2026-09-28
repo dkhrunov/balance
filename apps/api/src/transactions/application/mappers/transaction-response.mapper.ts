@@ -13,6 +13,7 @@ export function toTransactionResponse(transaction: TransactionModel): Transactio
         type: transaction.type,
         accountId: transaction.accountId,
         categoryId: transaction.categoryId,
+        transferGroupId: transaction.transferGroupId,
         amount: transaction.amount,
         currency: transaction.currency,
         transactionDate: transaction.transactionDate,
