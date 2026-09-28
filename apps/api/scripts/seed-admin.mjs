@@ -70,7 +70,7 @@ try {
     const locale = resolveSeedCategoriesLocale();
     const { created, skipped } = await seedDefaultCategories(pool, userId, locale);
     console.log(
-        `Default expense categories (${locale}): created ${created}, already present ${skipped}`,
+        `Default categories (${locale}): created ${created}, already present ${skipped}`,
     );
 } finally {
     await pool.end();

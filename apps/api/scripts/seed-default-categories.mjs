@@ -7,7 +7,7 @@ import pg from 'pg';
 export const SEED_CATEGORY_LOCALES = ['en', 'ru'];
 
 /**
- * Shared-space default expense categories (SPEC §17).
+ * Shared-space default categories (SPEC §17).
  * Names are user data for the space — pick language via `SEED_CATEGORIES_LOCALE`, not UI i18n.
  */
 const DEFAULT_EXPENSE_CATEGORY_DEFS = [
@@ -53,6 +53,13 @@ const DEFAULT_EXPENSE_CATEGORY_DEFS = [
     },
 ];
 
+const DEFAULT_INCOME_CATEGORY_DEFS = [
+    {
+        icon: 'Wallet',
+        names: { en: 'Salary', ru: 'Зарплата' },
+    },
+];
+
 /**
  * Resolves the seed locale from `SEED_CATEGORIES_LOCALE` (default `en`).
  *
@@ -76,21 +83,42 @@ export function resolveSeedCategoriesLocale(env = process.env) {
 }
 
 /**
- * Default expense categories for the given seed locale.
+ * Maps category definitions to localized `{ name, icon }` rows.
  *
+ * @param {readonly { icon: string, names: Record<'en' | 'ru', string> }[]} definitions
  * @param {'en' | 'ru'} locale
  * @returns {readonly { name: string, icon: string }[]}
  */
-export function defaultExpenseCategoriesForLocale(locale) {
-    return DEFAULT_EXPENSE_CATEGORY_DEFS.map((definition) => ({
+function categoriesForLocale(definitions, locale) {
+    return definitions.map((definition) => ({
         name: definition.names[locale],
         icon: definition.icon,
     }));
 }
 
 /**
- * Inserts missing default expense categories for the single financial space.
- * Idempotent: skips names that already exist among active EXPENSE categories.
+ * Default expense categories for the given seed locale.
+ *
+ * @param {'en' | 'ru'} locale
+ * @returns {readonly { name: string, icon: string }[]}
+ */
+export function defaultExpenseCategoriesForLocale(locale) {
+    return categoriesForLocale(DEFAULT_EXPENSE_CATEGORY_DEFS, locale);
+}
+
+/**
+ * Default income categories for the given seed locale.
+ *
+ * @param {'en' | 'ru'} locale
+ * @returns {readonly { name: string, icon: string }[]}
+ */
+export function defaultIncomeCategoriesForLocale(locale) {
+    return categoriesForLocale(DEFAULT_INCOME_CATEGORY_DEFS, locale);
+}
+
+/**
+ * Inserts missing default categories for the single financial space.
+ * Idempotent: skips names that already exist among active categories of the same type.
  * Changing locale and re-running does not rename existing rows; it may insert
  * the other language’s names if they are absent.
  *
@@ -100,30 +128,35 @@ export function defaultExpenseCategoriesForLocale(locale) {
  * @returns {Promise<{ created: number, skipped: number, locale: 'en' | 'ru' }>}
  */
 export async function seedDefaultCategories(pool, actorUserId, locale = resolveSeedCategoriesLocale()) {
-    const categories = defaultExpenseCategoriesForLocale(locale);
+    const batches = [
+        { type: 'EXPENSE', categories: defaultExpenseCategoriesForLocale(locale) },
+        { type: 'INCOME', categories: defaultIncomeCategoriesForLocale(locale) },
+    ];
     let created = 0;
     let skipped = 0;
 
-    for (const category of categories) {
-        const result = await pool.query(
-            `
-                INSERT INTO categories (type, name, icon, created_by, updated_by)
-                SELECT 'EXPENSE', $1, $2, $3::uuid, $3::uuid
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM categories
-                    WHERE type = 'EXPENSE'
-                      AND name = $1
-                      AND deleted_at IS NULL
-                )
-            `,
-            [category.name, category.icon, actorUserId],
-        );
+    for (const batch of batches) {
+        for (const category of batch.categories) {
+            const result = await pool.query(
+                `
+                    INSERT INTO categories (type, name, icon, created_by, updated_by)
+                    SELECT $1, $2, $3, $4::uuid, $4::uuid
+                    WHERE NOT EXISTS (
+                        SELECT 1
+                        FROM categories
+                        WHERE type = $1
+                          AND name = $2
+                          AND deleted_at IS NULL
+                    )
+                `,
+                [batch.type, category.name, category.icon, actorUserId],
+            );
 
-        if (result.rowCount === 1) {
-            created += 1;
-        } else {
-            skipped += 1;
+            if (result.rowCount === 1) {
+                created += 1;
+            } else {
+                skipped += 1;
+            }
         }
     }
 
@@ -165,7 +198,7 @@ if (isMainModule) {
         const { created, skipped } = await seedDefaultCategories(pool, actorUserId, locale);
 
         console.log(
-            `Default expense categories (${locale}): created ${created}, already present ${skipped} (actor ${actorUserId})`,
+            `Default categories (${locale}): created ${created}, already present ${skipped} (actor ${actorUserId})`,
         );
     } finally {
         await pool.end();
