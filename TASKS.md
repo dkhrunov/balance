@@ -24,11 +24,11 @@
 
 ### Foundation
 
-- [x] Scaffold Nx monorepo with `apps/web` and `apps/api`
+- [x] Scaffold Nx monorepo with `apps/web` and `apps/server`
   - **ID**: scaffold-nx-monorepo
   - **Tags**: infra, nx
   - **Details**: Initialize Nx workspace; React+TS web app; NestJS API app; baseline libs layout (`contracts`, `domain` stubs OK; env in apps, no shared `libs/config`). Align with SPEC §1, §3–5. Update AGENTS.md Commands with real targets.
-  - **Acceptance**: `npx nx graph` works; `web` and `api` projects build; Node version matches `.nvmrc`; README notes how to start both apps.
+  - **Acceptance**: `npx nx graph` works; `web` and `server` projects build; Node version matches `.nvmrc`; README notes how to start both apps.
   - **Estimate**: 2-4h
 
 - [x] Docker Compose PostgreSQL for local API

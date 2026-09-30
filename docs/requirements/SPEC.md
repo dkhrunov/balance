@@ -89,7 +89,7 @@ Expected structure:
 ```text
 apps/
   web/          # React shell; env via .env / Vite (VITE_*), no secrets
-  api/          # NestJS shell; env via .env + ConfigModule (DB, JWT, …)
+  server/       # NestJS shell; env via .env + ConfigModule (DB, JWT, …)
 
 libs/
   contracts/    # Shared FE↔BE TypeScript contracts (wire types)
@@ -1667,7 +1667,7 @@ Write tests for every meaningful feature.
 | Layer                       | Unit / component                   | Integration                                                    | E2E                                                                                              |
 | --------------------------- | ---------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `apps/web` + FE libs        | **Vitest** + React Testing Library | as needed (MSW / local IDB fixtures)                           | **Playwright**                                                                                   |
-| `apps/api` + BE/domain libs | **Jest** (NestJS default)          | Jest + Nest testing module + PostgreSQL (test DB / containers) | Playwright against running `web`+`api` for critical flows; API-only scenarios via Jest/supertest |
+| `apps/server` + BE/domain libs | **Jest** (NestJS default)          | Jest + Nest testing module + PostgreSQL (test DB / containers) | Playwright against running `web`+`server` for critical flows; API-only scenarios via Jest/supertest |
 
 Rationale: Vitest fits Vite naturally; Jest is the NestJS default; Playwright is the shared e2e tool for UI and offline/sync scenarios.
 

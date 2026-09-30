@@ -4,7 +4,7 @@
     "files": [],
     "references": [
         { "path": "./apps/web" },
-        { "path": "./apps/api" },
+        { "path": "./apps/server" },
         { "path": "./libs/contracts" },
         { "path": "./libs/domain" }
     ]

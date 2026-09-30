@@ -39,8 +39,8 @@ export default [
                             onlyDependOnLibsWithTags: ['scope:web', 'scope:shared'],
                         },
                         {
-                            sourceTag: 'scope:api',
-                            onlyDependOnLibsWithTags: ['scope:api', 'scope:shared'],
+                            sourceTag: 'scope:server',
+                            onlyDependOnLibsWithTags: ['scope:server', 'scope:shared'],
                         },
                         {
                             sourceTag: 'scope:shared',
@@ -223,13 +223,13 @@ export default [
 ];
 
 /**
- * SafeQL: validate SQL against live Postgres (apps/api/.env via dotenv).
+ * SafeQL: validate SQL against live Postgres (apps/server/.env via dotenv).
  * Postgres should be up when linting files that use sql`...`.
  */
 function createSafeqlConfig() {
     const repoRoot = dirname(fileURLToPath(import.meta.url));
 
-    loadEnv({ path: resolve(repoRoot, 'apps/api/.env'), quiet: true });
+    loadEnv({ path: resolve(repoRoot, 'apps/server/.env'), quiet: true });
 
     const user = process.env.DATABASE_USER;
     const password = process.env.DATABASE_PASSWORD;
@@ -267,7 +267,7 @@ function createSafeqlConfig() {
         }),
         // Alternative connection: shadow DB from SQL migrations instead of databaseUrl.
         // safeql.configs.connections({
-        //     migrationsDir: resolve(repoRoot, 'apps/api/migrations'),
+        //     migrationsDir: resolve(repoRoot, 'apps/server/migrations'),
         //     targets: [{ tag: 'sql' }],
         //     // To connect using alternate superuser credentials (default is postgres://postgres:postgres@localhost:5432/postgres)
         //     connectionUrl: `postgres://alternate-user:alternate-password@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/postgres`,

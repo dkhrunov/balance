@@ -25,7 +25,7 @@ Use this skill when the request involves boundaries, domain-centric design, refa
 - **Inbound ports**: Contracts describing what the application can do (commands/queries/use-case interfaces). Prefer `interface I*` (e.g. `ICreateOrderUseCase`) plus a Nest `Symbol` token.
 - **Outbound ports**: Contracts for dependencies the application needs (repositories, gateways, event publishers, clock, UUID, etc.). Prefer `interface I*` + `Symbol` token.
 - **Adapters**: Infrastructure and delivery implementations of ports (HTTP controllers, DB repositories, queue consumers, SDK wrappers).
-- **Composition root**: Single wiring location where concrete adapters are bound to use cases. In Nest, that is the feature module file (e.g. `<feature>.module.ts`) under `composition/` in the generic layout, or at the feature root in Balance (`apps/api/src/<feature>/<feature>.module.ts`).
+- **Composition root**: Single wiring location where concrete adapters are bound to use cases. In Nest, that is the feature module file (e.g. `<feature>.module.ts`) under `composition/` in the generic layout, or at the feature root in Balance (`apps/server/src/<feature>/<feature>.module.ts`).
 
 Outbound port interfaces usually live in the application layer (or in domain only when the abstraction is truly domain-level), while infrastructure adapters implement them.
 

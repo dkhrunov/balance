@@ -14,12 +14,12 @@ Senior/Staff engineer: architecture integrity, FE↔BE type-safety, offline-firs
 
 ## Skills (read before coding)
 
-- `apps/api/**`, Nest modules, use cases, ports, repositories, migrations touching feature modules: read [`.cursor/skills/hexagonal-architecture/SKILL.md`](./.cursor/skills/hexagonal-architecture/SKILL.md)
+- `apps/server/**`, Nest modules, use cases, ports, repositories, migrations touching feature modules: read [`.cursor/skills/hexagonal-architecture/SKILL.md`](./.cursor/skills/hexagonal-architecture/SKILL.md)
 - `apps/web/**`, React UI structure, FSD layers/slices, placement of auth/layout/pages: read [`.cursor/skills/feature-sliced-design/SKILL.md`](./.cursor/skills/feature-sliced-design/SKILL.md)
 - `apps/web/**`, React performance (waterfalls, bundle, re-renders, data fetching): read [`.cursor/skills/vercel-react-best-practices/SKILL.md`](./.cursor/skills/vercel-react-best-practices/SKILL.md)
 - Carbon / IBM Products UI: [`.cursor/skills/carbon-builder/SKILL.md`](./.cursor/skills/carbon-builder/SKILL.md)
 
-Do not apply FSD or Vercel React rules to `apps/api`. Do not apply Nest hexagonal layout to `apps/web`.
+Do not apply FSD or Vercel React rules to `apps/server`. Do not apply Nest hexagonal layout to `apps/web`.
 
 ## Before Changing Code
 
@@ -57,11 +57,11 @@ Do not apply FSD or Vercel React rules to `apps/api`. Do not apply Nest hexagona
 | Styles        | **SCSS** + **CSS Modules** (`.module.scss`); Carbon via `@use '@carbon/react'`                       |
 | i18n          | Multilingual UI (`en`, `ru`); deploy-time default + in-app switch                                    |
 | Theme         | Carbon-compatible `light` / `dark` / `system` (default `system`)                                     |
-| API           | NestJS, PostgreSQL (`pg`), `@ts-safeql/sql-tag`, Docker, JWT                                         |
+| Server        | NestJS, PostgreSQL (`pg`), `@ts-safeql/sql-tag`, Docker, JWT                                         |
 | Tests (web)   | Unit/component: **Vitest** + React Testing Library; E2E: **Playwright**                              |
-| Tests (api)   | Unit/integration: **Jest** (+ Nest testing / supertest); E2E of critical flows: **Playwright**       |
+| Tests (server)| Unit/integration: **Jest** (+ Nest testing / supertest); E2E of critical flows: **Playwright**       |
 | Shared        | `libs/contracts`, `libs/domain` (+ feature/sync libs as needed)                                      |
-| Env / secrets | Only in `apps/web` and `apps/api` (`.env`); not a shared lib                                         |
+| Env / secrets | Only in `apps/web` and `apps/server` (`.env`); not a shared lib                                      |
 
 Adapt paths to the actual workspace layout.
 
@@ -113,14 +113,14 @@ Do not start feature UI until step 2 exists for that feature.
 
 Change the DB schema only via migrations.
 
-## PostgreSQL data access (API)
+## PostgreSQL data access (server)
 
-- Use raw **`pg`** in `apps/api`; do not add an ORM (TypeORM, Prisma, Sequelize, etc.).
-- In TypeScript under `apps/api/src`, write parameterized queries with **`sql` from `@ts-safeql/sql-tag`** and type row results explicitly, e.g. `pool.query<UserRow>(sql\`...\`)`.
+- Use raw **`pg`** in `apps/server`; do not add an ORM (TypeORM, Prisma, Sequelize, etc.).
+- In TypeScript under `apps/server/src`, write parameterized queries with **`sql` from `@ts-safeql/sql-tag`** and type row results explicitly, e.g. `pool.query<UserRow>(sql\`...\`)`.
 - Do not interpolate user input into SQL strings; the tag generates `$1`, `$2`, … placeholders.
-- `@ts-safeql/eslint-plugin` validates tagged SQL against the live Postgres schema during lint — keep Postgres up when running `nx lint api`.
-- Schema changes belong in **`apps/api/migrations/*.sql`** only; apply with `npm run db:migrate`.
-- **Exceptions:** CLI scripts (`apps/api/scripts/*.mjs`) and migration SQL files may use plain `$1` + values or raw SQL files without `sql`-tag; they are not covered by SafeQL lint.
+- `@ts-safeql/eslint-plugin` validates tagged SQL against the live Postgres schema during lint — keep Postgres up when running `nx lint server`.
+- Schema changes belong in **`apps/server/migrations/*.sql`** only; apply with `npm run db:migrate`.
+- **Exceptions:** CLI scripts (`apps/server/scripts/*.mjs`) and migration SQL files may use plain `$1` + values or raw SQL files without `sql`-tag; they are not covered by SafeQL lint.
 
 Example:
 
@@ -157,7 +157,7 @@ As needed: domain / contracts / schema; API then UI (UI only after the API exist
 - Treat a mobile/tablet layout as an MVP deliverable
 - Start feature UI before that feature’s contracts and backend API exist
 - Introduce multiple financial spaces, per-user spaces, or account membership/roles in MVP
-- Use string-concatenated or untyped SQL in `apps/api/src` when a parameterized `sql`-tag query is appropriate
+- Use string-concatenated or untyped SQL in `apps/server/src` when a parameterized `sql`-tag query is appropriate
 - Use `import type` or inline `type` in import lists
 
 ## Commands
@@ -165,26 +165,26 @@ As needed: domain / contracts / schema; API then UI (UI only after the API exist
 Requires **Node 22+**.
 
 ```bash
-# Local Postgres (required for API)
+# Local Postgres (required for server)
 docker compose up -d   # or: npm run db:up
-# apps/api/.env from apps/api/.env.example
+# apps/server/.env from apps/server/.env.example
 
 # Dev servers
-npx nx serve web    # http://localhost:4200  (/api → api :3000)
-npx nx serve api    # http://localhost:3000/api
+npx nx serve web       # http://localhost:4200  (/api → server :3000)
+npx nx serve server    # http://localhost:3000/api
 
 # Build / quality
 npx nx build web
-npx nx build api
-npx nx run-many -t build --projects=web,api
+npx nx build server
+npx nx run-many -t build --projects=web,server
 npx nx run-many -t lint,typecheck,test
 npx nx graph
 
 # Single project
-npx nx lint <project>      # web | api | contracts | domain
+npx nx lint <project>      # web | server | contracts | domain
 npx nx typecheck <project>
-npx nx test <project>      # Vitest (web/FE) or Jest (api/BE)
+npx nx test <project>      # Vitest (web/FE) or Jest (server/BE)
 npx nx e2e <project>       # Playwright (when an e2e project exists)
 ```
 
-npm scripts: `npm run start:web`, `start:api`, `db:up`, `db:down`, `build`, `graph`, `lint`, `typecheck`.
+npm scripts: `npm run start:web`, `start:server`, `db:up`, `db:down`, `build`, `graph`, `lint`, `typecheck`.

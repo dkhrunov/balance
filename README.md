@@ -16,8 +16,8 @@ npm install
 
 ```text
 apps/
-  web/    # React + Vite + TypeScript (env: .env / VITE_*)
-  api/    # NestJS + TypeScript (env: .env — DB, JWT, …)
+  web/     # React + Vite + TypeScript (env: .env / VITE_*)
+  server/  # NestJS + TypeScript (env: .env — DB, JWT, …)
 libs/
   contracts/  # Shared FE↔BE TypeScript contracts (stub)
   domain/     # Domain primitives (stub)
@@ -38,14 +38,14 @@ docker compose up -d
 docker compose ps
 ```
 
-API connection settings live in `apps/api/.env` (copy from `apps/api/.env.example`). Defaults match Compose. Do not commit `.env` files.
+Server connection settings live in `apps/server/.env` (copy from `apps/server/.env.example`). Defaults match Compose. Do not commit `.env` files.
 
 ```bash
-cp apps/api/.env.example apps/api/.env
+cp apps/server/.env.example apps/server/.env
 ```
 
-Apply schema migrations before starting the API. To create the initial local user, set
-the `SEED_ADMIN_*` values in `apps/api/.env` and run the seed command; it never stores
+Apply schema migrations before starting the server. To create the initial local user, set
+the `SEED_ADMIN_*` values in `apps/server/.env` and run the seed command; it never stores
 the supplied password in plaintext.
 
 ```bash
@@ -55,7 +55,7 @@ npm run db:seed:admin          # creates admin + shared default expense categori
 npm run db:seed:categories
 ```
 
-Default category names follow `SEED_CATEGORIES_LOCALE` (`en` | `ru`, default `en`) in `apps/api/.env`.
+Default category names follow `SEED_CATEGORIES_LOCALE` (`en` | `ru`, default `en`) in `apps/server/.env`.
 
 Stop / remove the container (volume kept):
 
@@ -68,28 +68,28 @@ docker compose down
 In two terminals (Node 22), with Postgres running:
 
 ```bash
-# API — http://localhost:3000/api
-npx nx serve api
+# Server — http://localhost:3000/api
+npx nx serve server
 
 # Web — http://localhost:4200 (proxies /api → :3000)
 npx nx serve web
 ```
 
-Or via npm scripts: `npm run start:api` and `npm run start:web`.
+Or via npm scripts: `npm run start:server` and `npm run start:web`.
 
 ## Useful Nx commands
 
 ```bash
 npx nx graph
 npx nx build web
-npx nx build api
-npx nx run-many -t build --projects=web,api
+npx nx build server
+npx nx run-many -t build --projects=web,server
 npx nx run-many -t lint,typecheck
 ```
 
 ## Self-hosted (server requirements)
 
-Draft sizing for a single-node Docker Compose deploy (API + PostgreSQL + static web). Numbers will change when Redis, queues, replicas, or heavier sync load are added — treat this as a starting point, not a guarantee.
+Draft sizing for a single-node Docker Compose deploy (server + PostgreSQL + static web). Numbers will change when Redis, queues, replicas, or heavier sync load are added — treat this as a starting point, not a guarantee.
 
 |              | Minimum                                                 | Recommended                                     |
 | ------------ | ------------------------------------------------------- | ----------------------------------------------- |
@@ -102,7 +102,7 @@ Draft sizing for a single-node Docker Compose deploy (API + PostgreSQL + static 
 
 **Notes**
 
-- Minimum is aimed at a small personal / household income–expense tracker with a few concurrent users. Expect tight headroom when Postgres and the API share one VM.
+- Minimum is aimed at a small personal / household income–expense tracker with a few concurrent users. Expect tight headroom when Postgres and the server share one VM.
 - Recommended leaves room for OS, Docker, Postgres shared buffers, and occasional migrations / backups without swapping.
 - Disk grows with transaction history and backup retention; plan capacity separately from the app image size.
 - Multi-node, HA Postgres, or extra services (Redis, workers) are out of scope for this draft.
