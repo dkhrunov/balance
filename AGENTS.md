@@ -35,7 +35,7 @@ Do not apply FSD or Vercel React rules to `apps/server`. Do not apply Nest hexag
 
 - Offline-first: client works without network; server is authoritative after sync.
 - Desktop-first UI (MVP): design and accept against a wide viewport (Carbon `lg+`). A dedicated mobile/tablet layout is Post-MVP; do not spend MVP time on a phone layout.
-- API contract-first: shared TypeScript contracts in `libs/contracts`; do not duplicate DTOs between FE and BE. Feature delivery is **contracts → backend → frontend**; do not start feature UI before that feature’s contract and API exist.
+- API contract-first: shared TypeScript contracts in `libs/contracts`; do not duplicate DTOs between FE and BE. Feature delivery is **contracts → backend → frontend**; do not start feature UI before that feature’s contract and API exist. Inside each `libs/contracts` feature domain use layers `models/`, `requests/`, `responses/`, `errors/`, `constraints/` (always present; see SPEC §6 Internal layout); import only via `@balance/contracts/<domain>`.
 - Money: never use JS `number` in calculations; decimal-safe `Money` (`amount: string` + currency); in PostgreSQL — `NUMERIC` (or agreed minor units).
 - Mutations are idempotent (`operationId`); for concurrently mutable entities — optimistic concurrency (`version`).
 - For sync entities — soft delete / tombstone (`deletedAt`).

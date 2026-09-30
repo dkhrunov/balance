@@ -20,7 +20,7 @@ Use this skill when the request involves boundaries, domain-centric design, refa
 
 ## Core Concepts
 
-- **Domain model**: Business rules and entities/value objects. No framework imports. In Balance, shared invariants live in `libs/domain`; wire types in `libs/contracts`.
+- **Domain model**: Business rules and entities/value objects. No framework imports. In Balance, shared invariants live in `libs/domain`; wire types in `libs/contracts` (per-domain layers: `models/`, `requests/`, `responses/`, `errors/`, `constraints/` — see SPEC §6).
 - **Use cases (application layer)**: Orchestrate domain behavior and workflow steps.
 - **Inbound ports**: Contracts describing what the application can do (commands/queries/use-case interfaces). Prefer `interface I*` (e.g. `ICreateOrderUseCase`) plus a Nest `Symbol` token.
 - **Outbound ports**: Contracts for dependencies the application needs (repositories, gateways, event publishers, clock, UUID, etc.). Prefer `interface I*` + `Symbol` token.

@@ -231,6 +231,7 @@ libs/contracts/
   categories/
   currencies/
   sync/
+  common/
   # Post-MVP as needed: savings-goals/, debts/, analytics/, import-export/
 ```
 
@@ -248,6 +249,47 @@ Contracts must describe:
 - timestamps;
 - currency information;
 - user preferences (locale, theme).
+
+### Internal layout (per feature domain)
+
+Every feature domain under `libs/contracts/src/lib/<domain>/` uses the **same** layer folders,
+even when some are empty (keep an empty folder with `.gitkeep`). Do not keep a flat pile of
+files at the domain root.
+
+```text
+libs/contracts/src/lib/<domain>/
+  models/         # wire entities, enums, opaque value aliases used across ops
+  requests/       # request bodies / query shapes (one operation per file)
+  responses/      # response bodies when not paired only inside a request file
+  errors/         # stable error-code maps and unions
+  constraints/    # protocol limits/constants (min/max length, shared caps)
+  index.ts        # sole public re-export for the domain
+```
+
+Placement rules:
+
+| Put in | Examples |
+| ------ | -------- |
+| `models/` | `Transaction`, `Account`, `CategoryType`, `AccountIcon`, `Locale` |
+| `requests/` | `CreateAccountRequest`, `ListTransactionsRequest`, `LoginRequest` |
+| `responses/` | `ListAccountsResponse`, `CreateTransferResponse`, `LoginResponse` |
+| `errors/` | `TRANSACTION_ERROR_CODES`, `AuthErrorCode` |
+| `constraints/` | `DISPLAY_NAME_MAX_LENGTH`, `TRANSACTION_DESCRIPTION_MAX_LENGTH` |
+
+- One HTTP operation → one file under `requests/` (and `responses/` when the response type is substantial or shared).
+- Shared length/enum caps used by several operations → `constraints/`, not duplicated in each request file.
+- Do **not** add deep public aliases like `@balance/contracts/transactions/requests`; consumers import only the domain entry point.
+
+`common/` is cross-cutting (not a feature). Use this layout instead of the five feature layers:
+
+```text
+libs/contracts/src/lib/common/
+  ids/       # EntityId, EntityVersion, OperationId
+  time/      # IsoDate, IsoTimestamp
+  paging/    # CursorPageRequest / CursorPageResponse
+  errors/    # ApiErrorResponse
+  index.ts
+```
 
 ### Public module boundaries
 

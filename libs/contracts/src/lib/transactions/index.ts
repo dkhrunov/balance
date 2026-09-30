@@ -1,4 +1,4 @@
-export { Transaction } from './transaction';
+export { Transaction } from './models/transaction';
 export {
     TRANSACTION_TYPES,
     TransactionType,
@@ -6,13 +6,15 @@ export {
     SimpleTransactionType,
     TRANSFER_TYPES,
     TransferType,
-} from './transaction-type';
-export { CreateTransactionRequest, TRANSACTION_DESCRIPTION_MAX_LENGTH } from './create-transaction-request';
-export { CreateTransferRequest, CreateTransferResponse } from './create-transfer-request';
-export { DeleteTransactionRequest } from './delete-transaction-request';
+} from './models/transaction-type';
+export { TRANSACTION_DESCRIPTION_MAX_LENGTH } from './constraints/description';
+export { CreateTransactionRequest } from './requests/create-transaction';
+export { CreateTransferRequest } from './requests/create-transfer';
+export { CreateTransferResponse } from './responses/create-transfer';
+export { DeleteTransactionRequest } from './requests/delete-transaction';
 export {
     ListTransactionsRequest,
-    ListTransactionsResponse,
     TransactionCreatedByFilter,
-} from './list-transactions-request';
-export { TRANSACTION_ERROR_CODES, TransactionErrorCode } from './transaction-error-codes';
+} from './requests/list-transactions';
+export { ListTransactionsResponse } from './responses/list-transactions';
+export { TRANSACTION_ERROR_CODES, TransactionErrorCode } from './errors/error-codes';

@@ -1,14 +1,10 @@
-export { Category } from './category';
-export { CATEGORY_TYPES, CategoryType } from './category-type';
-export { CATEGORY_NAME_MAX_LENGTH, CATEGORY_NAME_MIN_LENGTH } from './category-name';
-export {
-    CategoryIcon,
-    CATEGORY_ICON_MAX_LENGTH,
-    CATEGORY_ICON_MIN_LENGTH,
-    DEFAULT_CATEGORY_ICON,
-} from './category-icon';
-export { CreateCategoryRequest } from './create-category-request';
-export { UpdateCategoryRequest } from './update-category-request';
-export { DeleteCategoryRequest } from './delete-category-request';
-export { ListCategoriesResponse } from './list-categories-response';
-export { CATEGORY_ERROR_CODES, CategoryErrorCode } from './category-error-codes';
+export { Category } from './models/category';
+export { CATEGORY_TYPES, CategoryType } from './models/category-type';
+export { CategoryIcon, DEFAULT_CATEGORY_ICON } from './models/category-icon';
+export { CATEGORY_NAME_MAX_LENGTH, CATEGORY_NAME_MIN_LENGTH } from './constraints/category-name';
+export { CATEGORY_ICON_MAX_LENGTH, CATEGORY_ICON_MIN_LENGTH } from './constraints/category-icon';
+export { CreateCategoryRequest } from './requests/create-category';
+export { UpdateCategoryRequest } from './requests/update-category';
+export { DeleteCategoryRequest } from './requests/delete-category';
+export { ListCategoriesResponse } from './responses/list-categories';
+export { CATEGORY_ERROR_CODES, CategoryErrorCode } from './errors/error-codes';
