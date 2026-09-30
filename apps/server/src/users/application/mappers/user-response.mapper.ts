@@ -1,4 +1,4 @@
-import { UserIdentity } from '@balance/contracts/users';
+import { UserIdentity } from '@balance/dto/users';
 import { UserAccount } from '../models/user-account';
 
 /** Converts a user account into a safe {@link UserIdentity}. */

@@ -1,5 +1,5 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { AUTH_ERROR_CODES, CurrentUserResponse } from '@balance/contracts/auth';
+import { AUTH_ERROR_CODES, CurrentUserResponse } from '@balance/dto/auth';
 import { GET_USER_IDENTITY_USE_CASE, IGetUserIdentityUseCase } from '../../../users';
 import { ACCESS_TOKEN_SERVICE, IAccessTokenService } from '../ports/outbound/access-token.port';
 import { AUTH_SESSIONS_REPOSITORY, IAuthSessionsRepository } from '../ports/outbound/auth-sessions.repository';

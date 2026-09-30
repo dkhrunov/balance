@@ -1,5 +1,5 @@
-import { CurrencyCode } from '@balance/contracts/currencies';
-import { Locale, Theme } from '@balance/contracts/users';
+import { CurrencyCode } from '@balance/dto/currencies';
+import { Locale, Theme } from '@balance/dto/users';
 
 /** Persistence row shape for the `users` table. */
 export type UserRecord = {

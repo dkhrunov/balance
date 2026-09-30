@@ -20,7 +20,7 @@ Use this skill when the request involves boundaries, domain-centric design, refa
 
 ## Core Concepts
 
-- **Domain model**: Business rules and entities/value objects. No framework imports. In Balance, shared invariants live in `libs/domain`; wire types in `libs/contracts` (per-domain layers: `models/`, `requests/`, `responses/`, `errors/`, `constraints/` — see SPEC §6).
+- **Domain model**: Business rules and entities/value objects. No framework imports. In Balance, shared invariants live in `libs/domain`; wire types in `libs/dto` (per-domain layers: `models/`, `requests/`, `responses/`, `errors/`, `constraints/` — see SPEC §6).
 - **Use cases (application layer)**: Orchestrate domain behavior and workflow steps.
 - **Inbound ports**: Contracts describing what the application can do (commands/queries/use-case interfaces). Prefer `interface I*` (e.g. `ICreateOrderUseCase`) plus a Nest `Symbol` token.
 - **Outbound ports**: Contracts for dependencies the application needs (repositories, gateways, event publishers, clock, UUID, etc.). Prefer `interface I*` + `Symbol` token.
@@ -65,8 +65,8 @@ Use case class/function receives ports via constructor/arguments. It validates a
 For Balance Nest HTTP inbound adapters:
 
 - Global `ValidationPipe` with `transform: true`, `whitelist: true`, `forbidNonWhitelisted: true`.
-- DTO classes live next to controllers (e.g. `adapters/inbound/http/dto/`); each **implements** (or is tested against) the matching `@balance/contracts/*` type.
-- Do **not** put `class-validator` in `libs/contracts`.
+- DTO classes live next to controllers (e.g. `adapters/inbound/http/dto/`); each **implements** (or is tested against) the matching `@balance/dto/*` type.
+- Do **not** put `class-validator` in `libs/dto`.
 
 ### Step 5: Wire everything in a composition root
 
@@ -254,7 +254,7 @@ Place this file in `composition/orders.module.ts` (generic layout) or `orders.mo
 - Skipping the port interface because “there is only one implementation”.
 - Importing another feature’s internal paths instead of its `index.ts`.
 - Exposing `*Record`, repositories, or mappers in a feature’s public `index.ts`.
-- Putting Nest DTO classes or `class-validator` into `libs/contracts`.
+- Putting Nest DTO classes or `class-validator` into `libs/dto`.
 
 ## Migration Playbook
 

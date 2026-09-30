@@ -1,4 +1,4 @@
-import { ListAccountsResponse } from '@balance/contracts/accounts';
+import { ListAccountsResponse } from '@balance/dto/accounts';
 
 /** Lists active accounts in the single app space. */
 export interface IListAccountsUseCase {

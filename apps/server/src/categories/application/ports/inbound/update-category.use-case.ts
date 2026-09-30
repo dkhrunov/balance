@@ -1,4 +1,4 @@
-import { Category, UpdateCategoryRequest } from '@balance/contracts/categories';
+import { Category, UpdateCategoryRequest } from '@balance/dto/categories';
 
 /** Renames an active category with optimistic concurrency. */
 export interface IUpdateCategoryUseCase {

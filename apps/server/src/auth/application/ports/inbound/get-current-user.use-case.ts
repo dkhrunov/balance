@@ -1,4 +1,4 @@
-import { CurrentUserResponse } from '@balance/contracts/auth';
+import { CurrentUserResponse } from '@balance/dto/auth';
 
 /** Resolves the current user from an access token. */
 export interface IGetCurrentUserUseCase {

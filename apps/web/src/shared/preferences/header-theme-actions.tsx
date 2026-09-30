@@ -1,6 +1,6 @@
 import { IconButton } from '@carbon/react';
 import { Asleep, Devices, Light } from '@carbon/react/icons';
-import { Theme } from '@balance/contracts/users';
+import { Theme } from '@balance/dto/users';
 import { useTranslation } from 'react-i18next';
 import styles from './header-preference-actions.module.scss';
 

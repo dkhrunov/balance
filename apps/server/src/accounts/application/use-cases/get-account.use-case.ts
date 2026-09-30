@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Account, ACCOUNT_ERROR_CODES } from '@balance/contracts/accounts';
+import { Account, ACCOUNT_ERROR_CODES } from '@balance/dto/accounts';
 import { toAccountResponse } from '../mappers/account-response.mapper';
 import { IGetAccountUseCase } from '../ports/inbound/get-account.use-case';
 import { ACCOUNTS_REPOSITORY, IAccountsRepository } from '../ports/outbound/accounts.repository';

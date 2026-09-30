@@ -1,5 +1,5 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
-import { AUTH_ERROR_CODES } from '@balance/contracts/auth';
+import { AUTH_ERROR_CODES } from '@balance/dto/auth';
 
 /** Builds the global HTTP validation pipe with project error shape. */
 export function createValidationPipe(): ValidationPipe {

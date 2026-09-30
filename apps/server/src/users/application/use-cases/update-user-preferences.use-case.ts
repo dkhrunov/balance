@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { UserPreferences } from '@balance/contracts/users';
+import { UserPreferences } from '@balance/dto/users';
 import { IUsersRepository, USERS_REPOSITORY } from '../ports/outbound/users.repository';
 import { IUpdateUserPreferencesUseCase } from '../ports/inbound/update-user-preferences.use-case';
 

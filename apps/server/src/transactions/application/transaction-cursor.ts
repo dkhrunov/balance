@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { TRANSACTION_ERROR_CODES } from '@balance/contracts/transactions';
+import { TRANSACTION_ERROR_CODES } from '@balance/dto/transactions';
 import { TransactionListCursor } from './ports/outbound/transactions.repository';
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;

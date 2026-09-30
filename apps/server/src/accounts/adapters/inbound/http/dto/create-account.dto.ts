@@ -4,8 +4,8 @@ import {
     ACCOUNT_NAME_MAX_LENGTH,
     ACCOUNT_NAME_MIN_LENGTH,
     CreateAccountRequest,
-} from '@balance/contracts/accounts';
-import { CURRENCY_CODES } from '@balance/contracts/currencies';
+} from '@balance/dto/accounts';
+import { CURRENCY_CODES } from '@balance/dto/currencies';
 import { IsIn, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 /** HTTP body for `POST /accounts`; compatible with {@link CreateAccountRequest}. */

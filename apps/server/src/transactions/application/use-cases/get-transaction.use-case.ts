@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Transaction, TRANSACTION_ERROR_CODES } from '@balance/contracts/transactions';
+import { Transaction, TRANSACTION_ERROR_CODES } from '@balance/dto/transactions';
 import { toTransactionResponse } from '../mappers/transaction-response.mapper';
 import { IGetTransactionUseCase } from '../ports/inbound/get-transaction.use-case';
 import { ITransactionsRepository, TRANSACTIONS_REPOSITORY } from '../ports/outbound/transactions.repository';

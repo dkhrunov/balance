@@ -1,5 +1,5 @@
-import { CurrencyCode } from '@balance/contracts/currencies';
-import { TransactionType } from '@balance/contracts/transactions';
+import { CurrencyCode } from '@balance/dto/currencies';
+import { TransactionType } from '@balance/dto/transactions';
 
 /** Application-layer transaction used by use cases and the repository. */
 export type TransactionModel = {

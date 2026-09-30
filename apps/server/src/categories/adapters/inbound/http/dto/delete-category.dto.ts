@@ -1,4 +1,4 @@
-import { DeleteCategoryRequest } from '@balance/contracts/categories';
+import { DeleteCategoryRequest } from '@balance/dto/categories';
 import { IsInt, Min } from 'class-validator';
 
 /** HTTP body for `DELETE /categories/:id`; compatible with {@link DeleteCategoryRequest}. */

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LoginRequest } from '@balance/contracts/auth';
-import { UserIdentity } from '@balance/contracts/users';
+import { LoginRequest } from '@balance/dto/auth';
+import { UserIdentity } from '@balance/dto/users';
 import { IVerifyUserCredentialsUseCase, VERIFY_USER_CREDENTIALS_USE_CASE } from '../../../users';
 import { AuthenticatedSession } from '../models/authenticated-session';
 import { ACCESS_TOKEN_SERVICE, IAccessTokenService } from '../ports/outbound/access-token.port';

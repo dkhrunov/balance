@@ -1,4 +1,4 @@
-import { CategoryType } from '@balance/contracts/categories';
+import { CategoryType } from '@balance/dto/categories';
 
 /** Row shape returned from `categories` queries (camelCase aliases). */
 export type CategoryRecord = {

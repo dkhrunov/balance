@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { config as loadEnv } from 'dotenv';
 import pg from 'pg';
 
-/** Locales supported for default category names (keep in sync with `@balance/contracts` LOCALES). */
+/** Locales supported for default category names (keep in sync with `@balance/dto` LOCALES). */
 export const SEED_CATEGORY_LOCALES = ['en', 'ru'];
 
 /**

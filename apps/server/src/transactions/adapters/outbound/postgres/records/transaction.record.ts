@@ -1,5 +1,5 @@
-import { CurrencyCode } from '@balance/contracts/currencies';
-import { TransactionType } from '@balance/contracts/transactions';
+import { CurrencyCode } from '@balance/dto/currencies';
+import { TransactionType } from '@balance/dto/transactions';
 
 /** Row shape returned from `transactions` queries (camelCase aliases). */
 export type TransactionRecord = {

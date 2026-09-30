@@ -1,4 +1,4 @@
-import { CurrentUserResponse, LoginRequest, LoginResponse } from '@balance/contracts/auth';
+import { CurrentUserResponse, LoginRequest, LoginResponse } from '@balance/dto/auth';
 import { ApiClient } from '../api-request';
 
 /** Authenticates with email and password; sets session cookies. */

@@ -1,4 +1,4 @@
-import { ApiErrorResponse } from '@balance/contracts/common';
+import { ApiErrorResponse } from '@balance/dto/common';
 import { ApiError } from './api-error';
 
 type ApiRequestOptionsWithoutBody = Omit<RequestInit, 'method' | 'body'>;

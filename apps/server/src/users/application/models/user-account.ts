@@ -1,4 +1,4 @@
-import { CurrencyCode } from '@balance/contracts/currencies';
+import { CurrencyCode } from '@balance/dto/currencies';
 
 /**
  * Application model of a user account including credential material.

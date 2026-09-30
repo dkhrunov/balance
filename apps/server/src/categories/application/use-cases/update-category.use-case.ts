@@ -7,7 +7,7 @@ import {
     CATEGORY_NAME_MAX_LENGTH,
     CATEGORY_NAME_MIN_LENGTH,
     UpdateCategoryRequest,
-} from '@balance/contracts/categories';
+} from '@balance/dto/categories';
 import { toCategoryResponse } from '../mappers/category-response.mapper';
 import { IUpdateCategoryUseCase } from '../ports/inbound/update-category.use-case';
 import { CATEGORIES_REPOSITORY, ICategoriesRepository } from '../ports/outbound/categories.repository';

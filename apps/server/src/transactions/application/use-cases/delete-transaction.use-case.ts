@@ -1,5 +1,5 @@
 import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { DeleteTransactionRequest, Transaction, TRANSACTION_ERROR_CODES } from '@balance/contracts/transactions';
+import { DeleteTransactionRequest, Transaction, TRANSACTION_ERROR_CODES } from '@balance/dto/transactions';
 import { toTransactionResponse } from '../mappers/transaction-response.mapper';
 import { IDeleteTransactionUseCase } from '../ports/inbound/delete-transaction.use-case';
 import { ITransactionsRepository, TRANSACTIONS_REPOSITORY } from '../ports/outbound/transactions.repository';

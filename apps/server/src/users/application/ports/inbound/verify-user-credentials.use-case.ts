@@ -1,5 +1,5 @@
-import { LoginRequest } from '@balance/contracts/auth';
-import { UserIdentity } from '@balance/contracts/users';
+import { LoginRequest } from '@balance/dto/auth';
+import { UserIdentity } from '@balance/dto/users';
 
 /** Verifies login credentials and returns a safe user identity. */
 export interface IVerifyUserCredentialsUseCase {

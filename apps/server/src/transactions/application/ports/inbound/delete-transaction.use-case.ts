@@ -1,4 +1,4 @@
-import { DeleteTransactionRequest, Transaction } from '@balance/contracts/transactions';
+import { DeleteTransactionRequest, Transaction } from '@balance/dto/transactions';
 
 /** Soft-deletes an active transaction with optimistic concurrency. */
 export interface IDeleteTransactionUseCase {

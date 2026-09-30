@@ -1,4 +1,4 @@
-import { ListTransactionsRequest, ListTransactionsResponse } from '@balance/contracts/transactions';
+import { ListTransactionsRequest, ListTransactionsResponse } from '@balance/dto/transactions';
 
 /** Lists active income/expense transactions with attribution filters and cursor pagination. */
 export interface IListTransactionsUseCase {

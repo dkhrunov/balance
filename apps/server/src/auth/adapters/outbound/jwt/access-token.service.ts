@@ -1,6 +1,6 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AUTH_ERROR_CODES } from '@balance/contracts/auth';
+import { AUTH_ERROR_CODES } from '@balance/dto/auth';
 import { AccessTokenClaims } from '../../../application/models/access-token-claims';
 import { IAccessTokenService } from '../../../application/ports/outbound/access-token.port';
 import { AUTH_CONFIG, IAuthConfig } from '../../../application/ports/outbound/auth-config.port';

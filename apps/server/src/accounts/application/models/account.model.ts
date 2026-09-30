@@ -1,5 +1,5 @@
-import { AccountIcon } from '@balance/contracts/accounts';
-import { CurrencyCode } from '@balance/contracts/currencies';
+import { AccountIcon } from '@balance/dto/accounts';
+import { CurrencyCode } from '@balance/dto/currencies';
 
 /** Application-layer account aggregate used by use cases and the repository. */
 export type AccountModel = {

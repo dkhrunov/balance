@@ -1,4 +1,4 @@
-import { Category, CreateCategoryRequest } from '@balance/contracts/categories';
+import { Category, CreateCategoryRequest } from '@balance/dto/categories';
 
 /** Creates an income or expense category in the single app space. */
 export interface ICreateCategoryUseCase {

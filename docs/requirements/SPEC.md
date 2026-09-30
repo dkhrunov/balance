@@ -60,7 +60,7 @@ The application must follow these principles:
 
 - Offline-first.
 - Desktop-first (MVP). A dedicated mobile/tablet layout is Post-MVP and is decided after MVP works.
-- API contract-first. Work **feature by feature**: **contracts → backend → frontend** for that feature, then the next feature (do not start a feature’s UI before its contract and API exist; do not batch all backend before any frontend).
+- API contract-first. Work **feature by feature**: **dto → backend → frontend** for that feature, then the next feature (do not start a feature’s UI before its DTO package types and API exist; do not batch all backend before any frontend).
 - Type-safe communication between FE and BE.
 - Domain-driven design without unnecessary complexity.
 - Modular architecture.
@@ -92,12 +92,12 @@ apps/
   server/       # NestJS shell; env via .env + ConfigModule (DB, JWT, …)
 
 libs/
-  contracts/    # Shared FE↔BE TypeScript contracts (wire types)
+  dto/          # Shared FE↔BE TypeScript wire DTOs
   domain/       # Pure domain primitives and rules (Money, …)
   # later as needed: sync/, ui/, database ports, feature libs
 ```
 
-Environment configuration (secrets, URLs, ports, connection strings) lives **inside the corresponding app** (`.env` / `.env.example`), not in a shared `libs/`. Stable protocol constants (`schemaVersion`, sync versions, error shapes) live in `libs/contracts` (or `libs/domain` for business constants), not in env.
+Environment configuration (secrets, URLs, ports, connection strings) lives **inside the corresponding app** (`.env` / `.env.example`), not in a shared `libs/`. Stable protocol constants (`schemaVersion`, sync versions, error shapes) live in `libs/dto` (or `libs/domain` for business constants), not in env.
 
 Adapt the actual structure to the existing repository. Do not create a shared `libs/config` that mixes FE and BE.
 
@@ -214,16 +214,16 @@ For every new infrastructure dependency, first evaluate:
 
 ---
 
-## 6. Shared TypeScript Contracts
+## 6. Shared TypeScript DTOs (`libs/dto`)
 
-Frontend and Backend must use shared TypeScript contracts.
+Frontend and Backend must use shared TypeScript wire DTOs from `libs/dto`.
 
 Do not manually duplicate DTOs between FE and BE.
 
 For example:
 
 ```text
-libs/contracts/
+libs/dto/
   auth/
   users/
   accounts/
@@ -235,9 +235,9 @@ libs/contracts/
   # Post-MVP as needed: savings-goals/, debts/, analytics/, import-export/
 ```
 
-Include contracts for user preferences (locale, theme) under `users/` (or a dedicated `preferences/` module) so FE and BE share the same types.
+Include DTOs for user preferences (locale, theme) under `users/` (or a dedicated `preferences/` module) so FE and BE share the same types.
 
-Contracts must describe:
+The DTO package must describe:
 
 - request;
 - response;
@@ -252,12 +252,12 @@ Contracts must describe:
 
 ### Internal layout (per feature domain)
 
-Every feature domain under `libs/contracts/src/lib/<domain>/` uses the **same** layer folders,
+Every feature domain under `libs/dto/src/lib/<domain>/` uses the **same** layer folders,
 even when some are empty (keep an empty folder with `.gitkeep`). Do not keep a flat pile of
 files at the domain root.
 
 ```text
-libs/contracts/src/lib/<domain>/
+libs/dto/src/lib/<domain>/
   models/         # wire entities, enums, opaque value aliases used across ops
   requests/       # request bodies / query shapes (one operation per file)
   responses/      # response bodies when not paired only inside a request file
@@ -278,12 +278,12 @@ Placement rules:
 
 - One HTTP operation → one file under `requests/` (and `responses/` when the response type is substantial or shared).
 - Shared length/enum caps used by several operations → `constraints/`, not duplicated in each request file.
-- Do **not** add deep public aliases like `@balance/contracts/transactions/requests`; consumers import only the domain entry point.
+- Do **not** add deep public aliases like `@balance/dto/transactions/requests`; consumers import only the domain entry point.
 
 `common/` is cross-cutting (not a feature). Use this layout instead of the five feature layers:
 
 ```text
-libs/contracts/src/lib/common/
+libs/dto/src/lib/common/
   ids/       # EntityId, EntityVersion, OperationId
   time/      # IsoDate, IsoTimestamp
   paging/    # CursorPageRequest / CursorPageResponse
@@ -293,38 +293,38 @@ libs/contracts/src/lib/common/
 
 ### Public module boundaries
 
-`libs/contracts` exposes each feature folder as a secondary entry point:
+`libs/dto` exposes each feature folder as a secondary entry point:
 
 ```text
-@balance/contracts/auth
-@balance/contracts/users
-@balance/contracts/accounts
-@balance/contracts/categories
-@balance/contracts/transactions
-@balance/contracts/currencies
-@balance/contracts/common
-@balance/contracts/sync
+@balance/dto/auth
+@balance/dto/users
+@balance/dto/accounts
+@balance/dto/categories
+@balance/dto/transactions
+@balance/dto/currencies
+@balance/dto/common
+@balance/dto/sync
 ```
 
 Configure these as workspace TypeScript aliases. New feature code must import from
-its feature entry point rather than the root barrel; `@balance/contracts` may remain
+its feature entry point rather than the root barrel; `@balance/dto` may remain
 as a compatibility export. Add `package.json` `exports` only when the libraries need
 to be published or resolved directly by Node at runtime; aliases are sufficient inside
 the Nx workspace.
 
-Backend DTOs must be compatible with the shared contract.
+Backend Nest DTO classes must be compatible with the shared `libs/dto` types.
 
-Frontend API clients must also use the shared contract.
+Frontend API clients must also use the shared `libs/dto` types.
 
 Implementation order for every API-backed feature (complete that feature’s UI before starting the next feature’s backend, unless a listed blocker says otherwise):
 
 ```text
-1. Shared contract (libs/contracts)
+1. Shared DTO (libs/dto)
 2. Backend (schema/migration, API, authz, tests)
-3. Frontend built against those contracts
+3. Frontend built against those DTOs
 ```
 
-Do not start feature UI, and do not invent parallel frontend DTOs, before the contract and backend for that feature exist.
+Do not start feature UI, and do not invent parallel frontend DTOs, before the `libs/dto` types and backend for that feature exist.
 
 ---
 
@@ -369,7 +369,7 @@ Debt / Loan / Installment / Mortgage (as needed)
 AuditEvent (if beyond sync/ops logs)
 ```
 
-Do not create Post-MVP tables or contracts during MVP.
+Do not create Post-MVP tables or libs/dto types during MVP.
 
 `UserPreferences` holds per-user UI settings that must follow the user across devices (at minimum locale and theme). See §8.
 
@@ -870,7 +870,7 @@ edit category
 
 without an Internet connection.
 
-Locale and theme from cached user preferences must continue to apply offline (see §4, §8). Preference updates made offline may be queued and synced when online, consistent with the offline mutation model, or applied when connectivity returns — choose one clear approach and document it in contracts; do not lose the user’s last chosen locale/theme.
+Locale and theme from cached user preferences must continue to apply offline (see §4, §8). Preference updates made offline may be queued and synced when online, consistent with the offline mutation model, or applied when connectivity returns — choose one clear approach and document it in libs/dto; do not lose the user’s last chosen locale/theme.
 
 ---
 
@@ -1979,7 +1979,7 @@ Domain → React
 Domain → browser APIs
 ```
 
-Shared contracts must not depend on React or NestJS implementation details.
+Shared libs/dto types must not depend on React or NestJS implementation details.
 
 ---
 
@@ -2007,9 +2007,9 @@ Domain layer must not depend on infrastructure.
 
 When changing the API:
 
-1. Update the shared contract first.
+1. Update libs/dto first.
 2. Update the Backend implementation (schema, API, authz, tests).
-3. Only then update the Frontend client, built against those contracts.
+3. Only then update the Frontend client, built against those DTOs.
 4. Update tests.
 5. Check backward compatibility if needed for offline clients.
 
@@ -2018,7 +2018,7 @@ Do not implement feature UI in parallel with, or ahead of, the backend for that 
 Be especially careful changing:
 
 ```text
-sync contracts
+sync DTOs
 ```
 
 because an old client may stay offline for several days.
@@ -2073,7 +2073,7 @@ Do not:
 - make non-idempotent sync operations;
 - silently overwrite concurrent changes;
 - physically delete sync entities without need;
-- duplicate TypeScript contracts;
+- duplicate TypeScript DTOs;
 - use `any` to bypass architectural problems;
 - create custom Carbon components when Carbon already provides a solution;
 - add Redis/queues/WebSockets only “for later”;
@@ -2084,7 +2084,7 @@ Do not:
 - implement theme colors that diverge from Carbon theme tokens;
 - store locale/theme only in the browser when cross-browser persistence is required (use backend user preferences);
 - treat a mobile/tablet layout as an MVP deliverable or spend MVP time on a phone-first IA;
-- start feature UI before that feature’s shared contract and backend API exist;
+- start feature UI before that feature’s libs/dto types and backend API exist;
 - introduce multiple financial spaces, per-user spaces, or account membership/roles in MVP (§9).
 
 ---
@@ -2094,7 +2094,7 @@ Do not:
 A feature is done only if:
 
 - [ ] Domain model implemented.
-- [ ] Shared TypeScript contracts updated.
+- [ ] Shared TypeScript DTOs (libs/dto) updated.
 - [ ] PostgreSQL schema/migration updated.
 - [ ] Backend API implemented.
 - [ ] Frontend feature implemented.
@@ -2132,11 +2132,11 @@ For each task use this workflow:
    ↓
 4. Design minimal solution
    ↓
-5. Update contracts/domain
+5. Update dto/domain
    ↓
 6. Implement backend (schema, API, tests)
    ↓
-7. Implement frontend against those contracts
+7. Implement frontend against those DTOs
    ↓
 8. Implement offline/sync behavior
    ↓

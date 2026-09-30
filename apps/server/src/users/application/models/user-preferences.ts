@@ -1,4 +1,4 @@
-import { Locale, Theme } from '@balance/contracts/users';
+import { Locale, Theme } from '@balance/dto/users';
 
 /**
  * Application model of persisted UI preferences for a user.

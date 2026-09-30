@@ -1,4 +1,4 @@
-import { Category } from '@balance/contracts/categories';
+import { Category } from '@balance/dto/categories';
 import { CategoryModel } from '../models/category.model';
 
 /**

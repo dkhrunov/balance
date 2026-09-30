@@ -1,6 +1,6 @@
 import { ContentSwitcher, FormLabel, IconSwitch } from '@carbon/react';
 import { Asleep, Devices, Light } from '@carbon/react/icons';
-import { Theme } from '@balance/contracts/users';
+import { Theme } from '@balance/dto/users';
 import { useTranslation } from 'react-i18next';
 import { isTheme } from '../theme';
 import styles from './preference-switcher.module.scss';

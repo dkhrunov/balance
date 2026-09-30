@@ -1,4 +1,4 @@
-import { Category } from '@balance/contracts/categories';
+import { Category } from '@balance/dto/categories';
 
 /** Loads one active category by id. */
 export interface IGetCategoryUseCase {

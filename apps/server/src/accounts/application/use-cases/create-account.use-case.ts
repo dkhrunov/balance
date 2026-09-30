@@ -8,7 +8,7 @@ import {
     ACCOUNT_NAME_MIN_LENGTH,
     CreateAccountRequest,
     DEFAULT_ACCOUNT_ICON,
-} from '@balance/contracts/accounts';
+} from '@balance/dto/accounts';
 import { Money, MoneyValidationError } from '@balance/domain/money';
 import { toAccountResponse } from '../mappers/account-response.mapper';
 import { ICreateAccountUseCase } from '../ports/inbound/create-account.use-case';

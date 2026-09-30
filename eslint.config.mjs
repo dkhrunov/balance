@@ -55,7 +55,7 @@ export default [
                                 'type:data-access',
                                 'type:infra',
                                 'type:domain',
-                                'type:contracts',
+                                'type:dto',
                                 'type:util',
                             ],
                         },
@@ -66,7 +66,7 @@ export default [
                                 'type:ui',
                                 'type:data-access',
                                 'type:domain',
-                                'type:contracts',
+                                'type:dto',
                                 'type:util',
                             ],
                         },
@@ -75,7 +75,7 @@ export default [
                             onlyDependOnLibsWithTags: [
                                 'type:ui',
                                 'type:domain',
-                                'type:contracts',
+                                'type:dto',
                                 'type:util',
                             ],
                         },
@@ -84,7 +84,7 @@ export default [
                             onlyDependOnLibsWithTags: [
                                 'type:data-access',
                                 'type:domain',
-                                'type:contracts',
+                                'type:dto',
                                 'type:util',
                             ],
                         },
@@ -95,7 +95,7 @@ export default [
                                 'type:infra',
                                 'type:data-access',
                                 'type:domain',
-                                'type:contracts',
+                                'type:dto',
                                 'type:util',
                             ],
                         },
@@ -117,7 +117,7 @@ export default [
                             ],
                         },
                         {
-                            sourceTag: 'type:contracts',
+                            sourceTag: 'type:dto',
                             onlyDependOnLibsWithTags: ['type:domain', 'type:util'],
                             bannedExternalImports: [
                                 'react',
@@ -181,11 +181,11 @@ export default [
             ],
         },
     },
-    // Wire / domain shapes: no I prefix (not DI ports; BE DTOs implement contracts)
+    // Wire / domain shapes: no I prefix (not DI ports; BE Nest DTOs implement libs/dto types)
     {
         files: [
-            'libs/contracts/**/*.ts',
-            'libs/contracts/**/*.tsx',
+            'libs/dto/**/*.ts',
+            'libs/dto/**/*.tsx',
             'libs/domain/**/*.ts',
             'libs/domain/**/*.tsx',
         ],

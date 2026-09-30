@@ -1,17 +1,17 @@
 {
-    "name": "contracts",
+    "name": "dto",
     "$schema": "../../node_modules/nx/schemas/project-schema.json",
-    "sourceRoot": "libs/contracts/src",
+    "sourceRoot": "libs/dto/src",
     "projectType": "library",
-    "tags": ["type:contracts", "scope:shared"],
+    "tags": ["type:dto", "scope:shared"],
     "targets": {
         "build": {
             "executor": "@nx/js:tsc",
             "outputs": ["{options.outputPath}"],
             "options": {
-                "outputPath": "dist/libs/contracts",
-                "main": "libs/contracts/src/index.ts",
-                "tsConfig": "libs/contracts/tsconfig.lib.json",
+                "outputPath": "dist/libs/dto",
+                "main": "libs/dto/src/index.ts",
+                "tsConfig": "libs/dto/tsconfig.lib.json",
                 "assets": []
             }
         },
@@ -19,7 +19,7 @@
             "executor": "nx:run-commands",
             "options": {
                 "command": "tsc --noEmit -p tsconfig.lib.json",
-                "cwd": "libs/contracts"
+                "cwd": "libs/dto"
             }
         }
     }

@@ -5,7 +5,7 @@
     "references": [
         { "path": "./apps/web" },
         { "path": "./apps/server" },
-        { "path": "./libs/contracts" },
+        { "path": "./libs/dto" },
         { "path": "./libs/domain" }
     ]
 }

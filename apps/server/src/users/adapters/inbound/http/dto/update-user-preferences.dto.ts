@@ -1,4 +1,4 @@
-import { LOCALES, THEMES, UpdateUserPreferencesRequest } from '@balance/contracts/users';
+import { LOCALES, THEMES, UpdateUserPreferencesRequest } from '@balance/dto/users';
 import { IsIn } from 'class-validator';
 
 /** HTTP body for `PUT /users/me/preferences`; compatible with {@link UpdateUserPreferencesRequest}. */

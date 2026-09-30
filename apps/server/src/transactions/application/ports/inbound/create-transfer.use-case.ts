@@ -1,4 +1,4 @@
-import { CreateTransferRequest, CreateTransferResponse } from '@balance/contracts/transactions';
+import { CreateTransferRequest, CreateTransferResponse } from '@balance/dto/transactions';
 
 /** Creates an atomic same-currency transfer between two accounts. */
 export interface ICreateTransferUseCase {

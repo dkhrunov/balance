@@ -1,6 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { Locale } from '@balance/contracts/users';
+import { Locale } from '@balance/dto/users';
 import en from './locales/en.json';
 import ru from './locales/ru.json';
 

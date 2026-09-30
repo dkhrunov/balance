@@ -1,5 +1,5 @@
 import { ContentSwitcher, FormLabel, Switch } from '@carbon/react';
-import { Locale } from '@balance/contracts/users';
+import { Locale } from '@balance/dto/users';
 import { useTranslation } from 'react-i18next';
 import { isLocale } from '../i18n';
 import styles from './preference-switcher.module.scss';

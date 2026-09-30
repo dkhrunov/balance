@@ -1,4 +1,4 @@
-import { Account, CreateAccountRequest } from '@balance/contracts/accounts';
+import { Account, CreateAccountRequest } from '@balance/dto/accounts';
 
 /** Creates a financial account in the single app space. */
 export interface ICreateAccountUseCase {

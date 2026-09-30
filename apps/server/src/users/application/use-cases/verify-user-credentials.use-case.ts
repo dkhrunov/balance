@@ -1,7 +1,7 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import argon2 from 'argon2';
-import { AUTH_ERROR_CODES, LoginRequest } from '@balance/contracts/auth';
-import { UserIdentity } from '@balance/contracts/users';
+import { AUTH_ERROR_CODES, LoginRequest } from '@balance/dto/auth';
+import { UserIdentity } from '@balance/dto/users';
 import { toUserIdentity } from '../mappers/user-response.mapper';
 import { IUsersRepository, USERS_REPOSITORY } from '../ports/outbound/users.repository';
 import { IVerifyUserCredentialsUseCase } from '../ports/inbound/verify-user-credentials.use-case';

@@ -1,4 +1,4 @@
-import { Theme } from '@balance/contracts/users';
+import { Theme } from '@balance/dto/users';
 
 /** Resolved light/dark appearance after applying {@link Theme}. */
 export type ActiveTheme = 'light' | 'dark';

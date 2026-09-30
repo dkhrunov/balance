@@ -1,4 +1,4 @@
-import { UserIdentity } from '@balance/contracts/users';
+import { UserIdentity } from '@balance/dto/users';
 
 /** Loads a public user identity by id. */
 export interface IGetUserIdentityUseCase {

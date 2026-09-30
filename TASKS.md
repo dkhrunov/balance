@@ -39,11 +39,11 @@
   - **Blocked by**: scaffold-nx-monorepo
   - **Estimate**: 1h
 
-- [x] Shared `libs/contracts` package skeleton
+- [x] Shared `libs/dto` package skeleton
   - **ID**: contracts-skeleton
   - **Tags**: contracts
   - **Details**: Workspace TS library; MVP folders only: auth, users, accounts, transactions, categories, currencies, sync, common errors/pagination. No budgets/debts/analytics stubs. SPEC §1, §6, §65.
-  - **Acceptance**: Both `api` and `web` can import from contracts; empty/placeholder types compile; Nx boundary enforced.
+  - **Acceptance**: Both `server` and `web` can import from `@balance/dto`; empty/placeholder types compile; Nx boundary enforced.
   - **Blocked by**: scaffold-nx-monorepo
   - **Estimate**: 1-2h
 
@@ -51,7 +51,7 @@
   - **ID**: money-currency-domain
   - **Tags**: domain, money
   - **Details**: Decimal-safe `Money` (`amount: string` + currency); RUB/USD/EUR; precision helpers; unit tests. Never use JS number for arithmetic. SPEC §11–12.
-  - **Acceptance**: Unit tests cover add/subtract/compare and reject unsafe number usage paths; contracts export Money/CurrencyCode types.
+  - **Acceptance**: Unit tests cover add/subtract/compare and reject unsafe number usage paths; dto export Money/CurrencyCode types.
   - **Blocked by**: contracts-skeleton
   - **Estimate**: 2-3h
 
@@ -112,7 +112,7 @@
 - [ ] Accounts UI (online CRUD)
   - **ID**: accounts-ui
   - **Tags**: frontend, accounts
-  - **Details**: List/create/edit accounts using the accounts API/contracts; money/currency inputs without float; show per-account balance. No account owner/membership UI. Desktop tables/forms. SPEC §9–10, §18, §51.
+  - **Details**: List/create/edit accounts using the accounts API/dto; money/currency inputs without float; show per-account balance. No account owner/membership UI. Desktop tables/forms. SPEC §9–10, §18, §51.
   - **Acceptance**: Full CRUD online against contracts; currency + balance shown; empty/loading/error; usable on a wide viewport.
   - **Blocked by**: web-shell-auth, accounts-api
   - **Estimate**: 2h
@@ -130,7 +130,7 @@
 - [ ] Categories UI (online CRUD)
   - **ID**: categories-ui
   - **Tags**: frontend, categories
-  - **Details**: List/create/edit income and expense categories using the categories API/contracts. Desktop tables/forms. SPEC §17, §51.
+  - **Details**: List/create/edit income and expense categories using the categories API/dto. Desktop tables/forms. SPEC §17, §51.
   - **Acceptance**: Full CRUD online against contracts; type separation visible; empty/loading/error; usable on a wide viewport.
   - **Blocked by**: web-shell-auth, categories-api
   - **Estimate**: 2h
@@ -156,7 +156,7 @@
 - [ ] Transactions UI — income, expense, transfer + visibility filters
   - **ID**: transactions-ui
   - **Tags**: frontend, transactions
-  - **Details**: Create/list transactions against existing APIs/contracts; transfer flow; decimal money input; dates; show `createdBy`; filter all / me / selected users. Desktop tables/forms. SPEC §9, §14–16, §46, §51–52.
+  - **Details**: Create/list transactions against existing APIs/dto; transfer flow; decimal money input; dates; show `createdBy`; filter all / me / selected users. Desktop tables/forms. SPEC §9, §14–16, §46, §51–52.
   - **Acceptance**: Record income/expense/transfer; lists paginate; amounts correct; attribution + filters work; usable on a wide viewport.
   - **Blocked by**: accounts-ui, categories-ui, transactions-transfer
   - **Estimate**: 4-6h
@@ -240,7 +240,7 @@
 - [ ] Savings goals UI
   - **ID**: savings-goals-ui
   - **Tags**: frontend, savings-goals
-  - **Details**: Desktop UI against the savings-goals API/contracts. SPEC §1, §19, §50.
+  - **Details**: Desktop UI against the savings-goals API/dto. SPEC §1, §19, §50.
   - **Acceptance**: Create/update/complete goal in UI; progress shown; empty/loading/error; wide viewport.
   - **Blocked by**: savings-goals-api, web-shell-auth
   - **Estimate**: 1d
@@ -280,7 +280,7 @@
 - [ ] Debts / loans basic UI
   - **ID**: debts-loans-ui
   - **Tags**: frontend, debts
-  - **Details**: Desktop UI against the debts API/contracts. SPEC §20, §50.
+  - **Details**: Desktop UI against the debts API/dto. SPEC §20, §50.
   - **Acceptance**: CRUD + remaining/next payment in UI; empty/loading/error; wide viewport.
   - **Blocked by**: debts-loans-api, web-shell-auth
   - **Estimate**: 1d
@@ -296,7 +296,7 @@
 - [ ] Import + export UI
   - **ID**: import-export-ui
   - **Tags**: frontend, import, export
-  - **Details**: Desktop UI against the import/export API/contracts; preview before apply. SPEC §44–45, §50.
+  - **Details**: Desktop UI against the import/export API/dto; preview before apply. SPEC §44–45, §50.
   - **Acceptance**: Round-trip from UI on sample data; structured errors shown; wide viewport.
   - **Blocked by**: import-export-api, web-shell-auth
   - **Estimate**: 1d

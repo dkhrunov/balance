@@ -7,7 +7,7 @@ import {
     ACCOUNT_NAME_MAX_LENGTH,
     ACCOUNT_NAME_MIN_LENGTH,
     UpdateAccountRequest,
-} from '@balance/contracts/accounts';
+} from '@balance/dto/accounts';
 import { toAccountResponse } from '../mappers/account-response.mapper';
 import { IUpdateAccountUseCase } from '../ports/inbound/update-account.use-case';
 import { ACCOUNTS_REPOSITORY, IAccountsRepository } from '../ports/outbound/accounts.repository';

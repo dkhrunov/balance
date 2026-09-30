@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Category, CATEGORY_ERROR_CODES } from '@balance/contracts/categories';
+import { Category, CATEGORY_ERROR_CODES } from '@balance/dto/categories';
 import { toCategoryResponse } from '../mappers/category-response.mapper';
 import { IGetCategoryUseCase } from '../ports/inbound/get-category.use-case';
 import { CATEGORIES_REPOSITORY, ICategoriesRepository } from '../ports/outbound/categories.repository';

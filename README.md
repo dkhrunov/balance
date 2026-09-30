@@ -19,11 +19,11 @@ apps/
   web/     # React + Vite + TypeScript (env: .env / VITE_*)
   server/  # NestJS + TypeScript (env: .env — DB, JWT, …)
 libs/
-  contracts/  # Shared FE↔BE TypeScript contracts (stub)
-  domain/     # Domain primitives (stub)
+  dto/     # Shared FE↔BE TypeScript wire DTOs
+  domain/  # Domain primitives (stub)
 ```
 
-Import shared code via `@balance/contracts`, `@balance/domain`. App env/secrets stay in each app — no shared `libs/config`.
+Import shared code via `@balance/dto`, `@balance/domain`. App env/secrets stay in each app — no shared `libs/config`.
 
 ## Local PostgreSQL
 

@@ -1,4 +1,4 @@
-import { CategoryType, ListCategoriesResponse } from '@balance/contracts/categories';
+import { CategoryType, ListCategoriesResponse } from '@balance/dto/categories';
 
 /** Lists active categories, optionally filtered by type. */
 export interface IListCategoriesUseCase {

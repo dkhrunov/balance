@@ -1,4 +1,4 @@
-import { CreateTransactionRequest, Transaction } from '@balance/contracts/transactions';
+import { CreateTransactionRequest, Transaction } from '@balance/dto/transactions';
 
 /** Creates an income or expense transaction in the single app space. */
 export interface ICreateTransactionUseCase {

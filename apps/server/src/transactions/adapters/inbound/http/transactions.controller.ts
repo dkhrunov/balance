@@ -22,8 +22,8 @@ import {
     Transaction,
     TransactionCreatedByFilter,
     TransactionType,
-} from '@balance/contracts/transactions';
-import { UserIdentity } from '@balance/contracts/users';
+} from '@balance/dto/transactions';
+import { UserIdentity } from '@balance/dto/users';
 import { AuthGuard, CurrentUser, CsrfOriginGuard } from '../../../../auth/adapters/inbound';
 import {
     CREATE_TRANSACTION_USE_CASE,

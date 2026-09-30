@@ -1,5 +1,5 @@
 import { IconButton } from '@carbon/react';
-import { Locale } from '@balance/contracts/users';
+import { Locale } from '@balance/dto/users';
 import { useTranslation } from 'react-i18next';
 import styles from './header-preference-actions.module.scss';
 

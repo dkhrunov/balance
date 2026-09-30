@@ -1,4 +1,4 @@
-import { LoginRequest } from '@balance/contracts/auth';
+import { LoginRequest } from '@balance/dto/auth';
 import { Transform } from 'class-transformer';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 

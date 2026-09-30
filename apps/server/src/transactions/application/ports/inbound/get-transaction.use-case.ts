@@ -1,4 +1,4 @@
-import { Transaction } from '@balance/contracts/transactions';
+import { Transaction } from '@balance/dto/transactions';
 
 /** Loads one active income/expense transaction by id. */
 export interface IGetTransactionUseCase {

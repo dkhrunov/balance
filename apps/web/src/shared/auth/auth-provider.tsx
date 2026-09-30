@@ -1,14 +1,6 @@
-import {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-    ReactNode,
-} from 'react';
-import { LoginRequest } from '@balance/contracts/auth';
-import { UserIdentity } from '@balance/contracts/users';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
+import { LoginRequest } from '@balance/dto/auth';
+import { UserIdentity } from '@balance/dto/users';
 import {
     getCurrentUser,
     login as loginRequest,
@@ -90,10 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
-    const value = useMemo(
-        () => ({ status, user, login, logout }),
-        [status, user, login, logout],
-    );
+    const value = useMemo(() => ({ status, user, login, logout }), [status, user, login, logout]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

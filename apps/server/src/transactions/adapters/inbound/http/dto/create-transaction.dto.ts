@@ -2,8 +2,8 @@ import {
     CreateTransactionRequest,
     SIMPLE_TRANSACTION_TYPES,
     TRANSACTION_DESCRIPTION_MAX_LENGTH,
-} from '@balance/contracts/transactions';
-import { CURRENCY_CODES } from '@balance/contracts/currencies';
+} from '@balance/dto/transactions';
+import { CURRENCY_CODES } from '@balance/dto/currencies';
 import { IsIn, IsOptional, IsString, IsUUID, Matches, MaxLength } from 'class-validator';
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;

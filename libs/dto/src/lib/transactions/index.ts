@@ -12,9 +12,6 @@ export { CreateTransactionRequest } from './requests/create-transaction';
 export { CreateTransferRequest } from './requests/create-transfer';
 export { CreateTransferResponse } from './responses/create-transfer';
 export { DeleteTransactionRequest } from './requests/delete-transaction';
-export {
-    ListTransactionsRequest,
-    TransactionCreatedByFilter,
-} from './requests/list-transactions';
+export { ListTransactionsRequest, TransactionCreatedByFilter } from './requests/list-transactions';
 export { ListTransactionsResponse } from './responses/list-transactions';
 export { TRANSACTION_ERROR_CODES, TransactionErrorCode } from './errors/error-codes';

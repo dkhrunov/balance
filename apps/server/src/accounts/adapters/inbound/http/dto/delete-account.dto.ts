@@ -1,4 +1,4 @@
-import { DeleteAccountRequest } from '@balance/contracts/accounts';
+import { DeleteAccountRequest } from '@balance/dto/accounts';
 import { IsInt, Min } from 'class-validator';
 
 /** HTTP body for `DELETE /accounts/:id`; compatible with {@link DeleteAccountRequest}. */

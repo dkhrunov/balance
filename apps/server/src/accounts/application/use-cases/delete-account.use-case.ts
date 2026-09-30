@@ -1,5 +1,5 @@
 import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Account, ACCOUNT_ERROR_CODES, DeleteAccountRequest } from '@balance/contracts/accounts';
+import { Account, ACCOUNT_ERROR_CODES, DeleteAccountRequest } from '@balance/dto/accounts';
 import { toAccountResponse } from '../mappers/account-response.mapper';
 import { IDeleteAccountUseCase } from '../ports/inbound/delete-account.use-case';
 import { ACCOUNTS_REPOSITORY, IAccountsRepository } from '../ports/outbound/accounts.repository';

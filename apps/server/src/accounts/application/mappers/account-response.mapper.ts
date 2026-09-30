@@ -1,4 +1,4 @@
-import { Account } from '@balance/contracts/accounts';
+import { Account } from '@balance/dto/accounts';
 import { AccountModel } from '../models/account.model';
 
 /**

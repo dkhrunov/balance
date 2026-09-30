@@ -5,8 +5,8 @@ import {
     DeleteAccountRequest,
     ListAccountsResponse,
     UpdateAccountRequest,
-} from '@balance/contracts/accounts';
-import { UserIdentity } from '@balance/contracts/users';
+} from '@balance/dto/accounts';
+import { UserIdentity } from '@balance/dto/users';
 import { AuthGuard, CurrentUser, CsrfOriginGuard } from '../../../../auth/adapters/inbound';
 import {
     CREATE_ACCOUNT_USE_CASE,

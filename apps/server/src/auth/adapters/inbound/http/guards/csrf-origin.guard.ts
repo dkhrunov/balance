@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { AUTH_ERROR_CODES } from '@balance/contracts/auth';
+import { AUTH_ERROR_CODES } from '@balance/dto/auth';
 import { AUTH_CONFIG, IAuthConfig } from '../../../../application/ports/outbound/auth-config.port';
 
 @Injectable()

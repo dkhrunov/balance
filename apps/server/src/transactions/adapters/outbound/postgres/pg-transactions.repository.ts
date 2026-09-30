@@ -13,8 +13,8 @@ import {
     TransactionMutationResult,
 } from '../../../application/ports/outbound/transactions.repository';
 import { TransactionRecord } from './records/transaction.record';
-import { TransferType } from '@balance/contracts/transactions';
-import { CurrencyCode } from '@balance/contracts/currencies';
+import { TransferType } from '@balance/dto/transactions';
+import { CurrencyCode } from '@balance/dto/currencies';
 
 type TransferLeg = {
     readonly type: TransferType;

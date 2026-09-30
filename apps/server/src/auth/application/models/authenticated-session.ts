@@ -1,4 +1,4 @@
-import { UserIdentity } from '@balance/contracts/users';
+import { UserIdentity } from '@balance/dto/users';
 
 /** Application result of a successful authentication flow. */
 export type AuthenticatedSession = {

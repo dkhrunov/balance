@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { CurrentUserResponse } from '@balance/contracts/auth';
+import { CurrentUserResponse } from '@balance/dto/auth';
 import { AuthCookieService } from '../../../outbound/http/auth-cookie.service';
 import { GET_CURRENT_USER_USE_CASE, IGetCurrentUserUseCase } from '../../../../application';
 

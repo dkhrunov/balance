@@ -5,7 +5,7 @@ import {
     CATEGORY_NAME_MIN_LENGTH,
     CATEGORY_TYPES,
     CreateCategoryRequest,
-} from '@balance/contracts/categories';
+} from '@balance/dto/categories';
 import { IsIn, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 /** HTTP body for `POST /categories`; compatible with {@link CreateCategoryRequest}. */

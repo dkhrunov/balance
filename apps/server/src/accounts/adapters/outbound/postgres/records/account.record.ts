@@ -1,5 +1,5 @@
-import { AccountIcon } from '@balance/contracts/accounts';
-import { CurrencyCode } from '@balance/contracts/currencies';
+import { AccountIcon } from '@balance/dto/accounts';
+import { CurrencyCode } from '@balance/dto/currencies';
 
 /** Row shape returned from `accounts` queries (camelCase aliases). */
 export type AccountRecord = {

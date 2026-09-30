@@ -1,5 +1,5 @@
-import { CurrencyCode } from '@balance/contracts/currencies';
-import { SimpleTransactionType, TransactionType } from '@balance/contracts/transactions';
+import { CurrencyCode } from '@balance/dto/currencies';
+import { SimpleTransactionType, TransactionType } from '@balance/dto/transactions';
 import { TransactionModel } from '../../models/transaction.model';
 
 /** Result of an optimistic-concurrency mutation against the transactions store. */

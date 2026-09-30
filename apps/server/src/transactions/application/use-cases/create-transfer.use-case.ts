@@ -5,7 +5,7 @@ import {
     CreateTransferResponse,
     TRANSACTION_DESCRIPTION_MAX_LENGTH,
     TRANSACTION_ERROR_CODES,
-} from '@balance/contracts/transactions';
+} from '@balance/dto/transactions';
 import { Money, MoneyValidationError } from '@balance/domain/money';
 import { toTransactionResponse } from '../mappers/transaction-response.mapper';
 import { ICreateTransferUseCase } from '../ports/inbound/create-transfer.use-case';

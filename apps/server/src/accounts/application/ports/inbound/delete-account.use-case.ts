@@ -1,4 +1,4 @@
-import { Account, DeleteAccountRequest } from '@balance/contracts/accounts';
+import { Account, DeleteAccountRequest } from '@balance/dto/accounts';
 
 /** Soft-deletes an active account with optimistic concurrency. */
 export interface IDeleteAccountUseCase {

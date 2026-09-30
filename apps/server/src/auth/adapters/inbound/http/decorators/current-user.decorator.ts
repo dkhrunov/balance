@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { UserIdentity } from '@balance/contracts/users';
+import { UserIdentity } from '@balance/dto/users';
 import { AuthenticatedRequest } from '../guards/auth.guard';
 
 /**

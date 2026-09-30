@@ -1,4 +1,4 @@
-import { CategoryType } from '@balance/contracts/categories';
+import { CategoryType } from '@balance/dto/categories';
 
 /** Application-layer category aggregate used by use cases and the repository. */
 export type CategoryModel = {

@@ -1,4 +1,4 @@
-import { UserPreferences } from '@balance/contracts/users';
+import { UserPreferences } from '@balance/dto/users';
 
 /** Loads the authenticated user's persisted UI preferences. */
 export interface IGetUserPreferencesUseCase {

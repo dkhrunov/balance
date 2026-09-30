@@ -1,5 +1,5 @@
 import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Category, CATEGORY_ERROR_CODES, DeleteCategoryRequest } from '@balance/contracts/categories';
+import { Category, CATEGORY_ERROR_CODES, DeleteCategoryRequest } from '@balance/dto/categories';
 import { toCategoryResponse } from '../mappers/category-response.mapper';
 import { IDeleteCategoryUseCase } from '../ports/inbound/delete-category.use-case';
 import { CATEGORIES_REPOSITORY, ICategoriesRepository } from '../ports/outbound/categories.repository';

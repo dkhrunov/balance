@@ -1,4 +1,4 @@
-import { Category, DeleteCategoryRequest } from '@balance/contracts/categories';
+import { Category, DeleteCategoryRequest } from '@balance/dto/categories';
 
 /** Soft-deletes an active category with optimistic concurrency. */
 export interface IDeleteCategoryUseCase {

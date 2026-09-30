@@ -1,6 +1,6 @@
 import { sql } from '@ts-safeql/sql-tag';
 import { Injectable } from '@nestjs/common';
-import { CategoryType } from '@balance/contracts/categories';
+import { CategoryType } from '@balance/dto/categories';
 import { DatabaseService } from '../../../../database/database.service';
 import { CategoryModel } from '../../../application/models/category.model';
 import {

@@ -1,14 +1,5 @@
-import {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-    ReactNode,
-    useRef,
-} from 'react';
-import { Locale, Theme, UserPreferences } from '@balance/contracts/users';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode, useRef } from 'react';
+import { Locale, Theme, UserPreferences } from '@balance/dto/users';
 import { getUserPreferences, updateUserPreferences } from '../api';
 import { useAuth } from '../auth';
 import { applyLocale, isLocale, readCachedLocale } from '../i18n';
@@ -74,65 +65,74 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         };
     }, [status]);
 
-    const persistRemote = useCallback(async (preferences: UserPreferences): Promise<void> => {
-        if (status !== 'authenticated') {
-            return;
-        }
+    const persistRemote = useCallback(
+        async (preferences: UserPreferences): Promise<void> => {
+            if (status !== 'authenticated') {
+                return;
+            }
 
-        setIsSyncing(true);
-        setError(null);
+            setIsSyncing(true);
+            setError(null);
 
-        try {
-            await updateUserPreferences(preferences);
-        } catch {
-            setError('preferences.saveFailed');
-            throw new Error('preferences.saveFailed');
-        } finally {
-            setIsSyncing(false);
-        }
-    }, [status]);
+            try {
+                await updateUserPreferences(preferences);
+            } catch {
+                setError('preferences.saveFailed');
+                throw new Error('preferences.saveFailed');
+            } finally {
+                setIsSyncing(false);
+            }
+        },
+        [status],
+    );
 
-    const setLocale = useCallback(async (locale: Locale): Promise<void> => {
-        if (!isLocale(locale)) {
-            return;
-        }
+    const setLocale = useCallback(
+        async (locale: Locale): Promise<void> => {
+            if (!isLocale(locale)) {
+                return;
+            }
 
-        const previous = preferencesRef.current;
-        const next = { ...previous, locale: locale };
+            const previous = preferencesRef.current;
+            const next = { ...previous, locale: locale };
 
-        await applyLocale(locale);
-        setLocaleState(locale);
-        preferencesRef.current = next;
+            await applyLocale(locale);
+            setLocaleState(locale);
+            preferencesRef.current = next;
 
-        try {
-            await persistRemote(next);
-        } catch {
-            await applyLocale(previous.locale);
-            setLocaleState(previous.locale);
-            preferencesRef.current = previous;
-        }
-    }, [persistRemote]);
+            try {
+                await persistRemote(next);
+            } catch {
+                await applyLocale(previous.locale);
+                setLocaleState(previous.locale);
+                preferencesRef.current = previous;
+            }
+        },
+        [persistRemote],
+    );
 
-    const setTheme = useCallback(async (theme: Theme): Promise<void> => {
-        if (!isTheme(theme)) {
-            return;
-        }
+    const setTheme = useCallback(
+        async (theme: Theme): Promise<void> => {
+            if (!isTheme(theme)) {
+                return;
+            }
 
-        const previous = preferencesRef.current;
-        const next = { ...previous, theme: theme };
+            const previous = preferencesRef.current;
+            const next = { ...previous, theme: theme };
 
-        applyTheme(theme);
-        setThemeState(theme);
-        preferencesRef.current = next;
+            applyTheme(theme);
+            setThemeState(theme);
+            preferencesRef.current = next;
 
-        try {
-            await persistRemote(next);
-        } catch {
-            applyTheme(previous.theme);
-            setThemeState(previous.theme);
-            preferencesRef.current = previous;
-        }
-    }, [persistRemote]);
+            try {
+                await persistRemote(next);
+            } catch {
+                applyTheme(previous.theme);
+                setThemeState(previous.theme);
+                preferencesRef.current = previous;
+            }
+        },
+        [persistRemote],
+    );
 
     const preferencesValue = useMemo(
         () => ({
@@ -146,9 +146,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         [locale, theme, isSyncing, error, setLocale, setTheme],
     );
 
-    return (
-        <PreferencesContext.Provider value={preferencesValue}>{children}</PreferencesContext.Provider>
-    );
+    return <PreferencesContext.Provider value={preferencesValue}>{children}</PreferencesContext.Provider>;
 }
 
 /** Returns locale/theme preferences and setters. Requires {@link PreferencesProvider}. */

@@ -1,4 +1,4 @@
-import { Account, UpdateAccountRequest } from '@balance/contracts/accounts';
+import { Account, UpdateAccountRequest } from '@balance/dto/accounts';
 
 /** Updates name and icon on an active account with optimistic concurrency. */
 export interface IUpdateAccountUseCase {

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { CurrentUserResponse, LoginResponse } from '@balance/contracts/auth';
-import { UserIdentity } from '@balance/contracts/users';
+import { CurrentUserResponse, LoginResponse } from '@balance/dto/auth';
+import { UserIdentity } from '@balance/dto/users';
 import { AuthCookieService } from '../../outbound/http/auth-cookie.service';
 import {
     ILoginUseCase,

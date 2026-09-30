@@ -20,8 +20,8 @@ import {
     DeleteCategoryRequest,
     ListCategoriesResponse,
     UpdateCategoryRequest,
-} from '@balance/contracts/categories';
-import { UserIdentity } from '@balance/contracts/users';
+} from '@balance/dto/categories';
+import { UserIdentity } from '@balance/dto/users';
 import { AuthGuard, CurrentUser, CsrfOriginGuard } from '../../../../auth/adapters/inbound';
 import {
     CREATE_CATEGORY_USE_CASE,

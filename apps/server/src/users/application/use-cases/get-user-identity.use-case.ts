@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserIdentity } from '@balance/contracts/users';
+import { UserIdentity } from '@balance/dto/users';
 import { toUserIdentity } from '../mappers/user-response.mapper';
 import { IUsersRepository, USERS_REPOSITORY } from '../ports/outbound/users.repository';
 import { IGetUserIdentityUseCase } from '../ports/inbound/get-user-identity.use-case';

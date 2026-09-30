@@ -4,7 +4,7 @@ import {
     ACCOUNT_NAME_MAX_LENGTH,
     ACCOUNT_NAME_MIN_LENGTH,
     UpdateAccountRequest,
-} from '@balance/contracts/accounts';
+} from '@balance/dto/accounts';
 import { IsInt, IsString, MaxLength, Min, MinLength } from 'class-validator';
 
 /** HTTP body for `PUT /accounts/:id`; compatible with {@link UpdateAccountRequest}. */

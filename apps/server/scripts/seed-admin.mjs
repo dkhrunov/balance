@@ -19,7 +19,7 @@ if (!isValidEmail(email)) {
     throw new Error('SEED_ADMIN_EMAIL must be a valid email address');
 }
 
-// Keep in sync with libs/contracts (DISPLAY_NAME_*, CURRENCY_CODES).
+// Keep in sync with libs/dto (DISPLAY_NAME_*, CURRENCY_CODES).
 const DISPLAY_NAME_MIN_LENGTH = 1;
 const DISPLAY_NAME_MAX_LENGTH = 120;
 const CURRENCY_CODES = ['RUB', 'USD', 'EUR'];

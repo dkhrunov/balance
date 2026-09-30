@@ -4,7 +4,7 @@ import {
     CATEGORY_NAME_MAX_LENGTH,
     CATEGORY_NAME_MIN_LENGTH,
     UpdateCategoryRequest,
-} from '@balance/contracts/categories';
+} from '@balance/dto/categories';
 import { IsInt, IsString, MaxLength, Min, MinLength } from 'class-validator';
 
 /** HTTP body for `PUT /categories/:id`; compatible with {@link UpdateCategoryRequest}. */

@@ -4,7 +4,7 @@ import {
     ListTransactionsResponse,
     TRANSACTION_ERROR_CODES,
     TRANSACTION_TYPES,
-} from '@balance/contracts/transactions';
+} from '@balance/dto/transactions';
 import { toTransactionResponse } from '../mappers/transaction-response.mapper';
 import { IListTransactionsUseCase } from '../ports/inbound/list-transactions.use-case';
 import { ITransactionsRepository, TRANSACTIONS_REPOSITORY } from '../ports/outbound/transactions.repository';

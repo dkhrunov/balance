@@ -1,5 +1,5 @@
 import { Controller, Get, Inject, Put, Body, UseGuards } from '@nestjs/common';
-import { GetUserPreferencesResponse, UpdateUserPreferencesRequest, UserIdentity } from '@balance/contracts/users';
+import { GetUserPreferencesResponse, UpdateUserPreferencesRequest, UserIdentity } from '@balance/dto/users';
 import { AuthGuard, CurrentUser, CsrfOriginGuard } from '../../../../auth/adapters/inbound';
 import {
     GET_USER_PREFERENCES_USE_CASE,

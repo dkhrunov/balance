@@ -26,7 +26,7 @@ Do not apply FSD or Vercel React rules to `apps/server`. Do not apply Nest hexag
 1. Read the chosen task in `TASKS.md` and the cited sections of `docs/requirements/SPEC.md` (start with §1 Product Scope).
 2. Study existing architecture and analogs in the repo; do not invent a new pattern when a suitable one already exists.
 3. Respect Nx dependency boundaries.
-4. Assess impact: domain, contracts, DB schema, sync, offline storage, authz, multi-user attribution, money/currency, user preferences (locale/theme). Do not add a second financial space or account membership in MVP (SPEC §9).
+4. Assess impact: domain, dto, DB schema, sync, offline storage, authz, multi-user attribution, money/currency, user preferences (locale/theme). Do not add a second financial space or account membership in MVP (SPEC §9).
 5. If the task is Post-MVP, do not pull MVP work into scope (and vice versa: do not pre-build Post-MVP tables/APIs).
 6. If multiple layers are affected — short plan first.
 7. After implementation: typecheck, lint, relevant tests.
@@ -35,7 +35,7 @@ Do not apply FSD or Vercel React rules to `apps/server`. Do not apply Nest hexag
 
 - Offline-first: client works without network; server is authoritative after sync.
 - Desktop-first UI (MVP): design and accept against a wide viewport (Carbon `lg+`). A dedicated mobile/tablet layout is Post-MVP; do not spend MVP time on a phone layout.
-- API contract-first: shared TypeScript contracts in `libs/contracts`; do not duplicate DTOs between FE and BE. Feature delivery is **contracts → backend → frontend**; do not start feature UI before that feature’s contract and API exist. Inside each `libs/contracts` feature domain use layers `models/`, `requests/`, `responses/`, `errors/`, `constraints/` (always present; see SPEC §6 Internal layout); import only via `@balance/contracts/<domain>`.
+- API contract-first: shared TypeScript wire DTOs in `libs/dto`; do not duplicate DTOs between FE and BE. Feature delivery is **dto → backend → frontend**; do not start feature UI before that feature’s DTO and API exist. Inside each `libs/dto` feature domain use layers `models/`, `requests/`, `responses/`, `errors/`, `constraints/` (always present; see SPEC §6 Internal layout); import only via `@balance/dto/<domain>`.
 - Money: never use JS `number` in calculations; decimal-safe `Money` (`amount: string` + currency); in PostgreSQL — `NUMERIC` (or agreed minor units).
 - Mutations are idempotent (`operationId`); for concurrently mutable entities — optimistic concurrency (`version`).
 - For sync entities — soft delete / tombstone (`deletedAt`).
@@ -60,7 +60,7 @@ Do not apply FSD or Vercel React rules to `apps/server`. Do not apply Nest hexag
 | Server        | NestJS, PostgreSQL (`pg`), `@ts-safeql/sql-tag`, Docker, JWT                                         |
 | Tests (web)   | Unit/component: **Vitest** + React Testing Library; E2E: **Playwright**                              |
 | Tests (server)| Unit/integration: **Jest** (+ Nest testing / supertest); E2E of critical flows: **Playwright**       |
-| Shared        | `libs/contracts`, `libs/domain` (+ feature/sync libs as needed)                                      |
+| Shared        | `libs/dto`, `libs/domain` (+ feature/sync libs as needed)                                      |
 | Env / secrets | Only in `apps/web` and `apps/server` (`.env`); not a shared lib                                      |
 
 Adapt paths to the actual workspace layout.
@@ -75,7 +75,7 @@ For swappable modules (use cases, repositories, session/auth facades, and other 
 
 **contract (`interface I*`) → implementation → token**
 
-- Swappable contracts use `interface I*` (`ILoginUseCase`, `ISession`). Data shapes and wire types (`LoginRequest`, `UserRecord`, `@balance/contracts`) use `interface`/`type` **without** the `I` prefix; prefer `type` for data. ESLint enforces the `I` prefix only in `apps/**`.
+- Swappable contracts use `interface I*` (`ILoginUseCase`, `ISession`). Data shapes and wire types (`LoginRequest`, `UserRecord`, `@balance/dto`) use `interface`/`type` **without** the `I` prefix; prefer `type` for data. ESLint enforces the `I` prefix only in `apps/**`.
 - Resolve by **token**; consumers are typed as the `I*` contract, not the concrete class. Define the contract first, then the implementation, then the binding.
 - **Backend token:** Nest injection token (`Symbol` / string) in `*.module.ts`.
 - **Frontend token:** React `Context` + Provider + hook — not Nest-style `Symbol` DI. Plain imports are fine for trivial single-implementation helpers that are not swapped in tests.
@@ -83,7 +83,7 @@ For swappable modules (use cases, repositories, session/auth facades, and other 
 
 ## Working the Task Queue
 
-1. Open `TASKS.md`. Take the **first unchecked** task in the highest non-empty priority (`P0` → `P1` → `P2` → `P3`) that has no unresolved `**Blocked by**`. Prefer finishing MVP (`P1`) before Post-MVP (`P2`/`P3`); see SPEC §1. Work **feature by feature**: backend (contracts + API) for that feature, then its frontend, then the next feature. Do not batch all backend before any frontend.
+1. Open `TASKS.md`. Take the **first unchecked** task in the highest non-empty priority (`P0` → `P1` → `P2` → `P3`) that has no unresolved `**Blocked by**`. Prefer finishing MVP (`P1`) before Post-MVP (`P2`/`P3`); see SPEC §1. Work **feature by feature**: backend (dto + API) for that feature, then its frontend, then the next feature. Do not batch all backend before any frontend.
 2. Claim the task line with an `(@agent-id)` suffix while working; remove the claim if you stop unfinished.
 3. Stay within that task’s scope. For complex tasks fill in `**Plan**` before coding; remove `**Plan**` when done.
 4. When **Acceptance** is met — mark `- [x]`. After merge, prefer deleting completed tasks (history lives in git).
@@ -93,7 +93,7 @@ For swappable modules (use cases, repositories, session/auth facades, and other 
 
 ## Hacks and workarounds
 
-Do **not** silently land a hack, workaround, or library-internal override to “just make it work.” That includes (not exhaustive): targeting Carbon/internal class names (`:global(.cds--…)`), fighting a design-system layout with CSS, `@ts-ignore` / `any` to paper over types, one-off flags, duplicated contracts, or bypassing an existing project pattern.
+Do **not** silently land a hack, workaround, or library-internal override to “just make it work.” That includes (not exhaustive): targeting Carbon/internal class names (`:global(.cds--…)`), fighting a design-system layout with CSS, `@ts-ignore` / `any` to paper over types, one-off flags, duplicated DTOs, or bypassing an existing project pattern.
 
 When the proper API or composition is missing, unclear, or would require a workaround:
 
@@ -107,7 +107,7 @@ An exception is allowed only when the user explicitly chooses one of the propose
 
 ## API / Schema Changes
 
-1. Shared contract → 2. Backend (schema, API, authz, tests) → 3. Frontend client built against those contracts → 4. Tests → 5. Account for offline clients with an old queue (`schemaVersion` / sync protocol).
+1. Shared DTO (`libs/dto`) → 2. Backend (schema, API, authz, tests) → 3. Frontend client built against those DTOs → 4. Tests → 5. Account for offline clients with an old queue (`schemaVersion` / sync protocol).
 
 Do not start feature UI until step 2 exists for that feature.
 
@@ -140,7 +140,7 @@ const result = await pool.query<UserRow>(sql`
 
 ## Definition of Done (unless the task narrows it)
 
-As needed: domain / contracts / schema; API then UI (UI only after the API exists); offline/pending mutation path; idempotency; authz on backend; decimal-safe money; loading/error/empty in UI; desktop UX (mobile layout is not an MVP DoD item); tests for non-trivial logic; lint + typecheck; Nx boundaries respected.
+As needed: domain / dto / schema; API then UI (UI only after the API exists); offline/pending mutation path; idempotency; authz on backend; decimal-safe money; loading/error/empty in UI; desktop UX (mobile layout is not an MVP DoD item); tests for non-trivial logic; lint + typecheck; Nx boundaries respected.
 
 ## Must NOT
 
@@ -150,12 +150,12 @@ As needed: domain / contracts / schema; API then UI (UI only after the API exist
 - Rely only on frontend authorization
 - Non-idempotent sync / silent overwrite of concurrent edits
 - Physically delete sync entities without a tombstone when sync requires one
-- Duplicate contracts; paper over gaps with `any` / `@ts-ignore`
+- Duplicate DTOs; paper over gaps with `any` / `@ts-ignore`
 - Silently apply hacks/workarounds (CSS against library internals, type escapes, pattern bypasses) instead of stopping to propose options
 - Require network to read local data
 - Treat `navigator.onLine === true` as proof of real connectivity
 - Treat a mobile/tablet layout as an MVP deliverable
-- Start feature UI before that feature’s contracts and backend API exist
+- Start feature UI before that feature’s DTOs and backend API exist
 - Introduce multiple financial spaces, per-user spaces, or account membership/roles in MVP
 - Use string-concatenated or untyped SQL in `apps/server/src` when a parameterized `sql`-tag query is appropriate
 - Use `import type` or inline `type` in import lists
@@ -181,7 +181,7 @@ npx nx run-many -t lint,typecheck,test
 npx nx graph
 
 # Single project
-npx nx lint <project>      # web | server | contracts | domain
+npx nx lint <project>      # web | server | dto | domain
 npx nx typecheck <project>
 npx nx test <project>      # Vitest (web/FE) or Jest (server/BE)
 npx nx e2e <project>       # Playwright (when an e2e project exists)

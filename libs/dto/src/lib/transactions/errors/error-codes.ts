@@ -8,5 +8,4 @@ export const TRANSACTION_ERROR_CODES = {
     sameAccount: 'TRANSACTION_TRANSFER_SAME_ACCOUNT',
 } as const;
 
-export type TransactionErrorCode =
-    (typeof TRANSACTION_ERROR_CODES)[keyof typeof TRANSACTION_ERROR_CODES];
+export type TransactionErrorCode = (typeof TRANSACTION_ERROR_CODES)[keyof typeof TRANSACTION_ERROR_CODES];

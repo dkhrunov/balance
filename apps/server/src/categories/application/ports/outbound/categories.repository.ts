@@ -1,4 +1,4 @@
-import { CategoryType } from '@balance/contracts/categories';
+import { CategoryType } from '@balance/dto/categories';
 import { CategoryModel } from '../../models/category.model';
 
 /** Result of an optimistic-concurrency mutation against the categories store. */

@@ -9,7 +9,7 @@ import {
     CATEGORY_TYPES,
     CreateCategoryRequest,
     DEFAULT_CATEGORY_ICON,
-} from '@balance/contracts/categories';
+} from '@balance/dto/categories';
 import { toCategoryResponse } from '../mappers/category-response.mapper';
 import { ICreateCategoryUseCase } from '../ports/inbound/create-category.use-case';
 import { CATEGORIES_REPOSITORY, ICategoriesRepository } from '../ports/outbound/categories.repository';

@@ -1,4 +1,4 @@
-import { Transaction } from '@balance/contracts/transactions';
+import { Transaction } from '@balance/dto/transactions';
 import { TransactionModel } from '../models/transaction.model';
 
 /**
