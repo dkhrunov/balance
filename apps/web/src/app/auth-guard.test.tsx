@@ -11,7 +11,7 @@ vi.mock('../shared/auth', () => ({ useAuth }));
 function renderWithProviders(ui: React.ReactElement) {
     return render(
         <I18nProvider>
-            <MemoryRouter initialEntries={['/transactions']}>{ui}</MemoryRouter>
+            <MemoryRouter initialEntries={['/']}>{ui}</MemoryRouter>
         </I18nProvider>,
     );
 }
@@ -23,7 +23,7 @@ describe('AuthGuard', () => {
         renderWithProviders(
             <Routes>
                 <Route element={<AuthGuard />}>
-                    <Route path="/transactions" element={<p>Transactions</p>} />
+                    <Route path="/" element={<p>Dashboard</p>} />
                 </Route>
                 <Route path="/login" element={<p>Login</p>} />
             </Routes>,
@@ -38,12 +38,12 @@ describe('AuthGuard', () => {
         renderWithProviders(
             <Routes>
                 <Route element={<AuthGuard />}>
-                    <Route path="/transactions" element={<p>Transactions</p>} />
+                    <Route path="/" element={<p>Dashboard</p>} />
                 </Route>
                 <Route path="/login" element={<p>Login</p>} />
             </Routes>,
         );
 
-        expect(screen.getByText('Transactions')).toBeInTheDocument();
+        expect(screen.getByText('Dashboard')).toBeInTheDocument();
     });
 });

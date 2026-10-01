@@ -80,7 +80,7 @@ export function Layout({ children }: LayoutProps) {
                             />
                             <HeaderName
                                 as={Link}
-                                to="/transactions"
+                                to="/"
                                 prefix=""
                                 className={styles.header}
                             >
@@ -139,7 +139,11 @@ export function Layout({ children }: LayoutProps) {
                                         as={NavLink}
                                         to={item.path}
                                         renderIcon={item.icon}
-                                        isActive={location.pathname.startsWith(item.path)}
+                                        isActive={
+                                            item.path === '/'
+                                                ? location.pathname === '/'
+                                                : location.pathname.startsWith(item.path)
+                                        }
                                         onClick={() => onSideNavLinkClick(isSideNavExpanded, onClickSideNavExpand)}
                                     >
                                         {t(item.labelKey)}

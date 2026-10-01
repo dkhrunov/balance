@@ -1,5 +1,5 @@
 import { ComponentType } from 'react';
-import { Finance, Settings, Wallet, Category } from '@carbon/react/icons';
+import { Dashboard, Settings } from '@carbon/react/icons';
 
 export type AppNavItem = {
     id: string;
@@ -10,8 +10,6 @@ export type AppNavItem = {
 
 /** Destinations for desktop SideNav (labels via i18n keys). */
 export const APP_NAV_ITEMS: AppNavItem[] = [
-    { id: 'transactions', labelKey: 'nav.transactions', path: '/transactions', icon: Finance },
-    { id: 'accounts', labelKey: 'nav.accounts', path: '/accounts', icon: Wallet },
-    { id: 'categories', labelKey: 'nav.categories', path: '/categories', icon: Category },
+    { id: 'dashboard', labelKey: 'nav.dashboard', path: '/', icon: Dashboard },
     { id: 'settings', labelKey: 'nav.settings', path: '/settings', icon: Settings },
 ];

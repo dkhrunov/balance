@@ -11,14 +11,8 @@ import { Layout } from './layout';
 const LoginPage = lazy(() =>
     import('../pages/login').then((module) => ({ default: module.LoginPage })),
 );
-const TransactionsPage = lazy(() =>
-    import('../pages/transactions').then((module) => ({ default: module.TransactionsPage })),
-);
-const AccountsPage = lazy(() =>
-    import('../pages/accounts').then((module) => ({ default: module.AccountsPage })),
-);
-const CategoriesPage = lazy(() =>
-    import('../pages/categories').then((module) => ({ default: module.CategoriesPage })),
+const DashboardPage = lazy(() =>
+    import('../pages/dashboard').then((module) => ({ default: module.DashboardPage })),
 );
 const SettingsPage = lazy(() =>
     import('../pages/settings').then((module) => ({ default: module.SettingsPage })),
@@ -44,15 +38,12 @@ export function App() {
                                 <Route path="/login" element={<LoginPage />} />
                                 <Route element={<AuthGuard />}>
                                     <Route element={<Layout />}>
-                                        <Route path="/transactions" element={<TransactionsPage />} />
-                                        <Route path="/accounts" element={<AccountsPage />} />
-                                        <Route path="/categories" element={<CategoriesPage />} />
+                                        <Route path="/" element={<DashboardPage />} />
                                         <Route path="/settings" element={<SettingsPage />} />
                                         <Route path="/profile" element={<ProfilePage />} />
                                     </Route>
                                 </Route>
-                                <Route path="/" element={<Navigate to="/transactions" replace />} />
-                                <Route path="*" element={<Navigate to="/transactions" replace />} />
+                                <Route path="*" element={<Navigate to="/" replace />} />
                             </Routes>
                         </Suspense>
                     </BrowserRouter>

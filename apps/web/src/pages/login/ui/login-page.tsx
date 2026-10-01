@@ -139,7 +139,7 @@ export function LoginPage() {
 
 function getReturnPath(state: unknown): string {
     if (!isReturnLocation(state)) {
-        return '/transactions';
+        return '/';
     }
 
     return `${state.from.pathname}${state.from.search}${state.from.hash}`;
