@@ -33,6 +33,7 @@ export class UsersPreferencesController {
         const preferences: UpdateUserPreferencesRequest = {
             locale: body.locale,
             theme: body.theme,
+            accountOrder: body.accountOrder,
         };
 
         return this.updateUserPreferencesUseCase.execute(user.id, preferences);

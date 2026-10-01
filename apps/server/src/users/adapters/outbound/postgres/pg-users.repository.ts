@@ -46,7 +46,8 @@ export class PgUsersRepository implements IUsersRepository {
         const result = await this.database.getPool().query<UserPreferencesRecord>(sql`
             SELECT
                 locale,
-                theme
+                theme,
+                account_order AS "accountOrder"
             FROM users
             WHERE id = ${userId}::uuid
         `);
@@ -58,14 +59,16 @@ export class PgUsersRepository implements IUsersRepository {
         userId: string,
         preferences: UserPreferencesModel,
     ): Promise<UserPreferencesModel | null> {
+        const accountOrder = [...preferences.accountOrder];
         const result = await this.database.getPool().query<UserPreferencesRecord>(sql`
             UPDATE users
             SET
                 locale = ${preferences.locale},
                 theme = ${preferences.theme},
+                account_order = ${accountOrder}::uuid[],
                 updated_at = now()
             WHERE id = ${userId}::uuid
-            RETURNING locale, theme
+            RETURNING locale, theme, account_order AS "accountOrder"
         `);
 
         return result.rows[0] ? this.toUserPreferences(result.rows[0]) : null;
@@ -86,6 +89,7 @@ export class PgUsersRepository implements IUsersRepository {
         return {
             locale: record.locale,
             theme: record.theme,
+            accountOrder: record.accountOrder ?? [],
         };
     }
 }

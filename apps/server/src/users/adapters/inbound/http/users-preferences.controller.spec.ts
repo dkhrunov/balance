@@ -93,19 +93,21 @@ describe('UsersPreferencesController', () => {
             .set('Cookie', authCookies)
             .expect(200)
             .expect(({ body }) => {
-                expect(body).toEqual({ locale: 'en', theme: 'system' });
+                expect(body).toEqual({ locale: 'en', theme: 'system', accountOrder: [] });
             });
     });
 
     it('updates preferences and returns the same values on GET', async () => {
+        const accountId = '11111111-1111-4111-8111-111111111111';
+
         await request(app.getHttpServer())
             .put('/api/users/me/preferences')
             .set('Origin', origin)
             .set('Cookie', authCookies)
-            .send({ locale: 'ru', theme: 'dark' })
+            .send({ locale: 'ru', theme: 'dark', accountOrder: [accountId] })
             .expect(200)
             .expect(({ body }) => {
-                expect(body).toEqual({ locale: 'ru', theme: 'dark' });
+                expect(body).toEqual({ locale: 'ru', theme: 'dark', accountOrder: [accountId] });
             });
 
         await request(app.getHttpServer())
@@ -113,7 +115,7 @@ describe('UsersPreferencesController', () => {
             .set('Cookie', authCookies)
             .expect(200)
             .expect(({ body }) => {
-                expect(body).toEqual({ locale: 'ru', theme: 'dark' });
+                expect(body).toEqual({ locale: 'ru', theme: 'dark', accountOrder: [accountId] });
             });
     });
 
@@ -121,7 +123,7 @@ describe('UsersPreferencesController', () => {
         await request(app.getHttpServer())
             .put('/api/users/me/preferences')
             .set('Cookie', authCookies)
-            .send({ locale: 'en', theme: 'light' })
+            .send({ locale: 'en', theme: 'light', accountOrder: [] })
             .expect(403)
             .expect(({ body }) => {
                 expect(body.code).toBe('AUTH_CSRF_REJECTED');
@@ -133,7 +135,7 @@ describe('UsersPreferencesController', () => {
             .put('/api/users/me/preferences')
             .set('Origin', origin)
             .set('Cookie', authCookies)
-            .send({ locale: 'de', theme: 'dark' })
+            .send({ locale: 'de', theme: 'dark', accountOrder: [] })
             .expect(400)
             .expect(({ body }) => {
                 expect(body.message).toBeDefined();

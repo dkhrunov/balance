@@ -15,4 +15,5 @@ export type UserRecord = {
 export type UserPreferencesRecord = {
     readonly locale: Locale;
     readonly theme: Theme;
+    readonly accountOrder: string[];
 };

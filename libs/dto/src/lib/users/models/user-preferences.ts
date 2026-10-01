@@ -1,3 +1,4 @@
+import { EntityId } from '../../common';
 import { Locale } from './locale';
 import { Theme } from './theme';
 
@@ -5,4 +6,9 @@ import { Theme } from './theme';
 export interface UserPreferences {
     readonly locale: Locale;
     readonly theme: Theme;
+    /**
+     * Preferred display order of account ids for the dashboard carousel.
+     * Unknown or deleted ids are ignored by clients; missing accounts are appended.
+     */
+    readonly accountOrder: readonly EntityId[];
 }
