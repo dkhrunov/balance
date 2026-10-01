@@ -41,7 +41,7 @@ export class AccountsController {
 
     @Get()
     @UseGuards(AuthGuard)
-    public getAccounts(): Promise<ListAccountsResponse> {
+    public listAccounts(): Promise<ListAccountsResponse> {
         return this.listAccountsUseCase.execute();
     }
 

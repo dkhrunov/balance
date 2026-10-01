@@ -56,7 +56,7 @@ export class CategoriesController {
 
     @Get()
     @UseGuards(AuthGuard)
-    public getCategories(@Query('type') type?: string): Promise<ListCategoriesResponse> {
+    public listCategories(@Query('type') type?: string): Promise<ListCategoriesResponse> {
         const filter = this.parseOptionalType(type);
 
         return this.listCategoriesUseCase.execute(filter);
