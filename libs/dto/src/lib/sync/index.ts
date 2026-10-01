@@ -1,1 +1,1 @@
-export { SchemaVersion, SyncContractPlaceholder } from './models/sync-placeholder';
+export type { SchemaVersion, SyncContractPlaceholder } from './models/sync-placeholder';

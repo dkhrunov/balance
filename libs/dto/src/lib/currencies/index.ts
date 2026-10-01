@@ -1,2 +1,3 @@
-export { CURRENCY_CODES, CurrencyCode } from './models/currency-code';
-export { Money } from './models/money';
+export { CURRENCY_CODES } from './models/currency-code';
+export type { CurrencyCode } from './models/currency-code';
+export type { Money } from './models/money';
