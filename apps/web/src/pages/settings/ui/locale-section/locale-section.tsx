@@ -1,3 +1,4 @@
+import { AsciiReveal } from 'ascii-reveal';
 import { useTranslation } from 'react-i18next';
 import { usePreferences } from '../../../../shared/preferences';
 import { LocaleSwitcher } from './locale-switcher';
@@ -13,14 +14,16 @@ export function LocaleSection() {
                 {t('locale.title')}
             </h4>
 
-            <LocaleSwitcher
-                id="settings-locale"
-                locale={locale}
-                onChange={setLocale}
-                disabled={isSyncing}
-                size="md"
-                showLabel
-            />
+            <AsciiReveal>
+                <LocaleSwitcher
+                    id="settings-locale"
+                    locale={locale}
+                    onChange={setLocale}
+                    disabled={isSyncing}
+                    size="md"
+                    showLabel
+                />
+            </AsciiReveal>
         </section>
     );
 }

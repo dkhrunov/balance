@@ -35,8 +35,9 @@ export function CategoryList({
             label={title}
             kind="on-page"
             size="md"
+            data-ascii="surface"
             action={
-                <IconButton kind="ghost" label={t('categories.actions.add')} onClick={onAdd}>
+                <IconButton kind="ghost" label={t('categories.actions.add')} onClick={onAdd} data-ascii="fade">
                     <Add />
                 </IconButton>
             }
@@ -51,11 +52,12 @@ export function CategoryList({
                         key={category.id}
                         renderIcon={resolveIcon(category.icon)}
                         action={
-                            <>
+                            <span data-ascii="fade">
                                 <IconButton
                                     kind="ghost"
                                     label={t('categories.actions.edit')}
                                     onClick={() => onEdit(category)}
+                                    data-ascii="fade"
                                 >
                                     <Edit />
                                 </IconButton>
@@ -63,10 +65,11 @@ export function CategoryList({
                                     kind="ghost"
                                     label={t('categories.actions.delete')}
                                     onClick={() => onDelete(category)}
+                                    data-ascii="fade"
                                 >
                                     <TrashCan />
                                 </IconButton>
-                            </>
+                            </span>
                         }
                     >
                         {category.name}

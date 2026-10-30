@@ -37,13 +37,13 @@ export function LocaleSwitcher({
     const selectedIndex = LOCALE_OPTIONS.indexOf(locale);
 
     return (
-        <div className={styles.root}>
+        <div className={styles.root} data-ascii="surface">
             {showLabel ? (
                 <FormLabel id={`${id}-label`} className={styles.label}>
                     {t('locale.language')}
                 </FormLabel>
             ) : null}
-            <div className={styles.textControl}>
+            <div className={styles.textControl} data-ascii="fade">
                 <ContentSwitcher
                     aria-labelledby={showLabel ? `${id}-label` : undefined}
                     aria-label={showLabel ? undefined : t('locale.language')}
@@ -55,8 +55,8 @@ export function LocaleSwitcher({
                         }
                     }}
                 >
-                    <Switch name="en" text="EN" disabled={disabled} />
-                    <Switch name="ru" text="RU" disabled={disabled} />
+                    <Switch name="en" text="EN" disabled={disabled} data-ascii="media" />
+                    <Switch name="ru" text="RU" disabled={disabled} data-ascii="media" />
                 </ContentSwitcher>
             </div>
         </div>

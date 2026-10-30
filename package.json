@@ -86,6 +86,7 @@
         "@nestjs/platform-express": "^11.0.0",
         "@ts-safeql/sql-tag": "^0.2.2",
         "argon2": "^0.45.1",
+        "ascii-reveal": "^0.3.0",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.15.1",
         "i18next": "^26.4.2",

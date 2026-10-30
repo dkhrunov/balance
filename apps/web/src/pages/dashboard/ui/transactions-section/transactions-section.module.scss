@@ -1,6 +1,6 @@
 @use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
-@use '@carbon/react/scss/utilities/skeleton' as *;
 
 .section {
     display: flex;
@@ -13,37 +13,29 @@
     margin: 0 0 $spacing-05;
 }
 
-// className lands on the <table> (Carbon DataTableSkeleton).
 .tableSkeleton {
-    table-layout: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-03;
     width: 100%;
+    padding: $spacing-05;
+    background-color: $layer-01;
+}
 
-    // Actions: two ghost IconButtons (sm) — keep the last column narrow.
-    th:last-child,
-    td:last-child {
-        width: 5.5rem;
-        max-width: 5.5rem;
-        padding-inline: $spacing-03;
-        vertical-align: middle;
-        white-space: nowrap;
-        text-align: end;
-    }
+.toolbarSkeleton {
+    margin-block-end: $spacing-03;
+}
 
-    td:last-child span {
-        display: none;
-    }
+.tableSkeletonHeader,
+.tableSkeletonRow {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr 1.5fr 5.5rem;
+    gap: $spacing-03;
+    align-items: center;
+    min-block-size: $spacing-07;
+}
 
-    td:last-child::before,
-    td:last-child::after {
-        content: '';
-        display: inline-block;
-        width: $spacing-07;
-        height: $spacing-07;
-        vertical-align: middle;
-        @include skeleton;
-    }
-
-    td:last-child::before {
-        margin-inline-end: $spacing-02;
-    }
+.tableSkeletonHeader {
+    padding-block-end: $spacing-03;
+    border-block-end: 1px solid $border-subtle-01;
 }

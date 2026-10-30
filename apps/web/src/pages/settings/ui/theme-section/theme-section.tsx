@@ -1,3 +1,4 @@
+import { AsciiReveal } from 'ascii-reveal';
 import { useTranslation } from 'react-i18next';
 import { usePreferences } from '../../../../shared/preferences';
 import { ThemeSwitcher } from './theme-switcher';
@@ -13,14 +14,16 @@ export function ThemeSection() {
                 {t('theme.title')}
             </h4>
 
-            <ThemeSwitcher
-                id="settings-theme"
-                theme={theme}
-                onChange={setTheme}
-                disabled={isSyncing}
-                size="md"
-                showLabel
-            />
+            <AsciiReveal>
+                <ThemeSwitcher
+                    id="settings-theme"
+                    theme={theme}
+                    onChange={setTheme}
+                    disabled={isSyncing}
+                    size="md"
+                    showLabel
+                />
+            </AsciiReveal>
         </section>
     );
 }

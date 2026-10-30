@@ -29,6 +29,7 @@
     display: flex;
     gap: $spacing-05;
     overflow-x: auto;
+    scrollbar-gutter: stable;
     scroll-snap-type: x mandatory;
     margin: 0;
     padding: 0;
@@ -41,11 +42,13 @@
 }
 
 // RadioTile root is an unstyled <div> (input + label); width must sit on this slot.
+// Floor matches selectable-tile padding + header + heading-02 balance + sm IconButtons.
 .cardSlot {
     flex: 0 0 16rem;
     scroll-snap-align: start;
     inline-size: 16rem;
     max-inline-size: 16rem;
+    min-block-size: 8rem;
 
     >div {
         block-size: 100%;
@@ -62,9 +65,9 @@
 }
 
 .cardSkeleton {
+    // Match Carbon selectable tile: padding-inline + icon gutter (padding × 2 + 1rem).
     padding: $spacing-05;
-    // Approx. Carbon selectable tile icon gutter (padding × 2 + 1rem icon).
-    padding-inline-end: $spacing-09;
+    padding-inline-end: calc(#{$spacing-05} * 2 + 1rem);
     border: 1px solid $border-subtle-01;
     background-color: $layer-01;
 }
@@ -75,6 +78,14 @@
     align-items: center;
     gap: $spacing-03;
     min-inline-size: 0;
+    min-block-size: 1rem;
+}
+
+.skeletonCardName {
+    @include type-style('label-01');
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    min-block-size: 1lh;
 }
 
 .skeletonCardContent {
@@ -83,28 +94,19 @@
     gap: $spacing-02;
 }
 
+.skeletonCardBalance {
+    @include type-style('heading-02');
+    min-block-size: 1lh;
+}
+
 .skeletonCardActions {
     display: flex;
     gap: $spacing-02;
     justify-content: end;
+    // Carbon IconButton size="sm" hit area.
+    min-block-size: $spacing-07;
 }
 
-.skeletonIcon {
-    inline-size: $spacing-05;
-    block-size: $spacing-05;
-}
-
-.skeletonName {
-    inline-size: $spacing-09;
-    block-size: $spacing-05;
-}
-
-.skeletonBalance {
-    inline-size: 100%;
-    block-size: $spacing-06;
-}
-
-.skeletonAction {
-    inline-size: $spacing-07;
-    block-size: $spacing-07;
+.skeletonCardHeader> :first-child {
+    flex: 0 0 auto;
 }

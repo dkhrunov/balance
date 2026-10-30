@@ -115,7 +115,11 @@ export function TransactionsDataTable({
                 onInputChange,
             }) => (
                 <TableContainer>
-                    <TableToolbar {...getToolbarProps()} aria-label={t('transactions.title')}>
+                    <TableToolbar
+                        {...getToolbarProps()}
+                        aria-label={t('transactions.title')}
+                        data-ascii="fade"
+                    >
                         <TableToolbarContent>
                             <TableToolbarSearch
                                 persistent
@@ -178,7 +182,11 @@ export function TransactionsDataTable({
                             body={t('transactions.emptyBody')}
                         />
                     ) : (
-                        <Table {...getTableProps()} aria-label={t('transactions.title')}>
+                        <Table
+                            {...getTableProps()}
+                            aria-label={t('transactions.title')}
+                            data-ascii="surface"
+                        >
                             <TableHead>
                                 <TableRow>
                                     {tableHeaders.map((header) => {
@@ -322,7 +330,7 @@ type AmountDataCellProps = {
 
 function AmountDataCell({ value, cellProps }: AmountDataCellProps) {
     return (
-        <TableCell {...cellProps}>
+        <TableCell {...cellProps} data-ascii-digits>
             {String(value)}
         </TableCell>
     );
@@ -345,7 +353,7 @@ function TransactionRowActions({
     const { t } = useTranslation();
 
     return (
-        <div className={styles.rowActions}>
+        <div className={styles.rowActions} data-ascii="fade">
             <IconButton
                 kind="ghost"
                 size="sm"

@@ -47,7 +47,7 @@ export function ThemeSwitcher({
     };
 
     return (
-        <div className={styles.root}>
+        <div className={styles.root} data-ascii="surface">
             {showLabel ? (
                 <FormLabel id={`${id}-label`} className={styles.label}>
                     {t('theme.title')}
@@ -63,6 +63,7 @@ export function ThemeSwitcher({
                         onChange(name);
                     }
                 }}
+                data-ascii="fade"
             >
                 <IconSwitch
                     name="system"
@@ -70,6 +71,7 @@ export function ThemeSwitcher({
                     disabled={disabled}
                     align="bottom"
                     enterDelayMs={TOOLTIP_ENTER_DELAY_MS}
+                    data-ascii="media"
                 >
                     <Devices />
                 </IconSwitch>
@@ -79,6 +81,7 @@ export function ThemeSwitcher({
                     disabled={disabled}
                     align="bottom"
                     enterDelayMs={TOOLTIP_ENTER_DELAY_MS}
+                    data-ascii="media"
                 >
                     <Light />
                 </IconSwitch>
@@ -88,6 +91,7 @@ export function ThemeSwitcher({
                     disabled={disabled}
                     align="bottom"
                     enterDelayMs={TOOLTIP_ENTER_DELAY_MS}
+                    data-ascii="media"
                 >
                     <Asleep />
                 </IconSwitch>

@@ -4,14 +4,13 @@ import {
     ContentSwitcher,
     Grid,
     InlineNotification,
-    SkeletonPlaceholder,
-    SkeletonText,
     Switch,
     Tile,
 } from '@carbon/react';
 import { Account } from '@balance/dto/accounts';
 import { Transaction } from '@balance/dto/transactions';
 import { AccountBalance } from '@balance/domain/transactions';
+import { AsciiReveal, AsciiSkeleton } from 'ascii-reveal';
 import { useTranslation } from 'react-i18next';
 import { useAccounts } from '../../../../entities/account';
 import { formatMoney } from '../../../../shared/lib/money';
@@ -55,19 +54,8 @@ export function SummarySection({
         transactionsLoadState === 'loading' ||
         (transactionsLoadState === 'idle' && !account);
 
-    if (!account && !showSkeleton) {
-        return (
-            <section className={styles.section} aria-labelledby="dashboard-summary-heading">
-                <h4 id="dashboard-summary-heading" className={styles.title}>
-                    {t('summary.title')}
-                </h4>
-                <EmptyState
-                    title={t('summary.selectAccountTitle')}
-                    body={t('summary.selectAccountBody')}
-                />
-            </section>
-        );
-    }
+    const showSelectPrompt = !account && !showSkeleton;
+    const showError = Boolean(account) && transactionsLoadState === 'error' && !showSkeleton;
 
     const balance =
         account == null
@@ -96,70 +84,111 @@ export function SummarySection({
                 locale,
             )}`;
 
+    const showContent =
+        !showSkeleton &&
+        !showError &&
+        balance != null &&
+        income != null &&
+        expenses != null;
+
     return (
         <section className={styles.section} aria-labelledby="dashboard-summary-heading">
             <div className={styles.header}>
                 <h4 id="dashboard-summary-heading" className={styles.title}>
                     {t('summary.title')}
                 </h4>
-                <ContentSwitcher
-                    size="sm"
-                    selectedIndex={PRESETS.indexOf(preset)}
-                    onChange={(event) => {
-                        const index = typeof event.index === 'number' ? event.index : 0;
-                        const next = PRESETS[index];
+                {!showSelectPrompt ? (
+                    <AsciiReveal>
+                        <ContentSwitcher
+                            size="sm"
+                            selectedIndex={PRESETS.indexOf(preset)}
+                            onChange={(event) => {
+                                const index = typeof event.index === 'number' ? event.index : 0;
+                                const next = PRESETS[index];
 
-                        if (next) {
-                            setPreset(next);
-                        }
-                    }}
-                >
-                    {PRESETS.map((value) => (
-                        <Switch key={value} name={value} text={t(`summary.presets.${value}`)} />
-                    ))}
-                </ContentSwitcher>
+                                if (next) {
+                                    setPreset(next);
+                                }
+                            }}
+                            data-ascii="fade"
+                        >
+                            {PRESETS.map((value) => (
+                                <Switch
+                                    key={value}
+                                    name={value}
+                                    text={t(`summary.presets.${value}`)}
+                                />
+                            ))}
+                        </ContentSwitcher>
+                    </AsciiReveal>
+                ) : null}
             </div>
 
-            {transactionsLoadState === 'error' && !showSkeleton ? (
-                <InlineNotification
-                    kind="error"
-                    title={t('summary.cannotLoad')}
-                    subtitle={t('summary.loadError')}
-                    lowContrast
-                    hideCloseButton
-                />
-            ) : null}
+            <AsciiReveal loading={showSkeleton} className={styles.stack}>
+                {showSelectPrompt ? (
+                    <EmptyState
+                        title={t('summary.selectAccountTitle')}
+                        body={t('summary.selectAccountBody')}
+                    />
+                ) : null}
 
-            {showSkeleton ? <SummarySkeleton /> : null}
+                {showSkeleton ? <SummarySkeleton /> : null}
 
-            {!showSkeleton && transactionsLoadState !== 'error' && balance && income && expenses ? (
-                <>
-                    <Grid fullWidth className={styles.tilesGrid}>
-                        <Column sm={4} md={8} lg={5}>
-                            <Tile className={styles.tile}>
-                                <p className={styles.tileLabel}>{t('summary.tiles.balance')}</p>
-                                <p className={styles.tileValue}>{balance}</p>
-                            </Tile>
-                        </Column>
-                        <Column sm={4} md={8} lg={6}>
-                            <Tile className={styles.tile}>
-                                <p className={styles.tileLabel}>{t('summary.tiles.income')}</p>
-                                <p className={`${styles.tileValue} ${styles.amountPositive}`}>{income}</p>
-                            </Tile>
-                        </Column>
-                        <Column sm={4} md={8} lg={5}>
-                            <Tile className={styles.tile}>
-                                <p className={styles.tileLabel}>{t('summary.tiles.expenses')}</p>
-                                <p className={`${styles.tileValue} ${styles.amountNegative}`}>{expenses}</p>
-                            </Tile>
-                        </Column>
-                    </Grid>
-                    <div className={styles.chartPlaceholder} aria-label={t('summary.chart.aria')}>
-                        <p className={styles.chartText}>{t('summary.chart.placeholder')}</p>
-                    </div>
-                </>
-            ) : null}
-        </section>
+                {showError ? (
+                    <InlineNotification
+                        kind="error"
+                        title={t('summary.cannotLoad')}
+                        subtitle={t('summary.loadError')}
+                        lowContrast
+                        hideCloseButton
+                    />
+                ) : null}
+
+                {showContent ? (
+                    <>
+                        <Grid fullWidth className={styles.tilesGrid}>
+                            <Column sm={4} md={8} lg={5}>
+                                <Tile className={styles.tile} data-ascii="surface">
+                                    <p className={styles.tileLabel}>{t('summary.tiles.balance')}</p>
+                                    <p className={styles.tileValue} data-ascii-digits>
+                                        {balance}
+                                    </p>
+                                </Tile>
+                            </Column>
+                            <Column sm={4} md={8} lg={6}>
+                                <Tile className={styles.tile} data-ascii="surface">
+                                    <p className={styles.tileLabel}>{t('summary.tiles.income')}</p>
+                                    <p
+                                        className={`${styles.tileValue} ${styles.amountPositive}`}
+                                        data-ascii-digits
+                                    >
+                                        {income}
+                                    </p>
+                                </Tile>
+                            </Column>
+                            <Column sm={4} md={8} lg={5}>
+                                <Tile className={styles.tile} data-ascii="surface">
+                                    <p className={styles.tileLabel}>{t('summary.tiles.expenses')}</p>
+                                    <p
+                                        className={`${styles.tileValue} ${styles.amountNegative}`}
+                                        data-ascii-digits
+                                    >
+                                        {expenses}
+                                    </p>
+                                </Tile>
+                            </Column>
+                        </Grid>
+                        <div
+                            className={styles.chartPlaceholder}
+                            aria-label={t('summary.chart.aria')}
+                            data-ascii="surface"
+                        >
+                            <p className={styles.chartText}>{t('summary.chart.placeholder')}</p>
+                        </div>
+                    </>
+                ) : null}
+            </AsciiReveal>
+        </section >
     );
 }
 
@@ -169,24 +198,38 @@ function SummarySkeleton() {
             <Grid fullWidth className={styles.tilesGrid}>
                 <Column sm={4} md={8} lg={5}>
                     <Tile className={styles.tile}>
-                        <SkeletonText className={styles.tileLabel} width="40%" />
-                        <SkeletonText className={styles.tileValue} heading width="70%" />
-                    </Tile>
-                </Column>
+                        <div className={styles.tileLabel}>
+                            <AsciiSkeleton lines={1} widths={['40%']} seed={1} />
+                        </div>
+                        <div className={styles.tileValue}>
+                            <AsciiSkeleton lines={1} widths={['70%']} seed={2} />
+                        </div>
+                    </Tile >
+                </Column >
                 <Column sm={4} md={8} lg={6}>
                     <Tile className={styles.tile}>
-                        <SkeletonText className={styles.tileLabel} width="40%" />
-                        <SkeletonText className={styles.tileValue} heading width="70%" />
-                    </Tile>
-                </Column>
+                        <div className={styles.tileLabel}>
+                            <AsciiSkeleton lines={1} widths={['40%']} seed={3} />
+                        </div>
+                        <div className={styles.tileValue}>
+                            <AsciiSkeleton lines={1} widths={['70%']} seed={4} />
+                        </div>
+                    </Tile >
+                </Column >
                 <Column sm={4} md={8} lg={5}>
                     <Tile className={styles.tile}>
-                        <SkeletonText className={styles.tileLabel} width="40%" />
-                        <SkeletonText className={styles.tileValue} heading width="70%" />
+                        <div className={styles.tileLabel}>
+                            <AsciiSkeleton lines={1} widths={['40%']} seed={5} />
+                        </div>
+                        <div className={styles.tileValue}>
+                            <AsciiSkeleton lines={1} widths={['70%']} seed={6} />
+                        </div>
                     </Tile>
                 </Column>
             </Grid>
-            <SkeletonPlaceholder className={styles.chartSkeleton} />
+            <div className={styles.chartSkeleton} aria-hidden>
+                <AsciiSkeleton rows={12} width="100%" seed={10} />
+            </div>
         </>
     );
 }

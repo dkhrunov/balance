@@ -35,12 +35,12 @@ export function Account({ className, account, transactions, onEdit, onDelete }: 
             </div>
 
             <div className={styles.cardContent}>
-                <p className={styles.cardBalance}>
+                <p className={styles.cardBalance} data-ascii-digits>
                     {formatMoney(balance, account.currency, locale)}
                 </p>
             </div>
 
-            <div className={styles.cardActions}>
+            <div className={styles.cardActions} data-ascii="fade">
                 <IconButton
                     kind="ghost"
                     size="sm"

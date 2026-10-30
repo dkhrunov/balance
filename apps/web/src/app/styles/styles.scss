@@ -32,6 +32,24 @@
     @include themes.theme($g100);
 }
 
+// ascii-reveal — colors from Carbon tokens; mono stack must cover Block Elements
+// (░▒▓█). IBM Plex Mono is subsetted to Latin/Cyrillic unicode-ranges and falls
+// back to proportional glyphs for those code points, so keep system monospace.
+:root,
+[data-carbon-theme] {
+    --ascii-accent: var(--cds-link-primary);
+    --ascii-skeleton: var(--cds-text-secondary);
+    --ascii-glyph: var(--cds-text-secondary);
+    --ascii-surface: var(--cds-layer-01);
+    --ascii-font: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+}
+
+// Library uses :where(.ars) (specificity 0); Carbon type-style classNames win
+// otherwise and force IBM Plex Sans onto the skeleton.
+.ars[data-ascii-skeleton] {
+    font-family: var(--ascii-font);
+}
+
 // HACK: Carbon `update_fields_on_layer` (used by `.cds--modal`) ships a typo —
 // `.ccdsds--date-picker-input__wrapper` instead of `.cds--date-picker-input__wrapper`
 // (SCSS: `.c#{$prefix}ds--…` with prefix `cds`). The intended `field-01` background

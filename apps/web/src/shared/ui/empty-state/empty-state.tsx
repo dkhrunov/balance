@@ -100,9 +100,9 @@ export function EmptyState({
     const rootClass = className ? `${styles.root} ${className}` : styles.root;
 
     return (
-        <div className={rootClass}>
+        <div className={rootClass} data-ascii="surface">
             {resolvedIllustration ? (
-                <div className={styles.illustration} aria-hidden>
+                <div className={styles.illustration} aria-hidden data-ascii="media">
                     {resolvedIllustration}
                 </div>
             ) : null}
@@ -112,7 +112,7 @@ export function EmptyState({
                 {body ? <div className={styles.body}>{body}</div> : null}
 
                 {action ? (
-                    <div className={styles.action}>
+                    <div className={styles.action} data-ascii="fade">
                         <Button
                             kind={action.kind ?? 'primary'}
                             size="md"
@@ -126,7 +126,7 @@ export function EmptyState({
                 ) : null}
 
                 {link ? (
-                    <div className={styles.link}>
+                    <div className={styles.link} data-ascii="fade">
                         <Link href={link.href}>{link.label}</Link>
                     </div>
                 ) : null}
