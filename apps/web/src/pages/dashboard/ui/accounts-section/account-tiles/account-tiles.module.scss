@@ -1,0 +1,73 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
+
+// TileGroup = <fieldset> + bare <div> wrapping slots.
+// `display: contents` on that wrapper puts `.accountTileWrapper` items in this flex row.
+.carousel {
+    display: flex;
+    gap: $spacing-05;
+    overflow-x: auto;
+    scrollbar-gutter: stable;
+    scroll-snap-type: x mandatory;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+
+    >div:not(.accountTileWrapper) {
+        display: contents;
+    }
+}
+
+// RadioTile root is an unstyled <div> (input + label); width must sit on this slot.
+// Floor matches selectable-tile padding + header + heading-02 balance + sm IconButtons.
+.accountTileWrapper {
+    flex: 0 0 16rem;
+    scroll-snap-align: start;
+    inline-size: 16rem;
+    max-inline-size: 16rem;
+    min-block-size: 8rem;
+
+    >div {
+        block-size: 100%;
+    }
+}
+
+.account {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-02;
+    inline-size: 100%;
+    block-size: 100%;
+    box-sizing: border-box;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-03;
+    // RadioTile already reserves top-end for the selection icon (padding-inline-end).
+    min-inline-size: 0;
+}
+
+.accountName {
+    @include type-style('label-01');
+    margin: 0;
+    color: $text-primary;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.accountBalance {
+    @include type-style('heading-02');
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    gap: $spacing-02;
+    justify-content: end;
+}

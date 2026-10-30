@@ -1,0 +1,64 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
+
+.carousel {
+    display: flex;
+    gap: $spacing-05;
+    overflow-x: auto;
+    scrollbar-gutter: stable;
+    scroll-snap-type: x mandatory;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+}
+
+// Slot sizing + card chrome (no RadioTile between them in the skeleton).
+.account {
+    flex: 0 0 16rem;
+    scroll-snap-align: start;
+    inline-size: 16rem;
+    max-inline-size: 16rem;
+    min-block-size: 8rem;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-02;
+    box-sizing: border-box;
+    // Match Carbon selectable tile: padding-inline + icon gutter (padding × 2 + 1rem).
+    padding: $spacing-05;
+    padding-inline-end: calc(#{$spacing-05} * 2 + 1rem);
+    border: 1px solid $border-subtle-01;
+    background-color: $layer-01;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-03;
+    min-inline-size: 0;
+    min-block-size: 1rem;
+
+    > :first-child {
+        flex: 0 0 auto;
+    }
+}
+
+.accountName {
+    @include type-style('label-01');
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    min-block-size: 1lh;
+}
+
+.accountBalance {
+    @include type-style('heading-02');
+    min-block-size: 1lh;
+}
+
+.actions {
+    display: flex;
+    gap: $spacing-02;
+    justify-content: end;
+    min-block-size: $spacing-07;
+}
