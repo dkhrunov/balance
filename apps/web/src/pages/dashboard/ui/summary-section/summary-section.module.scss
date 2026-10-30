@@ -1,0 +1,80 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-05;
+    margin-block-start: $spacing-07;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-05;
+    flex-wrap: wrap;
+}
+
+.title {
+    @include type-style('heading-01');
+    margin: 0;
+}
+
+// Nested Grid is a Carbon subgrid: `withRowGap` uses full gutter (2rem).
+// Use spacing-05 so stacked rows match section rhythm without `narrow` hang.
+.tilesGrid {
+    row-gap: $spacing-05;
+}
+
+.tile {
+    height: 100%;
+    min-block-size: 100%;
+}
+
+.tileLabel {
+    @include type-style('label-01');
+    color: $text-secondary;
+    margin: 0 0 $spacing-02;
+}
+
+.tileValue {
+    @include type-style('heading-02');
+    margin: 0;
+    color: $text-primary;
+}
+
+// Amount polarity (Summary + Transactions): Carbon support tokens.
+// Income / credit → $support-success; expense / debit → $support-error;
+// Neutral (balance, unlabeled) → $text-primary (default on .tileValue).
+.amountPositive {
+    color: $support-success;
+}
+
+.amountNegative {
+    color: $support-error;
+}
+
+.chartPlaceholder {
+    min-height: 12rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-05;
+    background-color: $layer-01;
+    border: 1px dashed $border-subtle-01;
+}
+
+.chartSkeleton {
+    width: 100%;
+    min-height: 12rem;
+}
+
+.chartText {
+    @include type-style('body-compact-01');
+    color: $text-secondary;
+    margin: 0;
+    text-align: center;
+    max-width: 28rem;
+}

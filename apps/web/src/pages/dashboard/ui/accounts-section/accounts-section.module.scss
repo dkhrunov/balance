@@ -1,0 +1,110 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
+
+.section {
+    display: flex;
+    flex-direction: column;
+    margin-block-start: $spacing-07;
+}
+
+.header {
+    margin: 0 0 $spacing-05;
+}
+
+.title {
+    @include type-style('heading-01');
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+// TileGroup = <fieldset> + bare <div> wrapping slots.
+// `display: contents` on that wrapper puts `.cardSlot` items in this flex row.
+.carousel {
+    display: flex;
+    gap: $spacing-05;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+
+    >div:not(.cardSlot) {
+        display: contents;
+    }
+}
+
+// RadioTile root is an unstyled <div> (input + label); width must sit on this slot.
+.cardSlot {
+    flex: 0 0 16rem;
+    scroll-snap-align: start;
+    inline-size: 16rem;
+    max-inline-size: 16rem;
+
+    >div {
+        block-size: 100%;
+    }
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-02;
+    inline-size: 100%;
+    block-size: 100%;
+    box-sizing: border-box;
+}
+
+.cardSkeleton {
+    padding: $spacing-05;
+    // Approx. Carbon selectable tile icon gutter (padding × 2 + 1rem icon).
+    padding-inline-end: $spacing-09;
+    border: 1px solid $border-subtle-01;
+    background-color: $layer-01;
+}
+
+// Skeleton mirrors AccountCardBody layout (private helper in this file).
+.skeletonCardHeader {
+    display: flex;
+    align-items: center;
+    gap: $spacing-03;
+    min-inline-size: 0;
+}
+
+.skeletonCardContent {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-02;
+}
+
+.skeletonCardActions {
+    display: flex;
+    gap: $spacing-02;
+    justify-content: end;
+}
+
+.skeletonIcon {
+    inline-size: $spacing-05;
+    block-size: $spacing-05;
+}
+
+.skeletonName {
+    inline-size: $spacing-09;
+    block-size: $spacing-05;
+}
+
+.skeletonBalance {
+    inline-size: 100%;
+    block-size: $spacing-06;
+}
+
+.skeletonAction {
+    inline-size: $spacing-07;
+    block-size: $spacing-07;
+}

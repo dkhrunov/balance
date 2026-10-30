@@ -1,3 +1,4 @@
+import { AccountsProvider } from '../entities/account';
 import { AuthProvider } from '../shared/auth';
 import { I18nProvider } from '../shared/i18n';
 import { PreferencesProvider } from '../shared/preferences';
@@ -11,7 +12,9 @@ export function App() {
         <I18nProvider>
             <AuthProvider>
                 <PreferencesProvider>
-                    <AppRouter />
+                    <AccountsProvider>
+                        <AppRouter />
+                    </AccountsProvider>
                 </PreferencesProvider>
             </AuthProvider>
         </I18nProvider>
