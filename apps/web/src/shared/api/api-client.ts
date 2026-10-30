@@ -51,10 +51,14 @@ export const ApiClient = {
     },
 
     /**
-     * Sends a DELETE request and returns the parsed JSON response body when present.
+     * Sends a DELETE request with an optional JSON body and returns the parsed JSON response when present.
      */
-    delete<TResponse>(path: string, options: ApiRequestOptionsWithoutBody = {}): Promise<TResponse> {
-        return request<TResponse>(path, { ...options, method: 'DELETE' });
+    delete<TResponse>(
+        path: string,
+        body?: unknown,
+        options: ApiRequestOptionsWithoutBody = {},
+    ): Promise<TResponse> {
+        return request<TResponse>(path, withJsonBody('DELETE', body, options));
     },
 };
 

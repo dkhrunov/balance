@@ -1,37 +1,45 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode, useRef } from 'react';
+import { EntityId } from '@balance/dto/common';
 import { Locale, Theme, UserPreferences } from '@balance/dto/users';
-import { getUserPreferences, updateUserPreferences } from '../api';
+import { UserPreferencesApi } from '../api';
 import { useAuth } from '../auth';
 import { applyLocale, isLocale, readCachedLocale } from '../i18n';
-import { applyTheme, isTheme, readTheme } from '../theme';
+// Import theme primitives directly (not the segment barrel) to avoid a cycle with
+// `useActiveTheme` in `shared/theme`, which depends on this provider.
+import { applyTheme, isTheme, readTheme } from '../theme/theme';
 
 export interface IPreferences {
     readonly locale: Locale;
     readonly theme: Theme;
+    readonly accountOrder: readonly EntityId[];
     readonly isSyncing: boolean;
     readonly error: string | null;
     setLocale: (locale: Locale) => Promise<void>;
     setTheme: (theme: Theme) => Promise<void>;
+    setAccountOrder: (accountOrder: readonly EntityId[]) => Promise<void>;
 }
 
 const PreferencesContext = createContext<IPreferences | null>(null);
 
+const EMPTY_ACCOUNT_ORDER: readonly EntityId[] = [];
+
 /**
- * Owns locale + theme state: local cache for first paint, API as authority when authenticated.
- * Preference reads/writes go through {@link usePreferences} only; use {@link useActiveTheme}
- * when UI needs a resolved light/dark appearance.
+ * Owns locale + theme + account order: local cache for first paint, API as authority when authenticated.
+ * Preference reads/writes go through {@link usePreferences} only; use `useActiveTheme`
+ * from `shared/theme` when UI needs a resolved light/dark appearance.
  */
 export function PreferencesProvider({ children }: { children: ReactNode }) {
     const { status } = useAuth();
     const [locale, setLocaleState] = useState<Locale>(readCachedLocale);
     const [theme, setThemeState] = useState<Theme>(readTheme);
+    const [accountOrder, setAccountOrderState] = useState<readonly EntityId[]>(EMPTY_ACCOUNT_ORDER);
     const [isSyncing, setIsSyncing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const preferencesRef = useRef<UserPreferences>({ locale, theme });
+    const preferencesRef = useRef<UserPreferences>({ locale, theme, accountOrder });
 
     useEffect(() => {
-        preferencesRef.current = { locale, theme };
-    }, [locale, theme]);
+        preferencesRef.current = { locale, theme, accountOrder };
+    }, [locale, theme, accountOrder]);
 
     useEffect(() => {
         if (status !== 'authenticated') {
@@ -40,7 +48,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
 
         let cancelled = false;
 
-        getUserPreferences()
+        UserPreferencesApi.getUserPreferences()
             .then(async (preferences) => {
                 if (cancelled) {
                     return;
@@ -51,6 +59,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
 
                 setLocaleState(preferences.locale);
                 setThemeState(preferences.theme);
+                setAccountOrderState(preferences.accountOrder);
                 setError(null);
             })
             .catch(() => {
@@ -75,7 +84,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
             setError(null);
 
             try {
-                await updateUserPreferences(preferences);
+                await UserPreferencesApi.updateUserPreferences(preferences);
             } catch {
                 setError('preferences.saveFailed');
                 throw new Error('preferences.saveFailed');
@@ -87,16 +96,16 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     );
 
     const setLocale = useCallback(
-        async (locale: Locale): Promise<void> => {
-            if (!isLocale(locale)) {
+        async (nextLocale: Locale): Promise<void> => {
+            if (!isLocale(nextLocale)) {
                 return;
             }
 
             const previous = preferencesRef.current;
-            const next = { ...previous, locale: locale };
+            const next = { ...previous, locale: nextLocale };
 
-            await applyLocale(locale);
-            setLocaleState(locale);
+            await applyLocale(nextLocale);
+            setLocaleState(nextLocale);
             preferencesRef.current = next;
 
             try {
@@ -111,16 +120,16 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     );
 
     const setTheme = useCallback(
-        async (theme: Theme): Promise<void> => {
-            if (!isTheme(theme)) {
+        async (nextTheme: Theme): Promise<void> => {
+            if (!isTheme(nextTheme)) {
                 return;
             }
 
             const previous = preferencesRef.current;
-            const next = { ...previous, theme: theme };
+            const next = { ...previous, theme: nextTheme };
 
-            applyTheme(theme);
-            setThemeState(theme);
+            applyTheme(nextTheme);
+            setThemeState(nextTheme);
             preferencesRef.current = next;
 
             try {
@@ -134,22 +143,42 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         [persistRemote],
     );
 
+    const setAccountOrder = useCallback(
+        async (nextOrder: readonly EntityId[]): Promise<void> => {
+            const previous = preferencesRef.current;
+            const next = { ...previous, accountOrder: nextOrder };
+
+            setAccountOrderState(nextOrder);
+            preferencesRef.current = next;
+
+            try {
+                await persistRemote(next);
+            } catch {
+                setAccountOrderState(previous.accountOrder);
+                preferencesRef.current = previous;
+            }
+        },
+        [persistRemote],
+    );
+
     const preferencesValue = useMemo(
         () => ({
             locale,
             theme,
+            accountOrder,
             isSyncing,
             error,
             setLocale,
             setTheme,
+            setAccountOrder,
         }),
-        [locale, theme, isSyncing, error, setLocale, setTheme],
+        [locale, theme, accountOrder, isSyncing, error, setLocale, setTheme, setAccountOrder],
     );
 
     return <PreferencesContext.Provider value={preferencesValue}>{children}</PreferencesContext.Provider>;
 }
 
-/** Returns locale/theme preferences and setters. Requires {@link PreferencesProvider}. */
+/** Returns locale/theme/account-order preferences and setters. Requires {@link PreferencesProvider}. */
 export function usePreferences(): IPreferences {
     const context = useContext(PreferencesContext);
 

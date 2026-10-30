@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError } from './api-error';
-import { ApiClient, noopSessionExpiredHandler, registerSessionExpiredHandler } from './api-request';
+import { ApiClient, noopSessionExpiredHandler, registerSessionExpiredHandler } from './api-client';
 
 function jsonResponse(status: number, body: unknown): Response {
     return new Response(JSON.stringify(body), {
@@ -122,5 +122,21 @@ describe('ApiClient', () => {
         });
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('serializes DELETE body as JSON when provided', async () => {
+        const fetchMock = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'a1', version: 2 }));
+
+        vi.stubGlobal('fetch', fetchMock);
+
+        await expect(ApiClient.delete('/accounts/a1', { version: 1 })).resolves.toEqual({ id: 'a1', version: 2 });
+
+        expect(fetchMock).toHaveBeenCalledWith(
+            '/api/accounts/a1',
+            expect.objectContaining({
+                method: 'DELETE',
+                body: JSON.stringify({ version: 1 }),
+            }),
+        );
     });
 });

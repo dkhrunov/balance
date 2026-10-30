@@ -1,22 +1,28 @@
 import { CurrentUserResponse, LoginRequest, LoginResponse } from '@balance/dto/auth';
-import { ApiClient } from '../api-request';
+import { ApiClient } from '../api-client';
 
-/** Authenticates with email and password; sets session cookies. */
-export function login(credentials: LoginRequest): Promise<LoginResponse> {
-    return ApiClient.post<LoginResponse>('/auth/login', credentials);
-}
+export class AuthApi {
+    private constructor() {
+        /* empty constructor */
+    }
 
-/** Returns the current authenticated user, or fails if the session is invalid. */
-export function getCurrentUser(): Promise<CurrentUserResponse> {
-    return ApiClient.get<CurrentUserResponse>('/auth/me');
-}
+    /** Authenticates with email and password; sets session cookies. */
+    public static login(credentials: LoginRequest): Promise<LoginResponse> {
+        return ApiClient.post<LoginResponse>('/auth/login', credentials);
+    }
 
-/** Rotates the refresh token and issues a new access cookie. */
-export function refreshSession(): Promise<void> {
-    return ApiClient.post<void>('/auth/refresh');
-}
+    /** Returns the current authenticated user, or fails if the session is invalid. */
+    public static getCurrentUser(): Promise<CurrentUserResponse> {
+        return ApiClient.get<CurrentUserResponse>('/auth/me');
+    }
 
-/** Clears the server session and cookies. */
-export function logout(): Promise<void> {
-    return ApiClient.post<void>('/auth/logout');
+    /** Rotates the refresh token and issues a new access cookie. */
+    public static refreshSession(): Promise<void> {
+        return ApiClient.post<void>('/auth/refresh');
+    }
+
+    /** Clears the server session and cookies. */
+    public static logout(): Promise<void> {
+        return ApiClient.post<void>('/auth/logout');
+    }
 }

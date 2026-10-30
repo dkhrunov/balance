@@ -1,12 +1,20 @@
 import { GetUserPreferencesResponse, UpdateUserPreferencesRequest, UserPreferences } from '@balance/dto/users';
-import { ApiClient } from '../api-request';
+import { ApiClient } from '../api-client';
 
-/** Loads the authenticated user's UI preferences. */
-export function getUserPreferences(): Promise<GetUserPreferencesResponse> {
-    return ApiClient.get<GetUserPreferencesResponse>('/users/me/preferences');
-}
+export class UserPreferencesApi {
+    private constructor() {
+        /* empty constructor */
+    }
 
-/** Replaces the authenticated user's UI preferences. */
-export function updateUserPreferences(preferences: UpdateUserPreferencesRequest): Promise<UserPreferences> {
-    return ApiClient.put<UserPreferences>('/users/me/preferences', preferences);
+    /** Loads the authenticated user's UI preferences. */
+    public static getUserPreferences(): Promise<GetUserPreferencesResponse> {
+        return ApiClient.get<GetUserPreferencesResponse>('/users/me/preferences');
+    }
+
+    /** Replaces the authenticated user's UI preferences. */
+    public static updateUserPreferences(
+        preferences: UpdateUserPreferencesRequest,
+    ): Promise<UserPreferences> {
+        return ApiClient.put<UserPreferences>('/users/me/preferences', preferences);
+    }
 }

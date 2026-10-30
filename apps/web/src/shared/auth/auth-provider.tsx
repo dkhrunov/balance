@@ -2,9 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, R
 import { LoginRequest } from '@balance/dto/auth';
 import { UserIdentity } from '@balance/dto/users';
 import {
-    getCurrentUser,
-    login as loginRequest,
-    logout as logoutRequest,
+    AuthApi,
     noopSessionExpiredHandler,
     registerSessionExpiredHandler,
 } from '../api';
@@ -20,7 +18,7 @@ function restoreSession(): Promise<UserIdentity | null> {
         return pendingSessionRestore;
     }
 
-    pendingSessionRestore = getCurrentUser()
+    pendingSessionRestore = AuthApi.getCurrentUser()
         .then((response) => response.user)
         .catch(() => null)
         .finally(() => {
@@ -68,14 +66,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = useCallback(async (credentials: LoginRequest): Promise<void> => {
-        const response = await loginRequest(credentials);
+        const response = await AuthApi.login(credentials);
         setUser(response.user);
         setStatus('authenticated');
     }, []);
 
     const logout = useCallback(async (): Promise<void> => {
         try {
-            await logoutRequest();
+            await AuthApi.logout();
         } finally {
             setUser(null);
             setStatus('unauthenticated');
