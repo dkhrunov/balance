@@ -19,6 +19,7 @@ module.exports = {
         '^@balance/domain/money$': '<rootDir>/../../libs/domain/src/lib/money/index.ts',
         '^@balance/domain/currency$': '<rootDir>/../../libs/domain/src/lib/currency/index.ts',
         '^@balance/domain/duration$': '<rootDir>/../../libs/domain/src/lib/duration/index.ts',
+        '^@balance/domain/transactions$': '<rootDir>/../../libs/domain/src/lib/transactions/index.ts',
     },
     maxWorkers: 1,
 };

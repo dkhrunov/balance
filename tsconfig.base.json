@@ -27,7 +27,8 @@
             "@balance/domain": ["./libs/domain/src/index.ts"],
             "@balance/domain/money": ["./libs/domain/src/lib/money/index.ts"],
             "@balance/domain/currency": ["./libs/domain/src/lib/currency/index.ts"],
-            "@balance/domain/duration": ["./libs/domain/src/lib/duration/index.ts"]
+            "@balance/domain/duration": ["./libs/domain/src/lib/duration/index.ts"],
+            "@balance/domain/transactions": ["./libs/domain/src/lib/transactions/index.ts"]
         }
     },
     "exclude": ["node_modules", "tmp"]
