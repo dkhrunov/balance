@@ -5,8 +5,8 @@ Personal multi-user finance tracking web app. **One financial space**, 1–n use
 | File                                     | Purpose                            |
 | ---------------------------------------- | ---------------------------------- |
 | **This file**                            | How to work (agent rules)          |
-| [`TASKS.md`](./TASKS.md)                 | What to do next (task queue)       |
-| [`SPEC.md`](./docs/requirements/SPEC.md) | Full product and architecture spec |
+| `[TASKS.md](./TASKS.md)`                 | What to do next (task queue)       |
+| `[SPEC.md](./docs/requirements/SPEC.md)` | Full product and architecture spec |
 
 ## Role
 
@@ -14,10 +14,11 @@ Senior/Staff engineer: architecture integrity, FE↔BE type-safety, offline-firs
 
 ## Skills (read before coding)
 
-- `apps/server/**`, Nest modules, use cases, ports, repositories, migrations touching feature modules: read [`.cursor/skills/hexagonal-architecture/SKILL.md`](./.cursor/skills/hexagonal-architecture/SKILL.md)
-- `apps/web/**`, React UI structure, FSD layers/slices, placement of auth/layout/pages: read [`.cursor/skills/feature-sliced-design/SKILL.md`](./.cursor/skills/feature-sliced-design/SKILL.md)
-- `apps/web/**`, React performance (waterfalls, bundle, re-renders, data fetching): read [`.cursor/skills/vercel-react-best-practices/SKILL.md`](./.cursor/skills/vercel-react-best-practices/SKILL.md)
-- Carbon / IBM Products UI: [`.cursor/skills/carbon-builder/SKILL.md`](./.cursor/skills/carbon-builder/SKILL.md)
+- `apps/server/**`, Nest modules, use cases, ports, repositories, migrations touching feature modules: read `[.cursor/skills/hexagonal-architecture/SKILL.md](./.cursor/skills/hexagonal-architecture/SKILL.md)`
+- `apps/server/**`, SQL queries, repositories, migrations / schema design: read `[.cursor/skills/raw-postgresql/SKILL.md](./.cursor/skills/raw-postgresql/SKILL.md)`
+- `apps/web/**`, React UI structure, FSD layers/slices, placement of auth/layout/pages: read `[.cursor/skills/feature-sliced-design/SKILL.md](./.cursor/skills/feature-sliced-design/SKILL.md)`
+- `apps/web/**`, React performance (waterfalls, bundle, re-renders, data fetching): read `[.cursor/skills/vercel-react-best-practices/SKILL.md](./.cursor/skills/vercel-react-best-practices/SKILL.md)`
+- `apps/web/**`, Carbon / IBM Products UI (components, tokens, charts): read `[.cursor/skills/carbon-builder/SKILL.md](./.cursor/skills/carbon-builder/SKILL.md)` and verify against Carbon MCP / docs before inventing custom UI
 
 Do not apply FSD or Vercel React rules to `apps/server`. Do not apply Nest hexagonal layout to `apps/web`.
 
@@ -29,39 +30,50 @@ Do not apply FSD or Vercel React rules to `apps/server`. Do not apply Nest hexag
 4. Assess impact: domain, dto, DB schema, sync, offline storage, authz, multi-user attribution, money/currency, user preferences (locale/theme). Do not add a second financial space or account membership in MVP (SPEC §9).
 5. If the task is Post-MVP, do not pull MVP work into scope (and vice versa: do not pre-build Post-MVP tables/APIs).
 6. If multiple layers are affected — short plan first.
-7. After implementation: typecheck, lint, relevant tests.
+7. If creating or changing `apps/web` UI — run the Carbon Foundations / Components / Patterns check (Hard Constraints → UI) before considering the change done.
+8. After implementation: typecheck, lint, relevant tests.
 
 ## Hard Constraints
 
-- Offline-first: client works without network; server is authoritative after sync.
 - Desktop-first UI (MVP): design and accept against a wide viewport (Carbon `lg+`). A dedicated mobile/tablet layout is Post-MVP; do not spend MVP time on a phone layout.
 - API contract-first: shared TypeScript wire DTOs in `libs/dto`; do not duplicate DTOs between FE and BE. Feature delivery is **dto → backend → frontend**; do not start feature UI before that feature’s DTO and API exist. Inside each `libs/dto` feature domain use layers `models/`, `requests/`, `responses/`, `errors/`, `constraints/` (always present; see SPEC §6 Internal layout); import only via `@balance/dto/<domain>`.
-- Money: never use JS `number` in calculations; decimal-safe `Money` (`amount: string` + currency); in PostgreSQL — `NUMERIC` (or agreed minor units).
+- Money: never use JS `number` in calculations; decimal-safe `Money` (`amount: string` + currency). Persist money as Postgres `NUMERIC` per the SQL skill.
 - Mutations are idempotent (`operationId`); for concurrently mutable entities — optimistic concurrency (`version`).
 - For sync entities — soft delete / tombstone (`deletedAt`).
 - Prefer correction/reversal over silent in-place edit of financial operations where possible.
 - No `last-write-wins` for financial data under concurrent multi-user edits without explicit conflict handling.
 - Authorization on every backend request (auth + permission); FE checks are not a security boundary.
-- UI: Carbon Design System / Carbon Charts / Carbon MCP instead of custom primitives when Carbon covers the need. Design-in-app review (+ Figma only on request): [`.cursor/rules/carbon-ui-figma.mdc`](./.cursor/rules/carbon-ui-figma.mdc).
+- UI (`apps/web/**`): Carbon Design System only — prefer Carbon components / charts / MCP over custom primitives when Carbon covers the need. Agents **must** follow:
+  - **Foundations**:
+    - [2x Grid](https://www.carbondesignsystem.com/building-blocks/foundations/2x-grid/overview)
+    - [Accessibility](https://www.carbondesignsystem.com/building-blocks/foundations/accessibility/overview)
+    - [Color](https://www.carbondesignsystem.com/building-blocks/foundations/color)
+    - [Content](https://www.carbondesignsystem.com/building-blocks/foundations/content)
+    - [Icons](https://www.carbondesignsystem.com/building-blocks/foundations/icons)
+    - [Spacing](https://www.carbondesignsystem.com/building-blocks/foundations/spacing/overview)
+    - [Themes](https://www.carbondesignsystem.com/building-blocks/foundations/themes/overview)
+    - [Typography](https://www.carbondesignsystem.com/building-blocks/foundations/typography/overview)
+  - **Components** — [Carbon core components](https://www.carbondesignsystem.com/building-blocks/core/components/overview) (usage, anatomy, a11y; use ContainedList / Tile / DataTable / Modal / etc. instead of reinventing)
+  - **UI/UX Patterns** — [Common actions, Dialogs, Empty states, Forms, Loading, Notifications, Filtering, …](https://www.carbondesignsystem.com/building-blocks/core/patterns/overview)
+  **Always** run this Foundations / Components / Patterns check when creating or changing any `apps/web` UI (page, section, modal, shared component, styles). Check layout against the 2x Grid; spacing/type/color against tokens; interactions against the matching pattern; do not invent one-off layouts that fight Carbon. Use Carbon MCP / carbon-builder skill to verify — do not rely on memory alone.
 - No silent hacks or workarounds. If the proper API/pattern does not fit, stop, describe the gap, propose options, and wait for the next instruction (see **Hacks and workarounds**).
 - Do not add Redis/queues/WebSockets “for later” without a concrete need and an evaluation against Postgres/NestJS.
-- Locale and theme are user preferences persisted on the backend (cross-session, cross-browser); see SPEC §4 and §8.
 - Public API documentation: every **public** surface of an architectural component — exported interfaces, classes, functions, hooks, providers, domain types — must have **JSDoc** (purpose, parameters, return value; note non-obvious behavior and invariants where relevant). Private helpers need JSDoc only when the logic is complex or non-obvious.
 
 ## Target Stack
 
-| Layer         | Technologies                                                                                         |
-| ------------- | ---------------------------------------------------------------------------------------------------- |
-| Monorepo      | Nx                                                                                                   |
-| Web           | React, TypeScript, Carbon (`@carbon/react`), PWA, Service Worker, IndexedDB; **desktop-first** (MVP) |
-| Styles        | **SCSS** + **CSS Modules** (`.module.scss`); Carbon via `@use '@carbon/react'`                       |
-| i18n          | Multilingual UI (`en`, `ru`); deploy-time default + in-app switch                                    |
-| Theme         | Carbon-compatible `light` / `dark` / `system` (default `system`)                                     |
-| Server        | NestJS, PostgreSQL (`pg`), `@ts-safeql/sql-tag`, Docker, JWT                                         |
-| Tests (web)   | Unit/component: **Vitest** + React Testing Library; E2E: **Playwright**                              |
-| Tests (server)| Unit/integration: **Jest** (+ Nest testing / supertest); E2E of critical flows: **Playwright**       |
-| Shared        | `libs/dto`, `libs/domain` (+ feature/sync libs as needed)                                      |
-| Env / secrets | Only in `apps/web` and `apps/server` (`.env`); not a shared lib                                      |
+| Layer          | Technologies                                                                                                               |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Monorepo       | Nx                                                                                                                         |
+| Web            | React, TypeScript, IBM Carbon (`@carbon/react`, `@carbon/charts`), PWA, Service Worker, IndexedDB; **desktop-first** (MVP) |
+| Styles         | **SCSS** + **CSS Modules** (`.module.scss`); Carbon via `@use '@carbon/react'`                                             |
+| i18n           | Multilingual UI (`en`, `ru`); deploy-time default + in-app switch                                                          |
+| Theme          | Carbon-compatible `light` / `dark` / `system` (default `system`)                                                           |
+| Server         | NestJS, PostgreSQL (`pg`), `@ts-safeql/sql-tag`, Docker                                                                    |
+| Tests (web)    | Unit/component: **Vitest** + React Testing Library; E2E: **Playwright**                                                    |
+| Tests (server) | Unit/integration: **Jest** (+ Nest testing / supertest); E2E of critical flows: **Playwright**                             |
+| Shared         | `libs/dto`, `libs/domain` (+ feature/sync libs as needed)                                                                  |
+| Env / secrets  | Only in `apps/web` and `apps/server` (`.env`); not a shared lib                                                            |
 
 Adapt paths to the actual workspace layout.
 
@@ -69,21 +81,21 @@ Adapt paths to the actual workspace layout.
 
 - Use plain `import { … } from '…'` for both types and values. Do **not** use `import type { … }` or inline `type` in import lists (`import { type Foo }`).
 
-## Replaceable units
+## Design by Contract
 
 For swappable modules (use cases, repositories, session/auth facades, and other ports):
 
-**contract (`interface I*`) → implementation → token**
+**contract (**`interface I`**\*) → implementation → token**
 
-- Swappable contracts use `interface I*` (`ILoginUseCase`, `ISession`). Data shapes and wire types (`LoginRequest`, `UserRecord`, `@balance/dto`) use `interface`/`type` **without** the `I` prefix; prefer `type` for data. ESLint enforces the `I` prefix only in `apps/**`.
-- Resolve by **token**; consumers are typed as the `I*` contract, not the concrete class. Define the contract first, then the implementation, then the binding.
+- Swappable contracts use `interface I*` (`ILoginUseCase`, `ISession`). Data shapes and wire types (`LoginRequest`, `UserRecord`, `@balance/dto`) use `interface`/`type` **without** the `I` prefix; prefer `type` for data. ESLint enforces the `I` prefix only in `apps/`\*\*.
+- Resolve by **token**; consumers are typed as the `I`\* contract, not the concrete class. Define the contract first, then the implementation, then the binding.
 - **Backend token:** Nest injection token (`Symbol` / string) in `*.module.ts`.
 - **Frontend token:** React `Context` + Provider + hook — not Nest-style `Symbol` DI. Plain imports are fine for trivial single-implementation helpers that are not swapped in tests.
 - Export the contract and the public resolve path (Nest token / React hook); do not export the implementation unless the module or tests need it.
 
 ## Working the Task Queue
 
-1. Open `TASKS.md`. Take the **first unchecked** task in the highest non-empty priority (`P0` → `P1` → `P2` → `P3`) that has no unresolved `**Blocked by**`. Prefer finishing MVP (`P1`) before Post-MVP (`P2`/`P3`); see SPEC §1. Work **feature by feature**: backend (dto + API) for that feature, then its frontend, then the next feature. Do not batch all backend before any frontend.
+1. Open `TASKS.md`. Take the **first unchecked** task in the highest non-empty priority (`P0` → `P1` → `P2` → `P3`) that has no unresolved `**Blocked by`**. Prefer finishing MVP (`P1`) before Post-MVP (`P2`/`P3`); see SPEC §1. Work **feature by feature\*\*: backend (dto + API) for that feature, then its frontend, then the next feature. Do not batch all backend before any frontend.
 2. Claim the task line with an `(@agent-id)` suffix while working; remove the claim if you stop unfinished.
 3. Stay within that task’s scope. For complex tasks fill in `**Plan**` before coding; remove `**Plan**` when done.
 4. When **Acceptance** is met — mark `- [x]`. After merge, prefer deleting completed tasks (history lives in git).
@@ -111,28 +123,9 @@ An exception is allowed only when the user explicitly chooses one of the propose
 
 Do not start feature UI until step 2 exists for that feature.
 
-Change the DB schema only via migrations.
+## PostgreSQL (this repo)
 
-## PostgreSQL data access (server)
-
-- Use raw **`pg`** in `apps/server`; do not add an ORM (TypeORM, Prisma, Sequelize, etc.).
-- In TypeScript under `apps/server/src`, write parameterized queries with **`sql` from `@ts-safeql/sql-tag`** and type row results explicitly, e.g. `pool.query<UserRow>(sql\`...\`)`.
-- Do not interpolate user input into SQL strings; the tag generates `$1`, `$2`, … placeholders.
-- `@ts-safeql/eslint-plugin` validates tagged SQL against the live Postgres schema during lint — keep Postgres up when running `nx lint server`.
-- Schema changes belong in **`apps/server/migrations/*.sql`** only; apply with `npm run db:migrate`.
-- **Exceptions:** CLI scripts (`apps/server/scripts/*.mjs`) and migration SQL files may use plain `$1` + values or raw SQL files without `sql`-tag; they are not covered by SafeQL lint.
-
-Example:
-
-```typescript
-import { sql } from '@ts-safeql/sql-tag';
-
-const result = await pool.query<UserRow>(sql`
-    SELECT id, email
-    FROM users
-    WHERE email = ${email}
-`);
-```
+SQL approach: `[.cursor/skills/raw-postgresql/SKILL.md](./.cursor/skills/raw-postgresql/SKILL.md)`. Here: queries in `apps/server/src`, migrations in `apps/server/migrations/` (`npm run db:migrate`), SafeQL on `nx lint server` (Postgres must be up).
 
 ## Priority When Requirements Conflict
 
@@ -140,7 +133,7 @@ const result = await pool.query<UserRow>(sql`
 
 ## Definition of Done (unless the task narrows it)
 
-As needed: domain / dto / schema; API then UI (UI only after the API exists); offline/pending mutation path; idempotency; authz on backend; decimal-safe money; loading/error/empty in UI; desktop UX (mobile layout is not an MVP DoD item); tests for non-trivial logic; lint + typecheck; Nx boundaries respected.
+As needed: domain / dto / schema; API then UI (UI only after the API exists); offline/pending mutation path; idempotency; authz on backend; decimal-safe money; loading/error/empty in UI; desktop UX (mobile layout is not an MVP DoD item); UI aligned with Carbon Foundations / Components / Patterns (see Hard Constraints); tests for non-trivial logic; lint + typecheck; Nx boundaries respected.
 
 ## Must NOT
 
@@ -152,12 +145,12 @@ As needed: domain / dto / schema; API then UI (UI only after the API exists); of
 - Physically delete sync entities without a tombstone when sync requires one
 - Duplicate DTOs; paper over gaps with `any` / `@ts-ignore`
 - Silently apply hacks/workarounds (CSS against library internals, type escapes, pattern bypasses) instead of stopping to propose options
+- Ship `apps/web` UI that ignores Carbon Foundations, core Components, or UI/UX Patterns when a Carbon solution exists
 - Require network to read local data
 - Treat `navigator.onLine === true` as proof of real connectivity
 - Treat a mobile/tablet layout as an MVP deliverable
 - Start feature UI before that feature’s DTOs and backend API exist
 - Introduce multiple financial spaces, per-user spaces, or account membership/roles in MVP
-- Use string-concatenated or untyped SQL in `apps/server/src` when a parameterized `sql`-tag query is appropriate
 - Use `import type` or inline `type` in import lists
 
 ## Commands

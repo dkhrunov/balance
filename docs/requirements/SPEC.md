@@ -182,6 +182,17 @@ Requirements:
 
 Persistence of the chosen theme is defined under **User Preferences** (§8): stored on the backend for cross-session and cross-browser continuity, with a local cache for offline/first paint after preferences are known.
 
+### Loading states (skeletons)
+
+While the application or a screen region is loading, show a **skeleton** that mirrors the eventual UI — not a blank area or a lone spinner that is replaced by a differently sized layout.
+
+Requirements:
+
+- Prefer Carbon skeleton counterparts of the real components (e.g. `DataTableSkeleton` for a data table, skeleton placeholders for tiles, icons, and form chrome) when Carbon provides them.
+- Skeleton **geometry must match the loaded UI**: overall block size, spacing, column widths, control heights, and approximate row/tile count so the transition loading → content does **not** jump or reflow (no layout shift).
+- Configure skeleton props (columns, rows, sizes) to the same structure the live content uses; do not use a generic full-page spinner in place of a structured skeleton when the eventual layout is known.
+- Apply the same rule to app-shell and feature-level loading (initial auth/preferences hydrate, dashboard sections, settings lists, modals that fetch before showing fields).
+
 ---
 
 ## 5. Backend
@@ -271,8 +282,8 @@ Placement rules:
 | Put in | Examples |
 | ------ | -------- |
 | `models/` | `Transaction`, `Account`, `CategoryType`, `AccountIcon`, `Locale` |
-| `requests/` | `CreateAccountRequest`, `ListTransactionsRequest`, `LoginRequest` |
-| `responses/` | `ListAccountsResponse`, `CreateTransferResponse`, `LoginResponse` |
+| `requests/` | `CreateAccountRequest`, `QueryTransactionsRequest`, `LoginRequest` |
+| `responses/` | `QueryAccountsResponse`, `CreateTransferResponse`, `LoginResponse` |
 | `errors/` | `TRANSACTION_ERROR_CODES`, `AuthErrorCode` |
 | `constraints/` | `DISPLAY_NAME_MAX_LENGTH`, `TRANSACTION_DESCRIPTION_MAX_LENGTH` |
 
@@ -2105,7 +2116,7 @@ A feature is done only if:
 - [ ] Authorization is checked on the Backend.
 - [ ] Money calculations are decimal-safe.
 - [ ] Currency is handled correctly.
-- [ ] Loading/error/empty states implemented.
+- [ ] Loading/error/empty states implemented; loading uses size-matched skeletons (§4) so UI does not jump on content reveal.
 - [ ] Desktop UX checked (wide viewport). Missing mobile layout does not block MVP.
 - [ ] Unit tests added.
 - [ ] Integration tests added when needed.
