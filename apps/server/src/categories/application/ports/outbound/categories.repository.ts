@@ -40,7 +40,7 @@ export interface ICategoriesRepository {
      *
      * @param type Optional INCOME or EXPENSE filter.
      */
-    listActive(type?: CategoryType): Promise<readonly CategoryModel[]>;
+    findActive(type?: CategoryType): Promise<readonly CategoryModel[]>;
 
     /**
      * Loads an active category by id.

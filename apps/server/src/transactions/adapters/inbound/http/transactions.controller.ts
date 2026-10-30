@@ -15,8 +15,8 @@ import {
     CreateTransferRequest,
     CreateTransferResponse,
     DeleteTransactionRequest,
-    ListTransactionsRequest,
-    ListTransactionsResponse,
+    QueryTransactionsRequest,
+    QueryTransactionsResponse,
     TRANSACTION_ERROR_CODES,
     TRANSACTION_TYPES,
     Transaction,
@@ -34,8 +34,8 @@ import {
     ICreateTransferUseCase,
     IDeleteTransactionUseCase,
     IGetTransactionUseCase,
-    IListTransactionsUseCase,
-    LIST_TRANSACTIONS_USE_CASE,
+    IQueryTransactionsUseCase,
+    QUERY_TRANSACTIONS_USE_CASE,
 } from '../../../application';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { CreateTransferDto } from './dto/create-transfer.dto';
@@ -44,8 +44,8 @@ import { DeleteTransactionDto } from './dto/delete-transaction.dto';
 @Controller('transactions')
 export class TransactionsController {
     public constructor(
-        @Inject(LIST_TRANSACTIONS_USE_CASE)
-        private readonly listTransactionsUseCase: IListTransactionsUseCase,
+        @Inject(QUERY_TRANSACTIONS_USE_CASE)
+        private readonly queryTransactionsUseCase: IQueryTransactionsUseCase,
         @Inject(GET_TRANSACTION_USE_CASE)
         private readonly getTransactionUseCase: IGetTransactionUseCase,
         @Inject(CREATE_TRANSACTION_USE_CASE)
@@ -58,15 +58,15 @@ export class TransactionsController {
 
     @Get()
     @UseGuards(AuthGuard)
-    public listTransactions(
+    public queryTransactions(
         @CurrentUser() user: UserIdentity,
         @Query('createdBy') createdByRaw?: string,
         @Query('accountId') accountId?: string,
         @Query('type') typeRaw?: string,
         @Query('cursor') cursor?: string,
         @Query('limit') limitRaw?: string,
-    ): Promise<ListTransactionsResponse> {
-        const payload: ListTransactionsRequest = {
+    ): Promise<QueryTransactionsResponse> {
+        const payload: QueryTransactionsRequest = {
             createdBy: this.parseCreatedByFilter(createdByRaw),
             accountId: accountId || undefined,
             type: this.parseOptionalType(typeRaw),
@@ -74,7 +74,7 @@ export class TransactionsController {
             limit: this.parseOptionalLimit(limitRaw),
         };
 
-        return this.listTransactionsUseCase.execute(user.id, payload);
+        return this.queryTransactionsUseCase.execute(user.id, payload);
     }
 
     @Post()

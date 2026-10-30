@@ -38,7 +38,7 @@ export interface IAccountsRepository {
     /**
      * Lists active (non-deleted) accounts, newest first.
      */
-    listActive(): Promise<readonly AccountModel[]>;
+    findActive(): Promise<readonly AccountModel[]>;
 
     /**
      * Loads an active account by id.

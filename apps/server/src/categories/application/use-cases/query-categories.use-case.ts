@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CategoryType, ListCategoriesResponse } from '@balance/dto/categories';
+import { CategoryType, QueryCategoriesResponse } from '@balance/dto/categories';
 import { toCategoryResponse } from '../mappers/category-response.mapper';
-import { IListCategoriesUseCase } from '../ports/inbound/list-categories.use-case';
+import { IQueryCategoriesUseCase } from '../ports/inbound/query-categories.use-case';
 import { CATEGORIES_REPOSITORY, ICategoriesRepository } from '../ports/outbound/categories.repository';
 
 @Injectable()
-export class ListCategoriesUseCase implements IListCategoriesUseCase {
+export class QueryCategoriesUseCase implements IQueryCategoriesUseCase {
     public constructor(@Inject(CATEGORIES_REPOSITORY) private readonly categoriesRepository: ICategoriesRepository) {}
 
-    public async execute(type?: CategoryType): Promise<ListCategoriesResponse> {
-        const categories = await this.categoriesRepository.listActive(type);
+    public async execute(type?: CategoryType): Promise<QueryCategoriesResponse> {
+        const categories = await this.categoriesRepository.findActive(type);
 
         return { items: categories.map(toCategoryResponse) };
     }

@@ -1,6 +1,6 @@
 import {
     CreateTransactionRequest,
-    SIMPLE_TRANSACTION_TYPES,
+    INCOME_EXPENSE_TYPES,
     TRANSACTION_DESCRIPTION_MAX_LENGTH,
 } from '@balance/dto/transactions';
 import { CURRENCY_CODES } from '@balance/dto/currencies';
@@ -10,7 +10,7 @@ const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 /** HTTP body for `POST /transactions`; compatible with {@link CreateTransactionRequest}. */
 export class CreateTransactionDto implements CreateTransactionRequest {
-    @IsIn([...SIMPLE_TRANSACTION_TYPES])
+    @IsIn([...INCOME_EXPENSE_TYPES])
     public type: CreateTransactionRequest['type'];
 
     @IsUUID()

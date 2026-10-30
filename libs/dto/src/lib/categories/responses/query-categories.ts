@@ -1,6 +1,6 @@
 import { Category } from '../models/category';
 
 /** Active (non-deleted) categories in the single app space. */
-export interface ListCategoriesResponse {
+export interface QueryCategoriesResponse {
     readonly items: readonly Category[];
 }

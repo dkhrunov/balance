@@ -1,12 +1,12 @@
 export type { Transaction } from './models/transaction';
-export { TRANSACTION_TYPES, SIMPLE_TRANSACTION_TYPES, TRANSFER_TYPES } from './models/transaction-type';
-export type { TransactionType, SimpleTransactionType, TransferType } from './models/transaction-type';
+export { TRANSACTION_TYPES, INCOME_EXPENSE_TYPES, TRANSFER_TYPES } from './models/transaction-type';
+export type { TransactionType, IncomeExpenseType, TransferType } from './models/transaction-type';
 export { TRANSACTION_DESCRIPTION_MAX_LENGTH } from './constraints/description';
 export type { CreateTransactionRequest } from './requests/create-transaction';
 export type { CreateTransferRequest } from './requests/create-transfer';
 export type { CreateTransferResponse } from './responses/create-transfer';
 export type { DeleteTransactionRequest } from './requests/delete-transaction';
-export type { ListTransactionsRequest, TransactionCreatedByFilter } from './requests/list-transactions';
-export type { ListTransactionsResponse } from './responses/list-transactions';
+export type { QueryTransactionsRequest, TransactionCreatedByFilter } from './requests/query-transactions';
+export type { QueryTransactionsResponse } from './responses/query-transactions';
 export { TRANSACTION_ERROR_CODES } from './errors/error-codes';
 export type { TransactionErrorCode } from './errors/error-codes';

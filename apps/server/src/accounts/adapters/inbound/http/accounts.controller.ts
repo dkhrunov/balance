@@ -3,7 +3,7 @@ import {
     Account,
     CreateAccountRequest,
     DeleteAccountRequest,
-    ListAccountsResponse,
+    QueryAccountsResponse,
     UpdateAccountRequest,
 } from '@balance/dto/accounts';
 import { UserIdentity } from '@balance/dto/users';
@@ -15,9 +15,9 @@ import {
     ICreateAccountUseCase,
     IDeleteAccountUseCase,
     IGetAccountUseCase,
-    IListAccountsUseCase,
+    IQueryAccountsUseCase,
     IUpdateAccountUseCase,
-    LIST_ACCOUNTS_USE_CASE,
+    QUERY_ACCOUNTS_USE_CASE,
     UPDATE_ACCOUNT_USE_CASE,
 } from '../../../application';
 import { CreateAccountDto } from './dto/create-account.dto';
@@ -27,8 +27,8 @@ import { UpdateAccountDto } from './dto/update-account.dto';
 @Controller('accounts')
 export class AccountsController {
     public constructor(
-        @Inject(LIST_ACCOUNTS_USE_CASE)
-        private readonly listAccountsUseCase: IListAccountsUseCase,
+        @Inject(QUERY_ACCOUNTS_USE_CASE)
+        private readonly queryAccountsUseCase: IQueryAccountsUseCase,
         @Inject(GET_ACCOUNT_USE_CASE)
         private readonly getAccountUseCase: IGetAccountUseCase,
         @Inject(CREATE_ACCOUNT_USE_CASE)
@@ -41,8 +41,8 @@ export class AccountsController {
 
     @Get()
     @UseGuards(AuthGuard)
-    public getAccounts(): Promise<ListAccountsResponse> {
-        return this.listAccountsUseCase.execute();
+    public queryAccounts(): Promise<QueryAccountsResponse> {
+        return this.queryAccountsUseCase.execute();
     }
 
     @Get(':id')

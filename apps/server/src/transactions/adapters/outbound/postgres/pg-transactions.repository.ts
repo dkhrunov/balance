@@ -8,7 +8,7 @@ import {
     CreateTransferRecord,
     CreatedTransferPair,
     ITransactionsRepository,
-    ListTransactionsQuery,
+    FindActiveTransactionsQuery,
     SoftDeleteTransactionRecord,
     TransactionMutationResult,
 } from '../../../application/ports/outbound/transactions.repository';
@@ -31,7 +31,7 @@ type TransferLeg = {
 export class PgTransactionsRepository implements ITransactionsRepository {
     public constructor(private readonly database: DatabaseService) {}
 
-    public async listActive(query: ListTransactionsQuery): Promise<readonly TransactionModel[]> {
+    public async findActive(query: FindActiveTransactionsQuery): Promise<readonly TransactionModel[]> {
         const createdByUserIds = query.createdByUserIds;
         const accountId = query.accountId;
         const type = query.type;

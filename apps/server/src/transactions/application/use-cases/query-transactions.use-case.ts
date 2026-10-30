@@ -1,12 +1,12 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import {
-    ListTransactionsRequest,
-    ListTransactionsResponse,
+    QueryTransactionsRequest,
+    QueryTransactionsResponse,
     TRANSACTION_ERROR_CODES,
     TRANSACTION_TYPES,
 } from '@balance/dto/transactions';
 import { toTransactionResponse } from '../mappers/transaction-response.mapper';
-import { IListTransactionsUseCase } from '../ports/inbound/list-transactions.use-case';
+import { IQueryTransactionsUseCase } from '../ports/inbound/query-transactions.use-case';
 import { ITransactionsRepository, TRANSACTIONS_REPOSITORY } from '../ports/outbound/transactions.repository';
 import { decodeTransactionCursor, encodeTransactionCursor } from '../transaction-cursor';
 
@@ -15,12 +15,12 @@ const MAX_PAGE_LIMIT = 100;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 @Injectable()
-export class ListTransactionsUseCase implements IListTransactionsUseCase {
+export class QueryTransactionsUseCase implements IQueryTransactionsUseCase {
     public constructor(
         @Inject(TRANSACTIONS_REPOSITORY) private readonly transactionsRepository: ITransactionsRepository,
     ) {}
 
-    public async execute(actorUserId: string, request: ListTransactionsRequest): Promise<ListTransactionsResponse> {
+    public async execute(actorUserId: string, request: QueryTransactionsRequest): Promise<QueryTransactionsResponse> {
         const createdByUserIds = this.resolveCreatedByFilter(actorUserId, request);
         const limit = this.resolveLimit(request.limit);
         const cursor = request.cursor ? decodeTransactionCursor(request.cursor) : null;
@@ -41,7 +41,7 @@ export class ListTransactionsUseCase implements IListTransactionsUseCase {
             });
         }
 
-        const rows = await this.transactionsRepository.listActive({
+        const rows = await this.transactionsRepository.findActive({
             createdByUserIds,
             accountId: request.accountId ?? null,
             type: request.type ?? null,
@@ -67,7 +67,7 @@ export class ListTransactionsUseCase implements IListTransactionsUseCase {
         };
     }
 
-    private resolveCreatedByFilter(actorUserId: string, request: ListTransactionsRequest): readonly string[] | null {
+    private resolveCreatedByFilter(actorUserId: string, request: QueryTransactionsRequest): readonly string[] | null {
         const filter = request.createdBy;
 
         if (!filter || filter.mode === 'all') {

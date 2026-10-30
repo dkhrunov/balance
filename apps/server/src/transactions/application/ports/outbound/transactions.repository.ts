@@ -1,5 +1,5 @@
 import { CurrencyCode } from '@balance/dto/currencies';
-import { SimpleTransactionType, TransactionType } from '@balance/dto/transactions';
+import { IncomeExpenseType, TransactionType } from '@balance/dto/transactions';
 import { TransactionModel } from '../../models/transaction.model';
 
 /** Result of an optimistic-concurrency mutation against the transactions store. */
@@ -15,8 +15,8 @@ export type TransactionListCursor = {
     readonly id: string;
 };
 
-/** Filters and pagination for listing active transactions. */
-export type ListTransactionsQuery = {
+/** Filters and pagination for finding active transactions. */
+export type FindActiveTransactionsQuery = {
     readonly createdByUserIds: readonly string[] | null;
     readonly accountId: string | null;
     readonly type: TransactionType | null;
@@ -26,7 +26,7 @@ export type ListTransactionsQuery = {
 
 /** Input for inserting a new income/expense row. */
 export type CreateTransactionRecord = {
-    readonly type: SimpleTransactionType;
+    readonly type: IncomeExpenseType;
     readonly accountId: string;
     readonly categoryId: string;
     readonly amount: string;
@@ -70,7 +70,7 @@ export interface ITransactionsRepository {
      *
      * @param query Filters, cursor, and page size.
      */
-    listActive(query: ListTransactionsQuery): Promise<readonly TransactionModel[]>;
+    findActive(query: FindActiveTransactionsQuery): Promise<readonly TransactionModel[]>;
 
     /**
      * Loads an active transaction by id.

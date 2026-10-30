@@ -12,8 +12,8 @@ import {
     DeleteTransactionUseCase,
     GET_TRANSACTION_USE_CASE,
     GetTransactionUseCase,
-    LIST_TRANSACTIONS_USE_CASE,
-    ListTransactionsUseCase,
+    QUERY_TRANSACTIONS_USE_CASE,
+    QueryTransactionsUseCase,
     TRANSACTIONS_REPOSITORY,
 } from './application';
 import { TransactionsController } from './adapters/inbound';
@@ -24,14 +24,14 @@ import { PgTransactionsRepository } from './adapters/outbound';
     controllers: [TransactionsController],
     providers: [
         { provide: TRANSACTIONS_REPOSITORY, useClass: PgTransactionsRepository },
-        { provide: LIST_TRANSACTIONS_USE_CASE, useClass: ListTransactionsUseCase },
+        { provide: QUERY_TRANSACTIONS_USE_CASE, useClass: QueryTransactionsUseCase },
         { provide: GET_TRANSACTION_USE_CASE, useClass: GetTransactionUseCase },
         { provide: CREATE_TRANSACTION_USE_CASE, useClass: CreateTransactionUseCase },
         { provide: CREATE_TRANSFER_USE_CASE, useClass: CreateTransferUseCase },
         { provide: DELETE_TRANSACTION_USE_CASE, useClass: DeleteTransactionUseCase },
     ],
     exports: [
-        LIST_TRANSACTIONS_USE_CASE,
+        QUERY_TRANSACTIONS_USE_CASE,
         GET_TRANSACTION_USE_CASE,
         CREATE_TRANSACTION_USE_CASE,
         CREATE_TRANSFER_USE_CASE,

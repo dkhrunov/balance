@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ListAccountsResponse } from '@balance/dto/accounts';
+import { QueryAccountsResponse } from '@balance/dto/accounts';
 import { toAccountResponse } from '../mappers/account-response.mapper';
-import { IListAccountsUseCase } from '../ports/inbound/list-accounts.use-case';
+import { IQueryAccountsUseCase } from '../ports/inbound/query-accounts.use-case';
 import { ACCOUNTS_REPOSITORY, IAccountsRepository } from '../ports/outbound/accounts.repository';
 
 @Injectable()
-export class ListAccountsUseCase implements IListAccountsUseCase {
+export class QueryAccountsUseCase implements IQueryAccountsUseCase {
     public constructor(@Inject(ACCOUNTS_REPOSITORY) private readonly accountsRepository: IAccountsRepository) {}
 
-    public async execute(): Promise<ListAccountsResponse> {
-        const accounts = await this.accountsRepository.listActive();
+    public async execute(): Promise<QueryAccountsResponse> {
+        const accounts = await this.accountsRepository.findActive();
 
         return { items: accounts.map(toAccountResponse) };
     }

@@ -8,6 +8,6 @@ export { CATEGORY_ICON_MAX_LENGTH, CATEGORY_ICON_MIN_LENGTH } from './constraint
 export type { CreateCategoryRequest } from './requests/create-category';
 export type { UpdateCategoryRequest } from './requests/update-category';
 export type { DeleteCategoryRequest } from './requests/delete-category';
-export type { ListCategoriesResponse } from './responses/list-categories';
+export type { QueryCategoriesResponse } from './responses/query-categories';
 export { CATEGORY_ERROR_CODES } from './errors/error-codes';
 export type { CategoryErrorCode } from './errors/error-codes';

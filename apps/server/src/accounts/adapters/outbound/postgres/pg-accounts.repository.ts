@@ -15,7 +15,7 @@ import { AccountRecord } from './records/account.record';
 export class PgAccountsRepository implements IAccountsRepository {
     public constructor(private readonly database: DatabaseService) {}
 
-    public async listActive(): Promise<readonly AccountModel[]> {
+    public async findActive(): Promise<readonly AccountModel[]> {
         const result = await this.database.getPool().query<AccountRecord>(sql`
             SELECT
                 id,

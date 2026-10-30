@@ -16,7 +16,7 @@ import { CategoryRecord } from './records/category.record';
 export class PgCategoriesRepository implements ICategoriesRepository {
     public constructor(private readonly database: DatabaseService) {}
 
-    public async listActive(type?: CategoryType): Promise<readonly CategoryModel[]> {
+    public async findActive(type?: CategoryType): Promise<readonly CategoryModel[]> {
         if (type) {
             const result = await this.database.getPool().query<CategoryRecord>(sql`
                 SELECT

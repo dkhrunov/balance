@@ -6,6 +6,6 @@ export { ACCOUNT_NAME_MAX_LENGTH, ACCOUNT_NAME_MIN_LENGTH } from './constraints/
 export type { CreateAccountRequest } from './requests/create-account';
 export type { UpdateAccountRequest } from './requests/update-account';
 export type { DeleteAccountRequest } from './requests/delete-account';
-export type { ListAccountsResponse } from './responses/list-accounts';
+export type { QueryAccountsResponse } from './responses/query-accounts';
 export { ACCOUNT_ERROR_CODES } from './errors/error-codes';
 export type { AccountErrorCode } from './errors/error-codes';

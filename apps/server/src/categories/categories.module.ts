@@ -9,8 +9,8 @@ import {
     DeleteCategoryUseCase,
     GET_CATEGORY_USE_CASE,
     GetCategoryUseCase,
-    LIST_CATEGORIES_USE_CASE,
-    ListCategoriesUseCase,
+    QUERY_CATEGORIES_USE_CASE,
+    QueryCategoriesUseCase,
     UPDATE_CATEGORY_USE_CASE,
     UpdateCategoryUseCase,
 } from './application';
@@ -22,14 +22,14 @@ import { PgCategoriesRepository } from './adapters/outbound';
     controllers: [CategoriesController],
     providers: [
         { provide: CATEGORIES_REPOSITORY, useClass: PgCategoriesRepository },
-        { provide: LIST_CATEGORIES_USE_CASE, useClass: ListCategoriesUseCase },
+        { provide: QUERY_CATEGORIES_USE_CASE, useClass: QueryCategoriesUseCase },
         { provide: GET_CATEGORY_USE_CASE, useClass: GetCategoryUseCase },
         { provide: CREATE_CATEGORY_USE_CASE, useClass: CreateCategoryUseCase },
         { provide: UPDATE_CATEGORY_USE_CASE, useClass: UpdateCategoryUseCase },
         { provide: DELETE_CATEGORY_USE_CASE, useClass: DeleteCategoryUseCase },
     ],
     exports: [
-        LIST_CATEGORIES_USE_CASE,
+        QUERY_CATEGORIES_USE_CASE,
         GET_CATEGORY_USE_CASE,
         CREATE_CATEGORY_USE_CASE,
         UPDATE_CATEGORY_USE_CASE,

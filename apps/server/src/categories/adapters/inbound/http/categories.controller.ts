@@ -18,7 +18,7 @@ import {
     CategoryType,
     CreateCategoryRequest,
     DeleteCategoryRequest,
-    ListCategoriesResponse,
+    QueryCategoriesResponse,
     UpdateCategoryRequest,
 } from '@balance/dto/categories';
 import { UserIdentity } from '@balance/dto/users';
@@ -30,9 +30,9 @@ import {
     ICreateCategoryUseCase,
     IDeleteCategoryUseCase,
     IGetCategoryUseCase,
-    IListCategoriesUseCase,
+    IQueryCategoriesUseCase,
     IUpdateCategoryUseCase,
-    LIST_CATEGORIES_USE_CASE,
+    QUERY_CATEGORIES_USE_CASE,
     UPDATE_CATEGORY_USE_CASE,
 } from '../../../application';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -42,8 +42,8 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 @Controller('categories')
 export class CategoriesController {
     public constructor(
-        @Inject(LIST_CATEGORIES_USE_CASE)
-        private readonly listCategoriesUseCase: IListCategoriesUseCase,
+        @Inject(QUERY_CATEGORIES_USE_CASE)
+        private readonly queryCategoriesUseCase: IQueryCategoriesUseCase,
         @Inject(GET_CATEGORY_USE_CASE)
         private readonly getCategoryUseCase: IGetCategoryUseCase,
         @Inject(CREATE_CATEGORY_USE_CASE)
@@ -56,10 +56,10 @@ export class CategoriesController {
 
     @Get()
     @UseGuards(AuthGuard)
-    public getCategories(@Query('type') type?: string): Promise<ListCategoriesResponse> {
+    public queryCategories(@Query('type') type?: string): Promise<QueryCategoriesResponse> {
         const filter = this.parseOptionalType(type);
 
-        return this.listCategoriesUseCase.execute(filter);
+        return this.queryCategoriesUseCase.execute(filter);
     }
 
     @Get(':id')

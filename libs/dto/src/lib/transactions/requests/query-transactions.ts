@@ -13,7 +13,7 @@ export type TransactionCreatedByFilter =
     | { readonly mode: 'users'; readonly userIds: readonly EntityId[] };
 
 /** Query parameters for `GET /transactions`. */
-export interface ListTransactionsRequest extends CursorPageRequest {
+export interface QueryTransactionsRequest extends CursorPageRequest {
     readonly createdBy?: TransactionCreatedByFilter;
     readonly accountId?: EntityId;
     readonly type?: TransactionType;

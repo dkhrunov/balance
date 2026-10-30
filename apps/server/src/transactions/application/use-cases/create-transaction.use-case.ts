@@ -3,7 +3,7 @@ import { GET_ACCOUNT_USE_CASE, IGetAccountUseCase } from '../../../accounts';
 import { GET_CATEGORY_USE_CASE, IGetCategoryUseCase } from '../../../categories';
 import {
     CreateTransactionRequest,
-    SIMPLE_TRANSACTION_TYPES,
+    INCOME_EXPENSE_TYPES,
     TRANSACTION_DESCRIPTION_MAX_LENGTH,
     TRANSACTION_ERROR_CODES,
     Transaction,
@@ -23,10 +23,10 @@ export class CreateTransactionUseCase implements ICreateTransactionUseCase {
     ) {}
 
     public async execute(actorUserId: string, request: CreateTransactionRequest): Promise<Transaction> {
-        if (!(SIMPLE_TRANSACTION_TYPES as readonly string[]).includes(request.type)) {
+        if (!(INCOME_EXPENSE_TYPES as readonly string[]).includes(request.type)) {
             throw new BadRequestException({
                 code: TRANSACTION_ERROR_CODES.validationFailed,
-                message: `Transaction type must be ${SIMPLE_TRANSACTION_TYPES.join(' or ')}`,
+                message: `Transaction type must be ${INCOME_EXPENSE_TYPES.join(' or ')}`,
                 details: {},
             });
         }
