@@ -16,12 +16,13 @@
     }
 }
 
-.headerLogo {
-    display: block;
-    width: $spacing-07;
-    height: $spacing-07;
+.headerLabel {
+    @include type-style('heading-01');
 }
 
-.headerLabel {
-    @include type-style('productive-heading-01');
+// Desktop SideNav rail width (Carbon mini-units(6) / $spacing-09).
+// Applied only when the rail is persistent — overlay/hidden nav must not
+// reserve this space (Carbon's `.side-nav ~ .content` sibling rule would).
+.contentWithRail {
+    margin-inline-start: $spacing-09;
 }

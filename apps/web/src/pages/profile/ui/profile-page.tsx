@@ -6,7 +6,7 @@ export function ProfilePage() {
     const { user } = useAuth();
 
     return (
-        <PageShell title="Profile" subtitle="Your account details.">
+        <PageShell title="Profile">
             <ContainedList label="Account" kind="on-page">
                 <ContainedListItem>Email · {user?.email ?? '—'}</ContainedListItem>
                 <ContainedListItem>Display name · {user?.displayName ?? '—'}</ContainedListItem>

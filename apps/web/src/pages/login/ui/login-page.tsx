@@ -15,6 +15,7 @@ import { breakpoints } from '@carbon/layout';
 import { useTranslation } from 'react-i18next';
 import { ApiError } from '../../../shared/api';
 import { useAuth } from '../../../shared/auth';
+import { ROUTES } from '../../../shared/routes';
 import styles from './login-page.module.scss';
 
 const SM_COLUMN = breakpoints.sm.columns;
@@ -139,7 +140,7 @@ export function LoginPage() {
 
 function getReturnPath(state: unknown): string {
     if (!isReturnLocation(state)) {
-        return '/';
+        return ROUTES.home;
     }
 
     return `${state.from.pathname}${state.from.search}${state.from.hash}`;

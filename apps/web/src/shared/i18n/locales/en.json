@@ -6,9 +6,7 @@
         "offline": "Offline"
     },
     "nav": {
-        "transactions": "Transactions",
-        "accounts": "Accounts",
-        "categories": "Categories",
+        "dashboard": "Dashboard",
         "settings": "Settings",
         "openMenu": "Open menu",
         "closeMenu": "Close menu",
@@ -16,6 +14,200 @@
         "account": "Account",
         "profile": "Profile",
         "logOut": "Log out"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "placeholder": "Dashboard sections are coming next."
+    },
+    "accounts": {
+        "title": "Accounts",
+        "emptyTitle": "No accounts yet",
+        "emptyBody": "Create an account to start tracking balances.",
+        "cannotLoad": "Cannot load accounts",
+        "cannotSave": "Cannot save account",
+        "cannotDelete": "Cannot delete account",
+        "loadError": "Unable to load accounts. Check your connection and try again.",
+        "saveError": "Unable to save the account. Check your connection and try again.",
+        "deleteError": "Unable to delete the account. Check your connection and try again.",
+        "versionConflict": "This account was changed elsewhere. Refresh and try again.",
+        "createTitle": "Create account",
+        "editTitle": "Edit account",
+        "reorderTitle": "Reorder accounts",
+        "deleteTitle": "Delete account?",
+        "deleteBody": "The account will be soft-deleted. You can no longer record transactions against it.",
+        "fields": {
+            "name": "Name",
+            "icon": "Icon",
+            "currency": "Currency",
+            "initialBalance": "Initial balance",
+            "initialBalanceHelper": "Decimal amount in the account currency (e.g. 1000.00)."
+        },
+        "validation": {
+            "name": "Enter a name between 1 and 120 characters.",
+            "balance": "Enter a valid decimal amount for this currency.",
+            "generic": "Check the form fields and try again."
+        },
+        "actions": {
+            "add": "Add",
+            "create": "Create",
+            "save": "Save",
+            "cancel": "Cancel",
+            "edit": "Edit account",
+            "delete": "Delete",
+            "retry": "Retry",
+            "reorder": "Reorder",
+            "saveOrder": "Save order"
+        }
+    },
+    "categories": {
+        "title": "Categories",
+        "emptyIncome": "No income categories yet",
+        "emptyIncomeBody": "Use Add to create an income category.",
+        "emptyExpense": "No expense categories yet",
+        "emptyExpenseBody": "Use Add to create an expense category.",
+        "cannotLoad": "Cannot load categories",
+        "cannotSave": "Cannot save category",
+        "cannotDelete": "Cannot delete category",
+        "loadError": "Unable to load categories. Check your connection and try again.",
+        "saveError": "Unable to save the category. Check your connection and try again.",
+        "deleteError": "Unable to delete the category. Check your connection and try again.",
+        "versionConflict": "This category was changed elsewhere. Refresh and try again.",
+        "createTitle": "Create category",
+        "editTitle": "Edit category",
+        "deleteTitle": "Delete category?",
+        "deleteBody": "The category will be soft-deleted and unavailable for new transactions.",
+        "types": {
+            "INCOME": "Income",
+            "EXPENSE": "Expense"
+        },
+        "fields": {
+            "name": "Name",
+            "icon": "Icon",
+            "type": "Type"
+        },
+        "validation": {
+            "name": "Enter a name between 1 and 120 characters.",
+            "generic": "Check the form fields and try again."
+        },
+        "actions": {
+            "add": "Add category",
+            "create": "Create",
+            "save": "Save",
+            "cancel": "Cancel",
+            "edit": "Edit category",
+            "delete": "Delete",
+            "retry": "Retry"
+        }
+    },
+    "summary": {
+        "title": "Overview",
+        "selectAccountTitle": "No account selected",
+        "selectAccountBody": "Choose an account below to see balance and activity.",
+        "cannotLoad": "Cannot load summary",
+        "loadError": "Unable to load transactions for this account.",
+        "presets": {
+            "thisMonth": "This month",
+            "last30Days": "30 days",
+            "last90Days": "90 days",
+            "all": "All time"
+        },
+        "tiles": {
+            "balance": "Balance",
+            "income": "Income",
+            "expenses": "Expenses"
+        },
+        "chart": {
+            "aria": "Charts placeholder",
+            "placeholder": "Spending charts are Post-MVP. Totals above use live transactions for the selected account."
+        }
+    },
+    "transactions": {
+        "title": "Transactions",
+        "selectAccountTitle": "No account selected",
+        "selectAccountBody": "Choose an account above to view and add transactions.",
+        "emptyTitle": "No transactions",
+        "emptyBody": "Try adjusting search or filters, or add a transaction.",
+        "cannotLoad": "Cannot load transactions",
+        "loadError": "Unable to load transactions.",
+        "cannotSave": "Cannot save transaction",
+        "cannotDelete": "Cannot delete transaction",
+        "saveError": "Unable to save the transaction. Check your connection and try again.",
+        "deleteError": "Unable to delete the transaction. Check your connection and try again.",
+        "versionConflict": "This transaction was changed elsewhere. Refresh and try again.",
+        "createTitle": "Add transaction",
+        "editTitle": "Edit transaction",
+        "deleteTitle": "Delete transaction?",
+        "deleteBody": "The transaction will be soft-deleted and balances will update after refresh.",
+        "transferCategory": "Transfer",
+        "otherUser": "Other user",
+        "noTransferTargetsTitle": "No target accounts",
+        "noTransferTargets": "Create another account in the same currency to transfer.",
+        "search": "Search transactions",
+        "modes": {
+            "simple": "Regular",
+            "transfer": "Transfer"
+        },
+        "filters": {
+            "type": "Type",
+            "typeAll": "All types"
+        },
+        "types": {
+            "INCOME": "Income",
+            "EXPENSE": "Expense",
+            "TRANSFER_IN": "Transfer in",
+            "TRANSFER_OUT": "Transfer out"
+        },
+        "columns": {
+            "date": "Date",
+            "type": "Type",
+            "category": "Category",
+            "description": "Description",
+            "amount": "Amount",
+            "createdBy": "Created by",
+            "actions": "Actions"
+        },
+        "fields": {
+            "kind": "Type",
+            "mode": "Operation",
+            "category": "Category",
+            "amount": "Amount",
+            "date": "Date",
+            "description": "Description",
+            "fromAccount": "From",
+            "toAccount": "To"
+        },
+        "validation": {
+            "category": "Choose a category.",
+            "amount": "Enter a valid decimal amount.",
+            "amountPositive": "Amount must be greater than zero.",
+            "date": "Choose a valid date.",
+            "transferTarget": "Choose a destination account.",
+            "insufficientFunds": "Not enough balance for this transfer or expense."
+        },
+        "actions": {
+            "add": "Add",
+            "create": "Create",
+            "edit": "Edit",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "filters": "Filters",
+            "clearSearch": "Clear search"
+        }
+    },
+    "icon": {
+        "pickerLabel": "Choose an icon",
+        "placeholder": "No icon selected",
+        "search": "Search icons",
+        "clearSearch": "Clear search",
+        "noResults": "No icons match your search.",
+        "searchResults": "Search results ({{count}})",
+        "groups": {
+            "accounts": "Accounts",
+            "expenses": "Expenses",
+            "income": "Income",
+            "general": "General",
+            "custom": "Icons"
+        }
     },
     "login": {
         "subtitle": "Sign in to your finance space.",
@@ -31,16 +223,20 @@
     },
     "settings": {
         "title": "Settings",
-        "subtitle": "Language, theme, and session.",
+        "saveError": "Could not save preferences. Check your connection and try again."
+    },
+    "locale": {
+        "title": "Локализация",
         "language": "Language",
         "languagePlaceholder": "Choose language",
-        "theme": "Theme",
+        "localeEn": "English",
+        "localeRu": "Русский"
+    },
+    "theme": {
+        "title": "Theme",
         "themePlaceholder": "Choose theme",
         "themeSystem": "System",
         "themeLight": "Light",
-        "themeDark": "Dark",
-        "localeEn": "English",
-        "localeRu": "Русский",
-        "saveError": "Could not save preferences. Check your connection and try again."
+        "themeDark": "Dark"
     }
 }

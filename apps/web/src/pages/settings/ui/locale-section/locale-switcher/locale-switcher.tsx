@@ -1,8 +1,8 @@
 import { ContentSwitcher, FormLabel, Switch } from '@carbon/react';
 import { Locale } from '@balance/dto/users';
 import { useTranslation } from 'react-i18next';
-import { isLocale } from '../i18n';
-import styles from './preference-switcher.module.scss';
+import { isLocale } from '../../../../../shared/i18n';
+import styles from './locale-switcher.module.scss';
 
 const LOCALE_OPTIONS = ['en', 'ru'] as const satisfies readonly Locale[];
 
@@ -23,6 +23,7 @@ type LocaleSwitcherProps = {
 
 /**
  * Compact locale preference control (EN / RU), Carbon ContentSwitcher.
+ * Private to the settings locale section.
  */
 export function LocaleSwitcher({
     locale,
@@ -39,13 +40,13 @@ export function LocaleSwitcher({
         <div className={styles.root}>
             {showLabel ? (
                 <FormLabel id={`${id}-label`} className={styles.label}>
-                    {t('settings.language')}
+                    {t('locale.language')}
                 </FormLabel>
             ) : null}
             <div className={styles.textControl}>
                 <ContentSwitcher
                     aria-labelledby={showLabel ? `${id}-label` : undefined}
-                    aria-label={showLabel ? undefined : t('settings.language')}
+                    aria-label={showLabel ? undefined : t('locale.language')}
                     size={size}
                     selectedIndex={selectedIndex >= 0 ? selectedIndex : 0}
                     onChange={({ name }) => {

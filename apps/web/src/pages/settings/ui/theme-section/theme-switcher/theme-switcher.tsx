@@ -2,8 +2,8 @@ import { ContentSwitcher, FormLabel, IconSwitch } from '@carbon/react';
 import { Asleep, Devices, Light } from '@carbon/react/icons';
 import { Theme } from '@balance/dto/users';
 import { useTranslation } from 'react-i18next';
-import { isTheme } from '../theme';
-import styles from './preference-switcher.module.scss';
+import { isTheme } from '../../../../../shared/theme';
+import styles from './theme-switcher.module.scss';
 
 const THEME_OPTIONS = ['system', 'light', 'dark'] as const satisfies readonly Theme[];
 
@@ -27,6 +27,7 @@ type ThemeSwitcherProps = {
 
 /**
  * Compact theme preference control (system / light / dark), Carbon ContentSwitcher + icons.
+ * Private to the settings theme section.
  */
 export function ThemeSwitcher({
     theme,
@@ -40,21 +41,21 @@ export function ThemeSwitcher({
     const selectedIndex = THEME_OPTIONS.indexOf(theme);
 
     const labels: Record<Theme, string> = {
-        system: t('settings.themeSystem'),
-        light: t('settings.themeLight'),
-        dark: t('settings.themeDark'),
+        system: t('theme.themeSystem'),
+        light: t('theme.themeLight'),
+        dark: t('theme.themeDark'),
     };
 
     return (
         <div className={styles.root}>
             {showLabel ? (
                 <FormLabel id={`${id}-label`} className={styles.label}>
-                    {t('settings.theme')}
+                    {t('theme.title')}
                 </FormLabel>
             ) : null}
             <ContentSwitcher
                 aria-labelledby={showLabel ? `${id}-label` : undefined}
-                aria-label={showLabel ? undefined : t('settings.theme')}
+                aria-label={showLabel ? undefined : t('theme.title')}
                 size={size}
                 selectedIndex={selectedIndex >= 0 ? selectedIndex : 0}
                 onChange={({ name }) => {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ActiveTheme, resolveActiveTheme } from '../theme';
-import { usePreferences } from './preferences-provider';
+import { usePreferences } from '../preferences';
+import { ActiveTheme, resolveActiveTheme } from './theme';
 
 function readSystemPrefersDark(): boolean {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;

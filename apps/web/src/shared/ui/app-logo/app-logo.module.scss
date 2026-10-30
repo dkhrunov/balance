@@ -1,0 +1,7 @@
+@use '@carbon/react/scss/spacing' as *;
+
+.logo {
+    display: block;
+    width: $spacing-07;
+    height: $spacing-07;
+}

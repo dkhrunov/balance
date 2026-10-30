@@ -13,12 +13,11 @@
 
 .title {
     @include type-style('heading-03');
-    color: $text-primary;
-    margin: 0 0 $spacing-02;
+    margin: 0;
 }
 
 .subtitle {
     @include type-style('body-01');
     color: $text-secondary;
-    margin: 0;
+    margin: $spacing-02 0 0;
 }

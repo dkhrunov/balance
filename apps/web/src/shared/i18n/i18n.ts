@@ -46,13 +46,13 @@ export function persistLocale(locale: Locale): void {
  */
 export function initI18n(locale: Locale = readCachedLocale()): typeof i18n {
     if (i18n.isInitialized) {
-        i18n.changeLanguage(locale);
+        void i18n.changeLanguage(locale);
         document.documentElement.lang = locale;
 
         return i18n;
     }
 
-    i18n.use(initReactI18next).init({
+    void i18n.use(initReactI18next).init({
         resources: {
             en: { translation: en },
             ru: { translation: ru },

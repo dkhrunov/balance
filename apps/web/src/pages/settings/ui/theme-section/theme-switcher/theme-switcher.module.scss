@@ -1,0 +1,12 @@
+@use '@carbon/react/scss/spacing' as *;
+
+.root {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-03;
+}
+
+.label {
+    margin-block-end: 0;
+}

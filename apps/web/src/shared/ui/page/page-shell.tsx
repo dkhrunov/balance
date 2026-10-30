@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import styles from './page.module.scss';
+import styles from './page-shell.module.scss';
 
 type PageShellProps = {
     title: string;
@@ -16,12 +16,15 @@ export function PageShell({ title, subtitle, actions, children }: PageShellProps
         <>
             <header className={styles.header}>
                 <div>
-                    <h2 className={styles.title}>{title}</h2>
+                    <h3 className={styles.title}>{title}</h3>
                     {subtitle ? <p className={styles.subtitle}>{subtitle}</p> : null}
                 </div>
                 {actions}
             </header>
-            {children}
+
+            <main>
+                {children}
+            </main>
         </>
     );
 }
