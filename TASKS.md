@@ -109,10 +109,10 @@
   - **Blocked by**: auth-jwt, money-currency-domain
   - **Estimate**: 4h
 
-- [ ] Accounts UI (online CRUD)
+- [x] Accounts UI (online CRUD)
   - **ID**: accounts-ui
   - **Tags**: frontend, accounts
-  - **Details**: List/create/edit accounts using the accounts API/dto; money/currency inputs without float; show per-account balance. No account owner/membership UI. Desktop tables/forms. SPEC §9–10, §18, §51.
+  - **Details**: List/create/edit accounts using the accounts API/dto; money/currency inputs without float; show per-account balance. No account owner/membership UI. Desktop tables/forms. SPEC §9–10, §18, §51. Delivered on Dashboard `/` (no separate `/accounts` page).
   - **Acceptance**: Full CRUD online against contracts; currency + balance shown; empty/loading/error; usable on a wide viewport.
   - **Blocked by**: web-shell-auth, accounts-api
   - **Estimate**: 2h
@@ -127,10 +127,10 @@
   - **Blocked by**: auth-jwt
   - **Estimate**: 2-3h
 
-- [ ] Categories UI (online CRUD)
+- [x] Categories UI (online CRUD)
   - **ID**: categories-ui
   - **Tags**: frontend, categories
-  - **Details**: List/create/edit income and expense categories using the categories API/dto. Desktop tables/forms. SPEC §17, §51.
+  - **Details**: List/create/edit income and expense categories using the categories API/dto. Desktop tables/forms. SPEC §17, §51. Delivered on Dashboard `/` (no separate `/categories` page).
   - **Acceptance**: Full CRUD online against contracts; type separation visible; empty/loading/error; usable on a wide viewport.
   - **Blocked by**: web-shell-auth, categories-api
   - **Estimate**: 2h
@@ -153,10 +153,10 @@
   - **Blocked by**: transactions-income-expense
   - **Estimate**: 3-4h
 
-- [ ] Transactions UI — income, expense, transfer + visibility filters
+- [x] Transactions UI — income, expense, transfer + visibility filters
   - **ID**: transactions-ui
   - **Tags**: frontend, transactions
-  - **Details**: Create/list transactions against existing APIs/dto; transfer flow; decimal money input; dates; show `createdBy`; filter all / me / selected users. Desktop tables/forms. SPEC §9, §14–16, §46, §51–52.
+  - **Details**: Create/list transactions against existing APIs/dto; transfer flow; decimal money input; dates; show `createdBy`; filter all / me (per-user picker deferred until a users list API exists). Desktop tables/forms on Dashboard `/`. SPEC §9, §14–16, §46, §51–52.
   - **Acceptance**: Record income/expense/transfer; lists paginate; amounts correct; attribution + filters work; usable on a wide viewport.
   - **Blocked by**: accounts-ui, categories-ui, transactions-transfer
   - **Estimate**: 4-6h

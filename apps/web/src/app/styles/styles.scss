@@ -31,3 +31,31 @@
 [data-carbon-theme='g100'] {
     @include themes.theme($g100);
 }
+
+// HACK: Carbon `update_fields_on_layer` (used by `.cds--modal`) ships a typo —
+// `.ccdsds--date-picker-input__wrapper` instead of `.cds--date-picker-input__wrapper`
+// (SCSS: `.c#{$prefix}ds--…` with prefix `cds`). The intended `field-01` background
+// never applies, so FluidDatePicker stays on outer `var(--cds-field)` (#fff) while
+// sibling fluid controls get `var(--cds-field-01)`. Still broken on @carbon/styles
+// main / 1.118.0 — remove when upstream fixes:
+// https://github.com/carbon-design-system/carbon/blob/main/packages/styles/scss/utilities/_update_fields_on_layer.scss
+.cds--modal .cds--date-picker--fluid .cds--date-picker-input__wrapper .cds--date-picker__input {
+    background-color: var(--cds-field-01);
+}
+
+// HACK: FluidDatePicker outer is `inline-flex`; default single DatePicker input keeps
+// `inline-size: 18rem`, so the field does not span an `isFullWidth` modal. Stretch the
+// fluid date stack to the modal content width (same idea as the old `100cqi` fix).
+.cds--modal .cds--date-picker--fluid {
+    inline-size: 100%;
+    max-inline-size: none;
+
+    .cds--date-picker,
+    .cds--date-picker-container,
+    .cds--date-picker-input__wrapper,
+    .cds--date-picker-input__wrapper > span,
+    .cds--date-picker.cds--date-picker--single .cds--date-picker__input {
+        inline-size: 100%;
+        max-inline-size: none;
+    }
+}

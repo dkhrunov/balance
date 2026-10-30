@@ -6,6 +6,7 @@ import { PageShell } from '../../../shared/ui/page';
 import { useAccountTransactions } from '../lib/use-account-transactions';
 import { AccountsSection } from './accounts-section';
 import { SummarySection } from './summary-section';
+import { TransactionsSection } from './transactions-section';
 
 export function DashboardPage() {
     const { t } = useTranslation();
@@ -14,6 +15,7 @@ export function DashboardPage() {
     const {
         transactions,
         loadState: transactionsLoadState,
+        reload: reloadTransactions,
     } = useAccountTransactions(selectedAccountId);
 
     const selectedAccount =
@@ -30,6 +32,14 @@ export function DashboardPage() {
                 selectedAccountId={selectedAccountId}
                 selectedAccountTransactions={transactions}
                 onSelectAccountId={setSelectedAccountId}
+            />
+            <TransactionsSection
+                account={selectedAccount}
+                transactions={transactions}
+                transactionsLoadState={transactionsLoadState}
+                onTransactionsChanged={() => {
+                    void reloadTransactions();
+                }}
             />
         </PageShell>
     );

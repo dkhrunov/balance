@@ -1,0 +1,7 @@
+@use '@carbon/react/scss/spacing' as *;
+
+.categoryOption {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-03;
+}

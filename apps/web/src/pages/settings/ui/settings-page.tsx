@@ -3,6 +3,7 @@ import { ToastNotification } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import { usePreferences } from '../../../shared/preferences';
 import { PageShell } from '../../../shared/ui/page';
+import { CategoriesSection } from './categories-section';
 import { LocaleSection } from './locale-section';
 import { ThemeSection } from './theme-section';
 
@@ -33,6 +34,7 @@ export function SettingsPage() {
 
             <LocaleSection />
             <ThemeSection />
+            <CategoriesSection />
         </PageShell>
     );
 }

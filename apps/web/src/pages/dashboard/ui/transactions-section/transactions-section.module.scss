@@ -1,0 +1,49 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/type' as *;
+@use '@carbon/react/scss/utilities/skeleton' as *;
+
+.section {
+    display: flex;
+    flex-direction: column;
+    margin-block-start: $spacing-07;
+}
+
+.header {
+    @include type-style('heading-01');
+    margin: 0 0 $spacing-05;
+}
+
+// className lands on the <table> (Carbon DataTableSkeleton).
+.tableSkeleton {
+    table-layout: fixed;
+    width: 100%;
+
+    // Actions: two ghost IconButtons (sm) — keep the last column narrow.
+    th:last-child,
+    td:last-child {
+        width: 5.5rem;
+        max-width: 5.5rem;
+        padding-inline: $spacing-03;
+        vertical-align: middle;
+        white-space: nowrap;
+        text-align: end;
+    }
+
+    td:last-child span {
+        display: none;
+    }
+
+    td:last-child::before,
+    td:last-child::after {
+        content: '';
+        display: inline-block;
+        width: $spacing-07;
+        height: $spacing-07;
+        vertical-align: middle;
+        @include skeleton;
+    }
+
+    td:last-child::before {
+        margin-inline-end: $spacing-02;
+    }
+}

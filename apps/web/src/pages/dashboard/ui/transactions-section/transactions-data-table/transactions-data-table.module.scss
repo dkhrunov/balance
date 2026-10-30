@@ -1,0 +1,9 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+
+.categoryCell,
+.rowActions {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-03;
+}
