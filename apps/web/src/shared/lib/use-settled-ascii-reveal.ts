@@ -1,4 +1,4 @@
-import { useEffect, RefObject } from 'react';
+import { useLayoutEffect, RefObject } from 'react';
 import { AsciiRevealHandle } from 'ascii-reveal';
 
 /**
@@ -22,31 +22,38 @@ async function waitForLayoutSettle(): Promise<void> {
 }
 
 /**
- * Starts {@link AsciiRevealHandle.reveal} only after layout has settled.
+ * Hides content immediately, waits for layout to settle, then reveals.
  *
- * ascii-reveal aborts an in-flight reveal when its wrapper resizes by more than
- * 1px (ResizeObserver). Carbon TileGroup / RadioTile selection and carousel
- * scrollbars often change size right after mount, which makes mount reveals
- * look instant. Deferring past fonts + paint avoids that abort.
+ * With `revealOnMount={false}`, children are visible until an imperative
+ * `reveal()`. Settling alone would flash raw DOM; `hide({ instant: true })`
+ * first avoids that. Deferring past fonts + paint still avoids ResizeObserver
+ * abort from Carbon TileGroup / RadioTile selection and carousel scrollbars.
  *
  * Pair with `<AsciiReveal revealOnMount={false}>` and do **not** drive reveal
  * via the `loading` prop (that path also reveals before layout settles).
  *
  * @param handleRef - Ref from `<AsciiReveal ref={…} />`
- * @param enabled - When true, schedules a reveal; when false, cancels pending work
+ * @param enabled - When true, schedules hide → settle → reveal; when false, cancels
  */
 export function useSettledAsciiReveal(
     handleRef: RefObject<AsciiRevealHandle | null>,
     enabled: boolean,
 ): void {
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!enabled) {
+            return;
+        }
+
+        const handle = handleRef.current;
+
+        if (!handle) {
             return;
         }
 
         let cancelled = false;
 
         void (async () => {
+            await handle.hide({ instant: true });
             await waitForLayoutSettle();
 
             if (!cancelled) {
