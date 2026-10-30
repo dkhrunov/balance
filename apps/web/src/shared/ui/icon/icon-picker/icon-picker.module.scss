@@ -1,0 +1,67 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
+@use '@carbon/react/scss/utilities/visually-hidden' as *;
+
+.field {
+    // FormItem already stacks label + control; keep align stretch for full-width rows.
+    align-items: stretch;
+    inline-size: 100%;
+}
+
+.labelVisuallyHidden {
+    @include visually-hidden;
+}
+
+.triggerRow {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-03;
+}
+
+.popoverPanel {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-03;
+    padding: $spacing-04;
+    width: min(28rem, 90vw);
+    max-width: 28rem;
+}
+
+.catalog {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-05;
+    max-height: 22rem;
+    overflow-y: auto;
+    margin-top: $spacing-05;
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-03;
+}
+
+.groupHeader {
+    @include type-style('heading-compact-01');
+    color: $text-secondary;
+    margin: 0;
+}
+
+.groupSplitter {
+    border-block-end: 1px solid $border-subtle-01;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: $spacing-02;
+}
+
+.cell {
+    display: flex;
+    justify-content: center;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 2rem;
+}

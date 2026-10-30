@@ -1,0 +1,39 @@
+@use '@carbon/react/scss/motion' as *;
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/utilities/convert' as *;
+@use '@carbon/react/scss/utilities/focus-outline' as *;
+
+// Align with Carbon FluidTextInput: 64px field, $field-01 fill (no inset label —
+// IconButton md needs the full field; labelText is aria-only).
+.field {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    background: $field-01;
+    block-size: to-rem(64px);
+    min-block-size: to-rem(64px);
+    padding-inline: $spacing-05;
+    border-block-end: 1px solid $border-strong;
+    transition: outline $duration-fast-01 motion(standard, productive);
+
+    // Same outer focus ring as FluidTextInput / FluidDropdown (not the inner button).
+    &:focus-within {
+        @include focus-outline('outline');
+    }
+
+    // IconButton uses inset box-shadow for focus — suppress so only `.field` shows it.
+    :global(.cds--btn:focus) {
+        border-color: transparent;
+        box-shadow: none;
+        outline: none;
+    }
+}
+
+.control {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
