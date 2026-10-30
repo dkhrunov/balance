@@ -1,3 +1,4 @@
+import { BalanceTransaction } from '@balance/domain/transactions';
 import { CurrencyCode } from '@balance/dto/currencies';
 import { IncomeExpenseType, TransactionType } from '@balance/dto/transactions';
 import { TransactionModel } from '../../models/transaction.model';
@@ -79,6 +80,13 @@ export interface ITransactionsRepository {
      * @returns Transaction or `null` when missing or soft-deleted.
      */
     findActiveById(id: string): Promise<TransactionModel | null>;
+
+    /**
+     * Loads non-deleted transactions for an account as balance rows (type/amount/currency).
+     *
+     * @param accountId Account whose transactions are returned.
+     */
+    findTransactionsForAccount(accountId: string): Promise<readonly BalanceTransaction[]>;
 
     /**
      * Inserts a new income/expense transaction.

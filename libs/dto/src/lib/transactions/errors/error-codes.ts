@@ -6,6 +6,7 @@ export const TRANSACTION_ERROR_CODES = {
     categoryTypeMismatch: 'TRANSACTION_CATEGORY_TYPE_MISMATCH',
     currencyMismatch: 'TRANSACTION_CURRENCY_MISMATCH',
     sameAccount: 'TRANSACTION_TRANSFER_SAME_ACCOUNT',
+    insufficientFunds: 'TRANSACTION_INSUFFICIENT_FUNDS',
 } as const;
 
 export type TransactionErrorCode = (typeof TRANSACTION_ERROR_CODES)[keyof typeof TRANSACTION_ERROR_CODES];

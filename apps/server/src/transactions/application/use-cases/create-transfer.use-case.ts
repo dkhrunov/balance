@@ -7,6 +7,7 @@ import {
     TRANSACTION_ERROR_CODES,
 } from '@balance/dto/transactions';
 import { Money, MoneyValidationError } from '@balance/domain/money';
+import { assertSufficientOutboundFunds } from '../assert-sufficient-outbound-funds';
 import { toTransactionResponse } from '../mappers/transaction-response.mapper';
 import { ICreateTransferUseCase } from '../ports/inbound/create-transfer.use-case';
 import { ITransactionsRepository, TRANSACTIONS_REPOSITORY } from '../ports/outbound/transactions.repository';
@@ -90,6 +91,8 @@ export class CreateTransferUseCase implements ICreateTransferUseCase {
                 details: {},
             });
         }
+
+        await assertSufficientOutboundFunds(this.transactionsRepository, fromAccount, money.amount);
 
         const pair = await this.transactionsRepository.createTransfer({
             fromAccountId: fromAccount.id,

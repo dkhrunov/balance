@@ -9,6 +9,7 @@ import {
     Transaction,
 } from '@balance/dto/transactions';
 import { Money, MoneyValidationError } from '@balance/domain/money';
+import { assertSufficientOutboundFunds } from '../assert-sufficient-outbound-funds';
 import { toTransactionResponse } from '../mappers/transaction-response.mapper';
 import { ICreateTransactionUseCase } from '../ports/inbound/create-transaction.use-case';
 import { ITransactionsRepository, TRANSACTIONS_REPOSITORY } from '../ports/outbound/transactions.repository';
@@ -91,6 +92,10 @@ export class CreateTransactionUseCase implements ICreateTransactionUseCase {
                 message: 'Category type must match the transaction type',
                 details: {},
             });
+        }
+
+        if (request.type === 'EXPENSE') {
+            await assertSufficientOutboundFunds(this.transactionsRepository, account, money.amount);
         }
 
         const transaction = await this.transactionsRepository.create({

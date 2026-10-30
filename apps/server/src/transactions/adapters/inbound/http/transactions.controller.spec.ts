@@ -482,4 +482,53 @@ describe('TransactionsController', () => {
                 expect(body.code).toBe('TRANSACTION_CURRENCY_MISMATCH');
             });
     });
+
+    it('rejects expense and transfer that exceed account balance', async () => {
+        await request(app.getHttpServer())
+            .post('/api/transactions')
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({
+                type: 'EXPENSE',
+                accountId,
+                categoryId: expenseCategoryId,
+                amount: '100.01',
+                currency: 'RUB',
+                transactionDate: '2026-09-01',
+            })
+            .expect(400)
+            .expect(({ body }) => {
+                expect(body.code).toBe('TRANSACTION_INSUFFICIENT_FUNDS');
+            });
+
+        await request(app.getHttpServer())
+            .post('/api/transactions/transfers')
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({
+                fromAccountId: accountId,
+                toAccountId: secondAccountId,
+                amount: '100.01',
+                currency: 'RUB',
+                transactionDate: '2026-09-10',
+            })
+            .expect(400)
+            .expect(({ body }) => {
+                expect(body.code).toBe('TRANSACTION_INSUFFICIENT_FUNDS');
+            });
+
+        await request(app.getHttpServer())
+            .post('/api/transactions')
+            .set('Origin', origin)
+            .set('Cookie', authCookies)
+            .send({
+                type: 'EXPENSE',
+                accountId,
+                categoryId: expenseCategoryId,
+                amount: '100.00',
+                currency: 'RUB',
+                transactionDate: '2026-09-01',
+            })
+            .expect(201);
+    });
 });

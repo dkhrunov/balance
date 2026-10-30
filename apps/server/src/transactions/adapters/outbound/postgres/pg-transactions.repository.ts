@@ -1,6 +1,7 @@
 import { sql } from '@ts-safeql/sql-tag';
 import { Injectable } from '@nestjs/common';
 import { PoolClient } from 'pg';
+import { BalanceTransaction } from '@balance/domain/transactions';
 import { DatabaseService } from '../../../../database/database.service';
 import { TransactionModel } from '../../../application/models/transaction.model';
 import {
@@ -12,6 +13,7 @@ import {
     SoftDeleteTransactionRecord,
     TransactionMutationResult,
 } from '../../../application/ports/outbound/transactions.repository';
+import { TransactionBalanceRecord } from './records/transaction-balance.record';
 import { TransactionRecord } from './records/transaction.record';
 import { TransferType } from '@balance/dto/transactions';
 import { CurrencyCode } from '@balance/dto/currencies';
@@ -110,6 +112,20 @@ export class PgTransactionsRepository implements ITransactionsRepository {
         `);
 
         return result.rows[0] ? this.toTransactionModel(result.rows[0]) : null;
+    }
+
+    public async findTransactionsForAccount(accountId: string): Promise<readonly BalanceTransaction[]> {
+        const result = await this.database.getPool().query<TransactionBalanceRecord>(sql`
+            SELECT
+                type,
+                amount::text AS amount,
+                currency_code AS "currency"
+            FROM transactions
+            WHERE account_id = ${accountId}::uuid
+              AND deleted_at IS NULL
+        `);
+
+        return result.rows.map((row) => this.toBalanceTransaction(row));
     }
 
     public async create(input: CreateTransactionRecord): Promise<TransactionModel> {
@@ -414,6 +430,14 @@ export class PgTransactionsRepository implements ITransactionsRepository {
             createdAt: record.createdAt,
             updatedAt: record.updatedAt,
             deletedAt: record.deletedAt,
+        };
+    }
+
+    private toBalanceTransaction(record: TransactionBalanceRecord): BalanceTransaction {
+        return {
+            type: record.type,
+            amount: record.amount,
+            currency: record.currency,
         };
     }
 }
