@@ -1,5 +1,6 @@
 import { sql } from '@ts-safeql/sql-tag';
 import { Injectable } from '@nestjs/common';
+import { LOCALES, Locale, THEMES, Theme } from '@balance/dto/users';
 import { DatabaseService } from '../../../../database/database.service';
 import { UserAccount } from '../../../application/models/user-account';
 import { UserPreferencesModel } from '../../../application/models/user-preferences';
@@ -87,9 +88,25 @@ export class PgUsersRepository implements IUsersRepository {
 
     private toUserPreferences(record: UserPreferencesRecord): UserPreferencesModel {
         return {
-            locale: record.locale,
-            theme: record.theme,
+            locale: parseLocale(record.locale),
+            theme: parseTheme(record.theme),
             accountOrder: record.accountOrder ?? [],
         };
     }
+}
+
+function parseLocale(value: string): Locale {
+    if ((LOCALES as readonly string[]).includes(value)) {
+        return value as Locale;
+    }
+
+    throw new Error(`Invalid locale in users row: ${value}`);
+}
+
+function parseTheme(value: string): Theme {
+    if ((THEMES as readonly string[]).includes(value)) {
+        return value as Theme;
+    }
+
+    throw new Error(`Invalid theme in users row: ${value}`);
 }

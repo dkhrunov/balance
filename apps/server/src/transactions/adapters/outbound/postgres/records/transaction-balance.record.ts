@@ -1,5 +1,5 @@
-import { CurrencyCode } from '@balance/dto/currencies';
-import { TransactionType } from '@balance/dto/transactions';
+import { CurrencyCode } from '@balance/domain/currency';
+import { TransactionType } from '@balance/domain/transactions';
 
 /**
  * Row shape for balance-derivation queries (type/amount/currency only).

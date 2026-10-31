@@ -1,9 +1,9 @@
-import { CategoryType } from '@balance/dto/categories';
+import { IncomeExpenseType } from '@balance/domain/transactions';
 
 /** Row shape returned from `categories` queries (camelCase aliases). */
 export type CategoryRecord = {
     id: string;
-    type: CategoryType;
+    type: IncomeExpenseType;
     name: string;
     icon: string;
     version: number;

@@ -1,11 +1,10 @@
-import { AccountIcon } from '@balance/dto/accounts';
-import { CurrencyCode } from '@balance/dto/currencies';
+import { CurrencyCode } from '@balance/domain/currency';
 
 /** Row shape returned from `accounts` queries (camelCase aliases). */
 export type AccountRecord = {
     id: string;
     name: string;
-    icon: AccountIcon;
+    icon: string;
     currency: CurrencyCode;
     initialBalance: string;
     version: number;

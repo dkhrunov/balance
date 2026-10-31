@@ -1,5 +1,4 @@
-import { CurrencyCode } from '@balance/dto/currencies';
-import { Locale, Theme } from '@balance/dto/users';
+import { CurrencyCode } from '@balance/domain/currency';
 
 /** Persistence row shape for the `users` table. */
 export type UserRecord = {
@@ -13,7 +12,7 @@ export type UserRecord = {
 
 /** Persistence row shape for user preference columns. */
 export type UserPreferencesRecord = {
-    readonly locale: Locale;
-    readonly theme: Theme;
+    readonly locale: string;
+    readonly theme: string;
     readonly accountOrder: string[];
 };
