@@ -19,7 +19,7 @@ export function isTheme(value: unknown): value is Theme {
 
 /**
  * Applies Carbon `data-carbon-theme` on `<html>` and caches the theme
- * for offline / first-paint continuity.
+ * so the first paint matches the last choice.
  */
 export function applyTheme(theme: Theme): void {
     persistTheme(theme);

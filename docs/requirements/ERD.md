@@ -1,271 +1,229 @@
-# Balance — Entity-Relationship Diagram
+# Balance — диаграмма сущностей и связей
 
-Data model derived from [`SPEC.md`](./SPEC.md). Agent rules: [`AGENTS.md`](../../AGENTS.md).
+Модель данных выведена из [требований](./README.md). Правила для агента: [`AGENTS.md`](../../AGENTS.md).
 
-**Context:** one financial space (no `Space` / tenant entity); accounts are **not** owned by users; attribution lives on operations (`createdBy`).
+**Контекст:** одно финансовое пространство (сущностей `Space` / tenant нет); счета пользователям **не принадлежат**; атрибуция живёт на операциях (`created_by`).
 
 ---
 
-## 1. MVP — core domain
+## 1. Схема
 
 ```mermaid
 erDiagram
     direction LR
 
-    User ||--o| UserPreferences : has
-    User }o--|| Currency : "defaultCurrency"
-    User ||--o{ Account : created
-    User ||--o{ Category : created
-    User ||--o{ Transaction : createdBy
-    User ||--o{ Transaction : updatedBy
+    users }o--|| currencies : default_currency
+    currencies ||--o{ accounts : denominated_in
+    currencies ||--o{ transactions : amount_in
+    users ||--o{ accounts : created
+    users ||--o{ categories : created
+    users ||--o{ transactions : created_by
+    users ||--o{ transactions : updated_by
+    users ||--o{ auth_sessions : has
+    auth_sessions |o--o| auth_sessions : replaced_by
 
-    Currency ||--o{ Account : denominated_in
-    Currency ||--o{ Transaction : amount_in
+    accounts ||--o{ transactions : posts_to
+    categories ||--o{ transactions : classifies
+    transfer_groups ||--|{ transactions : links_legs
 
-    Account ||--o{ Transaction : posts_to
-    Category ||--o{ Transaction : classifies
-    TransferGroup ||--|{ Transaction : links_legs
+    currencies ||--o{ savings_goals : target_in
+    currencies ||--o{ debts : denominated_in
+    currencies ||--o{ exchange_rates : base
+    currencies ||--o{ exchange_rates : quote
+    users ||--o{ savings_goals : created
+    users ||--o{ debts : created
+    users ||--o{ audit_events : actor
 
-    User {
+    users {
         uuid id PK
         string email UK
-        string passwordHash
-        string displayName
-        string defaultCurrencyCode FK
-        timestamptz createdAt
-        timestamptz updatedAt
-    }
-
-    UserPreferences {
-        uuid userId PK_FK
+        string display_name
+        string password_hash
+        string default_currency_code FK "currencies.key"
+        timestamptz created_at
+        timestamptz updated_at
         enum locale "en | ru"
         enum theme "light | dark | system"
-        int version
-        timestamptz updatedAt
+        uuid_array account_order
     }
 
-    Currency {
-        string code PK "RUB USD EUR ..."
-        string name
-        int decimalPlaces
+    currencies {
+        string key PK "ISO 4217"
         string symbol
     }
 
-    Account {
+    accounts {
         uuid id PK
         string name
-        string currencyCode FK
-        numeric initialBalance
+        string icon "Carbon icon name, default Wallet"
+        string currency_code FK "currencies.key"
+        numeric initial_balance
         int version
-        uuid createdBy FK
-        timestamptz createdAt
-        timestamptz updatedAt
-        timestamptz deletedAt
+        uuid created_by FK
+        uuid updated_by FK
+        uuid deleted_by FK
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at
     }
 
-    Category {
+    categories {
         uuid id PK
         enum type "INCOME | EXPENSE"
         string name
+        string icon "Carbon icon name, default Wallet"
+        string color "Carbon tag key, default blue"
         int version
-        uuid createdBy FK
-        timestamptz createdAt
-        timestamptz updatedAt
-        timestamptz deletedAt
+        uuid created_by FK
+        uuid updated_by FK
+        uuid deleted_by FK
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at
     }
 
-    TransferGroup {
+    transfer_groups {
         uuid id PK
-        timestamptz createdAt
+        timestamptz created_at
     }
 
-    Transaction {
+    transactions {
         uuid id PK
         enum type "INCOME | EXPENSE | TRANSFER_OUT | TRANSFER_IN"
-        uuid accountId FK
-        uuid categoryId FK "nullable for transfers"
-        uuid transferGroupId FK "required for transfer legs"
+        uuid account_id FK
+        uuid category_id FK "nullable for transfers"
+        uuid transfer_group_id FK "required for transfer legs"
         numeric amount
-        string currencyCode FK
-        date transactionDate
+        string currency_code FK "currencies.key"
+        date transaction_date
         string description "optional, max 64"
-        uuid createdBy FK
-        uuid updatedBy FK
         int version
-        timestamptz createdAt
-        timestamptz updatedAt
-        timestamptz deletedAt
-        timestamptz clientTimestamp
-        timestamptz serverTimestamp
+        uuid created_by FK
+        uuid updated_by FK
+        uuid deleted_by FK
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at
+    }
+
+    auth_sessions {
+        uuid id PK
+        uuid family_id
+        uuid user_id FK
+        string refresh_token_hash UK "char(64)"
+        timestamptz expires_at
+        timestamptz absolute_expires_at
+        timestamptz revoked_at
+        uuid replaced_by_session_id FK "self, nullable"
+        timestamptz created_at
+    }
+
+    schema_migrations {
+        string name PK
+        timestamptz applied_at
+    }
+
+    savings_goals {
+        uuid id PK
+        string name
+        numeric target_amount
+        string currency_code FK
+        numeric current_amount
+        date deadline
+        enum status "ACTIVE | COMPLETED | CANCELLED"
+        uuid created_by FK
+        int version
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at
+    }
+
+    exchange_rates {
+        uuid id PK
+        string base_currency_code FK
+        string quote_currency_code FK
+        numeric rate
+        timestamptz effective_at
+        string source
+        timestamptz created_at
+    }
+
+    debts {
+        uuid id PK
+        enum debtType "LOAN | INSTALLMENT | MORTGAGE | CREDIT"
+        string name
+        numeric principal
+        numeric remaining
+        numeric interest_rate
+        string currency_code FK
+        enum status
+        uuid created_by FK
+        int version
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at
+    }
+
+    audit_events {
+        uuid id PK
+        uuid actor_user_id FK
+        string entity_type
+        uuid entity_id
+        enum operation
+        json beforeState
+        json afterState
+        timestamptz created_at
     }
 ```
 
-### Transfer model
+### Модель перевода
 
-A transfer is **two linked rows** in `Transaction` sharing `transferGroupId`:
+Перевод — это **две связанные строки** в `transactions` с общим `transfer_group_id`:
 
 ```text
 Account A (USD)  --TRANSFER_OUT-->  transferGroupId = X
 Account B (USD)  --TRANSFER_IN-->   transferGroupId = X
 ```
 
-Creating a transfer must run in a **single PostgreSQL transaction** (SPEC §41): both legs are atomic.
+Создание перевода выполняется в **одной транзакции PostgreSQL** ([`idempotency-concurrency.md`](./idempotency-concurrency.md)): обе ноги атомарны.
 
-`categoryId` is `NULL` for transfer legs. Amounts are always positive; direction is encoded in `type`.
-
----
-
-## 2. MVP — sync and idempotency
-
-```mermaid
-erDiagram
-    direction TB
-
-    User ||--o{ SyncCursor : owns
-    User ||--o{ ProcessedOperation : submitted
-    User ||--o{ ChangeLog : acted
-
-    SyncCursor {
-        uuid id PK
-        uuid userId FK
-        bigint lastSyncSequence
-        timestamptz updatedAt
-    }
-
-    ProcessedOperation {
-        uuid operationId PK "client idempotency key"
-        uuid userId FK
-        string entityType
-        uuid entityId
-        enum operationType "CREATE | UPDATE | DELETE"
-        json result
-        timestamptz processedAt
-    }
-
-    ChangeLog {
-        bigint changeSequence PK "monotonic server ordering"
-        string entityType
-        uuid entityId
-        enum changeType "UPSERT | DELETE"
-        json payload
-        uuid actorUserId FK
-        timestamptz serverTimestamp
-    }
-```
-
-| Entity | Storage | Purpose |
-| --- | --- | --- |
-| `SyncCursor` | PostgreSQL (+ client cache) | Pull: all changes after sequence N |
-| `ProcessedOperation` | PostgreSQL | Idempotency: duplicate `operationId` is not applied twice |
-| `ChangeLog` | PostgreSQL | Change feed for pull sync |
-| `PendingMutation` | **IndexedDB only** (not PG) | Client offline mutation queue |
-
-Shared sync fields on syncable entities (`Account`, `Category`, `Transaction`): `version`, `deletedAt`, `createdAt`, `updatedAt`, `clientTimestamp`, `serverTimestamp`.
+У ног перевода `category_id` равен `NULL`. Суммы всегда положительные; направление закодировано в `type`.
 
 ---
 
-## 3. Post-MVP — extensions (add when each feature is built)
+## 2. Мощность связей и ограничения
 
-```mermaid
-erDiagram
-    direction LR
-
-    User ||--o{ SavingsGoal : created
-    User ||--o{ Debt : created
-    User ||--o{ AuditEvent : actor
-
-    Currency ||--o{ SavingsGoal : target_in
-    Currency ||--o{ Debt : denominated_in
-    Currency ||--o{ ExchangeRate : base
-    Currency ||--o{ ExchangeRate : quote
-
-    SavingsGoal {
-        uuid id PK
-        string name
-        numeric targetAmount
-        string currencyCode FK
-        numeric currentAmount
-        date deadline
-        enum status "ACTIVE | COMPLETED | CANCELLED"
-        uuid createdBy FK
-        int version
-        timestamptz createdAt
-        timestamptz updatedAt
-        timestamptz deletedAt
-    }
-
-    ExchangeRate {
-        uuid id PK
-        string baseCurrencyCode FK
-        string quoteCurrencyCode FK
-        numeric rate
-        timestamptz effectiveAt
-        string source
-        timestamptz createdAt
-    }
-
-    Debt {
-        uuid id PK
-        enum debtType "LOAN | INSTALLMENT | MORTGAGE | CREDIT"
-        string name
-        numeric principal
-        numeric remaining
-        numeric interestRate
-        string currencyCode FK
-        enum status
-        uuid createdBy FK
-        int version
-        timestamptz createdAt
-        timestamptz updatedAt
-        timestamptz deletedAt
-    }
-
-    AuditEvent {
-        uuid id PK
-        uuid actorUserId FK
-        string entityType
-        uuid entityId
-        enum operation
-        json beforeState
-        json afterState
-        timestamptz createdAt
-    }
-```
-
-Do **not** create Post-MVP tables during MVP: `SavingsGoal`, `ExchangeRate`, `Debt`, `AuditEvent`, or `Space` / `AccountMember` (SPEC §9).
+| Связь                                                   | Мощность связи | Примечание                                                                                                 |
+| ------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------- |
+| users → auth_sessions                                   | 1:N            | `auth_sessions.user_id`; удаление пользователя удаляет его сессии                                          |
+| auth_sessions → auth_sessions                           | 0..1           | `replaced_by_session_id`, смена refresh-токена внутри `family_id`                                          |
+| schema_migrations                                       | —              | Журнал миграций, без связей с доменными таблицами                                                          |
+| users → transactions                                    | 1:N            | `created_by` — атрибуция, а не владение счётом                                                             |
+| accounts → transactions                                 | 1:N            | Баланс выводится из операций по счёту                                                                      |
+| categories → transactions                               | 1:N            | Только INCOME/EXPENSE; у transfer `category_id = NULL`                                                     |
+| transfer_groups → transactions                          | 1:2            | Ровно две ноги на перевод                                                                                  |
+| currencies → accounts / transactions / users            | 1:N            | FK на `currencies.key` (ISO 4217). Колонки справочника: `key`, `symbol`. Названия и точности в таблице нет |
+| users → savings_goals / debts                           | 1:N            | `created_by`                                                                |
+| currencies → savings_goals / debts / exchange_rates     | 1:N            | Суммы целей и долгов и курсы ссылаются на `currencies.key`                 |
+| users → audit_events                                    | 1:N            | `actor_user_id`                                                             |
 
 ---
 
-## 4. Cardinalities and constraints
-
-| Relationship | Cardinality | Notes |
-| --- | --- | --- |
-| User ↔ UserPreferences | 1:1 | `userId` is PK/FK |
-| User → Transaction | 1:N | `createdBy` is attribution, not account ownership |
-| Account → Transaction | 1:N | Balance is derived from account operations |
-| Category → Transaction | 1:N | INCOME/EXPENSE only; transfers have `categoryId = NULL` |
-| TransferGroup → Transaction | 1:2 | Exactly two legs per transfer |
-| Currency → Account | 1:N | Account currency is explicit, not from `User.defaultCurrency` |
-
----
-
-## 5. Recommended indexes (SPEC §40)
+## 3. Рекомендуемые индексы
 
 ```text
-Transaction:        accountId, categoryId, createdBy, transactionDate, deletedAt
-Account:            deletedAt, currencyCode
-Category:           type, deletedAt
-ChangeLog:          changeSequence (PK), entityType + entityId
-ProcessedOperation: operationId (PK), userId + processedAt
+transactions: account_id, category_id, created_by, transaction_date, deleted_at
+accounts:     deleted_at, currency_code
+categories:   type, deleted_at
+auth_sessions: user_id, family_id, refresh_token_hash (активные, revoked_at IS NULL)
 ```
 
 ---
 
-## 6. Intentionally excluded
+## 4. Намеренно исключено
 
-| Item | Reason |
-| --- | --- |
-| Budget / spending limits | Out of scope (SPEC §1) |
-| Space / Tenant / AccountMember | Not MVP (SPEC §9) |
-| `PendingMutation` in PostgreSQL | Client queue lives in IndexedDB (SPEC §23–24) |
-| Event Sourcing | Not required; prefer state + change log (SPEC §60) |
+| Сущность                       | Причина                                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------------- |
+| Budget / лимиты расходов       | Вне scope ([`scope.md`](./scope.md))                                                        |
+| Space / Tenant / AccountMember | Решение не принято ([`multi-user.md`](./multi-user.md))                                    |
+| Event Sourcing                 | Не нужен; предпочтительны состояние и журнал изменений ([`principles.md`](./principles.md)) |

@@ -29,7 +29,7 @@ export function readCachedLocale(): Locale {
     return 'en';
 }
 
-/** Persists the locale for offline / first-paint continuity. */
+/** Persists the locale so the first paint matches the last choice. */
 export function persistLocale(locale: Locale): void {
     try {
         localStorage.setItem(LOCALE_STORAGE_KEY, locale);

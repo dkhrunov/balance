@@ -3,7 +3,7 @@ import { CurrencyCode } from '../../currencies';
 
 /**
  * Body for `POST /transactions/transfers`.
- * Both accounts must share {@link currency}; no FX conversion in MVP.
+ * Both accounts must share {@link currency}; no FX conversion.
  */
 export interface CreateTransferRequest {
     readonly fromAccountId: EntityId;

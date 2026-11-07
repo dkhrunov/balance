@@ -1,6 +1,9 @@
 # Balance
 
-Offline-first, **desktop-first** multi-user finance app: **one financial space**, 1–n users (multi-currency, sync, operation attribution). Spec: [`docs/requirements/SPEC.md`](./docs/requirements/SPEC.md). Agent rules: [`AGENTS.md`](./AGENTS.md). Task queue: [`TASKS.md`](./TASKS.md).
+Online **desktop-first** multi-user finance app: **one financial space**, 1–n users (multi-currency, operation attribution).
+Requirements: [`docs/requirements/README.md`](./docs/requirements/README.md).
+Agent rules: [`AGENTS.md`](./AGENTS.md).
+Task queue: [`TASKS.md`](./TASKS.md).
 
 ## Prerequisites
 

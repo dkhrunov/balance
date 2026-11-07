@@ -5,7 +5,7 @@ const PAGE_LIMIT = 100;
 
 /**
  * Loads every page of transactions for the given filter (cursor walk).
- * MVP volumes stay small; prefer account-scoped calls from the dashboard.
+ * Prefer account-scoped calls from the dashboard.
  *
  * @param request Query filters (typically `accountId`).
  */

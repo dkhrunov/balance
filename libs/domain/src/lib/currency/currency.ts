@@ -1,6 +1,6 @@
 // TODO: store currencies in the database instead of hardcoding them here
 /**
- * Currencies supported by the MVP. Add new currencies to CURRENCY_DEFINITIONS
+ * Currencies supported now. Add new currencies to CURRENCY_DEFINITIONS
  * rather than scattering precision assumptions through the application.
  */
 export const CURRENCY_CODES = ['RUB', 'USD', 'EUR'] as const;
