@@ -5,8 +5,9 @@ import {
     ACCOUNT_NAME_MIN_LENGTH,
     CreateAccountRequest,
 } from '@balance/dto/accounts';
-import { CURRENCY_CODES } from '@balance/dto/currencies';
-import { IsIn, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+
+const CURRENCY_CODE_PATTERN = /^[A-Z]{3}$/;
 
 /** HTTP body for `POST /accounts`; compatible with {@link CreateAccountRequest}. */
 export class CreateAccountDto implements CreateAccountRequest {
@@ -15,7 +16,8 @@ export class CreateAccountDto implements CreateAccountRequest {
     @MaxLength(ACCOUNT_NAME_MAX_LENGTH)
     public name: string;
 
-    @IsIn([...CURRENCY_CODES])
+    @IsString()
+    @Matches(CURRENCY_CODE_PATTERN)
     public currency: CreateAccountRequest['currency'];
 
     @IsString()

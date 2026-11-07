@@ -1,8 +1,9 @@
 import { CreateTransferRequest, TRANSACTION_DESCRIPTION_MAX_LENGTH } from '@balance/dto/transactions';
-import { CURRENCY_CODES } from '@balance/dto/currencies';
-import { IsIn, IsOptional, IsString, IsUUID, Matches, MaxLength } from 'class-validator';
+import { IsOptional, IsString, IsUUID, Matches, MaxLength } from 'class-validator';
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+const CURRENCY_CODE_PATTERN = /^[A-Z]{3}$/;
 
 /** HTTP body for `POST /transactions/transfers`; compatible with {@link CreateTransferRequest}. */
 export class CreateTransferDto implements CreateTransferRequest {
@@ -15,7 +16,8 @@ export class CreateTransferDto implements CreateTransferRequest {
     @IsString()
     public amount: string;
 
-    @IsIn([...CURRENCY_CODES])
+    @IsString()
+    @Matches(CURRENCY_CODE_PATTERN)
     public currency: CreateTransferRequest['currency'];
 
     @IsString()

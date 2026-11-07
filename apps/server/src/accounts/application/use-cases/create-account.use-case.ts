@@ -11,6 +11,7 @@ import {
 } from '@balance/dto/accounts';
 import { Money, MoneyValidationError } from '@balance/domain/money';
 import { toAccountResponse } from '../mappers/account-response.mapper';
+import { UnknownCurrencyError } from '../unknown-currency.error';
 import { ICreateAccountUseCase } from '../ports/inbound/create-account.use-case';
 import { ACCOUNTS_REPOSITORY, IAccountsRepository } from '../ports/outbound/accounts.repository';
 
@@ -55,14 +56,26 @@ export class CreateAccountUseCase implements ICreateAccountUseCase {
             throw error;
         }
 
-        const account = await this.accountsRepository.create({
-            name,
-            icon,
-            currency: money.currency,
-            initialBalance: money.amount,
-            actorUserId,
-        });
+        try {
+            const account = await this.accountsRepository.create({
+                name,
+                icon,
+                currency: money.currency,
+                initialBalance: money.amount,
+                actorUserId,
+            });
 
-        return toAccountResponse(account);
+            return toAccountResponse(account);
+        } catch (error) {
+            if (error instanceof UnknownCurrencyError) {
+                throw new BadRequestException({
+                    code: ACCOUNT_ERROR_CODES.validationFailed,
+                    message: error.message,
+                    details: {},
+                });
+            }
+
+            throw error;
+        }
     }
 }

@@ -9,6 +9,7 @@ import { UsersModule } from '../users';
 import { AccountsModule } from '../accounts';
 import { CategoriesModule } from '../categories';
 import { TransactionsModule } from '../transactions';
+import { CurrenciesModule } from '../currencies';
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import { TransactionsModule } from '../transactions';
         AccountsModule,
         CategoriesModule,
         TransactionsModule,
+        CurrenciesModule,
     ],
     controllers: [AppController],
     providers: [AppService],

@@ -1,7 +1,9 @@
 import { sql } from '@ts-safeql/sql-tag';
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../../../../database/database.service';
+import { isUnknownCurrencyViolation } from '../../../../database/is-unknown-currency-violation';
 import { AccountModel } from '../../../application/models/account.model';
+import { UnknownCurrencyError } from '../../../application/unknown-currency.error';
 import {
     AccountMutationResult,
     CreateAccountRecord,
@@ -62,39 +64,47 @@ export class PgAccountsRepository implements IAccountsRepository {
     }
 
     public async create(input: CreateAccountRecord): Promise<AccountModel> {
-        const result = await this.database.getPool().query<AccountRecord>(sql`
-            INSERT INTO accounts (
-                name,
-                icon,
-                currency_code,
-                initial_balance,
-                created_by,
-                updated_by
-            )
-            VALUES (
-                ${input.name},
-                ${input.icon},
-                ${input.currency},
-                ${input.initialBalance}::numeric,
-                ${input.actorUserId}::uuid,
-                ${input.actorUserId}::uuid
-            )
-            RETURNING
-                id,
-                name,
-                icon,
-                currency_code AS "currency",
-                initial_balance::text AS "initialBalance",
-                version,
-                created_by AS "createdBy",
-                updated_by AS "updatedBy",
-                deleted_by AS "deletedBy",
-                created_at AS "createdAt",
-                updated_at AS "updatedAt",
-                deleted_at AS "deletedAt"
-        `);
+        try {
+            const result = await this.database.getPool().query<AccountRecord>(sql`
+                INSERT INTO accounts (
+                    name,
+                    icon,
+                    currency_code,
+                    initial_balance,
+                    created_by,
+                    updated_by
+                )
+                VALUES (
+                    ${input.name},
+                    ${input.icon},
+                    ${input.currency},
+                    ${input.initialBalance}::numeric,
+                    ${input.actorUserId}::uuid,
+                    ${input.actorUserId}::uuid
+                )
+                RETURNING
+                    id,
+                    name,
+                    icon,
+                    currency_code AS "currency",
+                    initial_balance::text AS "initialBalance",
+                    version,
+                    created_by AS "createdBy",
+                    updated_by AS "updatedBy",
+                    deleted_by AS "deletedBy",
+                    created_at AS "createdAt",
+                    updated_at AS "updatedAt",
+                    deleted_at AS "deletedAt"
+            `);
 
-        return this.toAccountModel(result.rows[0]);
+            return this.toAccountModel(result.rows[0]);
+        } catch (error) {
+            if (isUnknownCurrencyViolation(error)) {
+                throw new UnknownCurrencyError(input.currency);
+            }
+
+            throw error;
+        }
     }
 
     public async updateActive(input: UpdateAccountRecord): Promise<AccountMutationResult> {

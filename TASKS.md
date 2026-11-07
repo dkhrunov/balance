@@ -86,11 +86,11 @@
 
 ### Currency
 
-- [ ] API справочника валют
+- [x] API справочника валют
   - **ID**: currency-catalog-api
   - **Tags**: backend, currencies, database
-  - **Details**: [`docs/requirements/currency.md`](./docs/requirements/currency.md), [`docs/requirements/ERD.md`](./docs/requirements/ERD.md) — таблица `currencies` и read-only API. Миграция создаёт справочник, заполняет RUB/USD/EUR и заменяет `CHECK (currency_code IN ('RUB', 'USD', 'EUR'))` у `accounts.currency_code` и `transactions.currency_code` на внешний ключ к `currencies.key`.
-  - **Acceptance**: Миграция создаёт таблицу и три начальные строки; `accounts.currency_code` и `transactions.currency_code` ссылаются на `currencies.key`, старых проверок-списков нет; оба маршрута требуют auth и возвращают хеш; SQL-правка `symbol` меняет `version`; маршрута записи нет; тесты покрывают оба чтения и смену version.
+  - **Details**: [`docs/requirements/currency.md`](./docs/requirements/currency.md), [`docs/requirements/ERD.md`](./docs/requirements/ERD.md) — таблица `currencies` и read-only API. Миграция создаёт справочник, заполняет RUB/USD/EUR и заменяет `CHECK (... IN ('RUB', 'USD', 'EUR'))` у `accounts.currency_code`, `transactions.currency_code` и `users.default_currency_code` на внешний ключ к `currencies.key`.
+  - **Acceptance**: Миграция создаёт таблицу и три начальные строки; `accounts.currency_code`, `transactions.currency_code` и `users.default_currency_code` ссылаются на `currencies.key`, старых проверок-списков нет; оба маршрута требуют auth и возвращают хеш; SQL-правка `symbol` меняет `version`; маршрута записи нет; тесты покрывают оба чтения и смену version.
   - **Blocked by**: accounts-api, auth-jwt
 
 - [ ] UI справочника валют
