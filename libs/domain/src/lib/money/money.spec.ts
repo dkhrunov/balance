@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CurrencyMismatchError, Money, MoneyValidationError } from './money';
 
-const STANDARD_FIAT_PRECISION = 2;
 const UNSAFE_NUMBER_AMOUNT = 0.1;
 
 describe('Money', () => {
@@ -30,10 +29,8 @@ describe('Money', () => {
         expect(Money.compare(Money.create('RUB', '1.01'), Money.create('RUB', '1.00'))).toBe(1);
     });
 
-    it('exposes precision through the currency registry', () => {
-        expect(Money.getCurrencyPrecision('RUB')).toBe(STANDARD_FIAT_PRECISION);
-        expect(Money.getCurrencyPrecision('USD')).toBe(STANDARD_FIAT_PRECISION);
-        expect(Money.getCurrencyPrecision('EUR')).toBe(STANDARD_FIAT_PRECISION);
+    it('uses one precision for every amount', () => {
+        expect(Money.precision).toBe(2);
     });
 
     it('rejects unsafe number values and malformed decimal input', () => {

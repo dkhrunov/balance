@@ -6,6 +6,7 @@ import { AccountBalance } from '@balance/domain/transactions';
 import { useTranslation } from 'react-i18next';
 import { useAccounts } from '../../../../entities/account';
 import { useCategories } from '../../../../entities/category';
+import { useCurrencies } from '../../../../entities/currency';
 import { useAuth } from '../../../../shared/auth';
 import { formatMoney } from '../../../../shared/lib/money';
 import { LoadState } from '../../../../shared/lib/load-state';
@@ -65,6 +66,7 @@ export function useTransactionsSection({
 }: UseTransactionsSectionArgs): UseTransactionsSectionResult {
     const { t } = useTranslation();
     const { locale } = usePreferences();
+    const currencies = useCurrencies();
     const { user } = useAuth();
     const { loadState: accountsLoadState } = useAccounts();
     const { income, expense, categoriesMap } = useCategories();
@@ -117,7 +119,12 @@ export function useTransactionsSection({
             const isTransfer =
                 transaction.type === 'TRANSFER_IN' || transaction.type === 'TRANSFER_OUT';
             const isPositive = AccountBalance.isIncreasingType(transaction.type);
-            const formatted = formatMoney(transaction.amount, transaction.currency, locale);
+            const formatted = formatMoney(
+                transaction.amount,
+                transaction.currency,
+                currencies.symbol(transaction.currency),
+                locale,
+            );
             const amountLabel = isTransfer || isPositive ? formatted : `−${formatted}`;
             const createdByLabel =
                 user && transaction.createdBy === user.id
@@ -135,7 +142,7 @@ export function useTransactionsSection({
                 actions: '',
             };
         });
-    }, [categoriesMap, locale, t, transactions, typeFilter, user]);
+    }, [categoriesMap, currencies, locale, t, transactions, typeFilter, user]);
 
     const openCreate = (intent: TransactionCreateIntent) => {
         if (intent === 'TRANSFER') {

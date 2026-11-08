@@ -27,6 +27,7 @@
         "cannotSave": "Cannot save account",
         "cannotDelete": "Cannot delete account",
         "loadError": "Unable to load accounts. Check your connection and try again.",
+        "currencyLoadError": "Currencies could not be loaded.",
         "saveError": "Unable to save the account. Check your connection and try again.",
         "deleteError": "Unable to delete the account. Check your connection and try again.",
         "versionConflict": "This account was changed elsewhere. Refresh and try again.",
@@ -45,6 +46,7 @@
         "validation": {
             "name": "Enter a name between 1 and 120 characters.",
             "balance": "Enter a valid decimal amount for this currency.",
+            "currency": "Choose a currency from the list.",
             "generic": "Check the form fields and try again."
         },
         "actions": {

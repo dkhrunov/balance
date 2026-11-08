@@ -1,1 +1,2 @@
-export { CURRENCY_CODES, CurrencyCode, CurrencyDefinition } from './currency';
+export type { CurrencyCode } from './currency';
+export { Currency } from './currency';

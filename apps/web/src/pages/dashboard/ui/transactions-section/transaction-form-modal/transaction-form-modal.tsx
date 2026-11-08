@@ -16,6 +16,7 @@ import {
 } from '@balance/dto/transactions';
 import { FormEventHandler, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCurrencies } from '../../../../../entities/currency';
 import {
     FluidDatePickerField,
     FluidTypedDropdown,
@@ -56,6 +57,7 @@ export function TransactionFormModal({
 }: TransactionFormModalProps) {
     const { t } = useTranslation();
     const { locale } = usePreferences();
+    const currencies = useCurrencies();
     const form = useTransactionForm({
         open,
         type,
@@ -124,6 +126,7 @@ export function TransactionFormModal({
                         labelText={t('transactions.fields.amount')}
                         value={form.amount}
                         currency={account.currency}
+                        symbol={currencies.symbol(account.currency)}
                         locale={locale}
                         prefix={form.type === 'EXPENSE' ? '− ' : undefined}
                         disabled={form.isSubmitting}

@@ -3,5 +3,6 @@ export { ApiClient, noopSessionExpiredHandler, registerSessionExpiredHandler } f
 export { AccountsApi } from './endpoints/accounts';
 export { AuthApi } from './endpoints/auth';
 export { CategoriesApi } from './endpoints/categories';
+export { CurrenciesApi } from './endpoints/currencies';
 export { TransactionsApi } from './endpoints/transactions';
 export { UserPreferencesApi } from './endpoints/user-preferences';

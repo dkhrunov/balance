@@ -7,7 +7,7 @@ import { AuthGuard } from './auth-guard';
 
 const { useAuth } = vi.hoisted(() => ({ useAuth: vi.fn() }));
 
-vi.mock('../shared/auth', () => ({ useAuth }));
+vi.mock('../../shared/auth', () => ({ useAuth }));
 
 function renderWithProviders(ui: React.ReactElement) {
     return render(

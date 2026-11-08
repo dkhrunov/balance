@@ -19,7 +19,7 @@ export type MoneyInputMaskProps = {
      * Differs from Carbon TextInput `onChange` (DOM event).
      */
     readonly onChange: (value: string) => void;
-    /** Currency used for decimal precision, parsing/formatting, and the field decorator symbol. */
+    /** Currency used for decimal precision and parsing. The field decorator receives its symbol separately. */
     readonly currency: CurrencyCode;
     /** App locale for thousand/decimal separators while typing. */
     readonly locale: Locale;
@@ -91,7 +91,7 @@ export function useMoneyInputMask({
             return;
         }
 
-        const mask = IMask(input, createMoneyMaskOptions(currency, locale, prefix));
+        const mask = IMask(input, createMoneyMaskOptions(locale, prefix));
         maskRef.current = mask;
 
         if (valueRef.current) {

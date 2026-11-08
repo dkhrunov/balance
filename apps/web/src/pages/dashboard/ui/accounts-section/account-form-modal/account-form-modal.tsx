@@ -10,6 +10,7 @@ import {
 } from '@carbon/react';
 import { Account } from '@balance/dto/accounts';
 import { useTranslation } from 'react-i18next';
+import { useCurrencies } from '../../../../../entities/currency';
 import { usePreferences } from '../../../../../shared/preferences';
 import { FluidIconPicker } from '../../../../../shared/ui/icon';
 import { FluidMoneyInput } from '../../../../../shared/ui/money-input';
@@ -29,6 +30,7 @@ type AccountFormModalProps = {
 export function AccountFormModal({ open, account, onClose, onSaved }: AccountFormModalProps) {
     const { t } = useTranslation();
     const { locale } = usePreferences();
+    const currencies = useCurrencies();
     const form = useAccountForm({ open, account, onClose, onSaved });
 
     return (
@@ -51,6 +53,16 @@ export function AccountFormModal({ open, account, onClose, onSaved }: AccountFor
                     }}
                     noValidate
                 >
+                    {form.currencyUnavailable ? (
+                        <InlineNotification
+                            kind="error"
+                            title={t('accounts.cannotLoad')}
+                            subtitle={t('accounts.currencyLoadError')}
+                            lowContrast
+                            hideCloseButton
+                        />
+                    ) : null}
+
                     {form.error ? (
                         <InlineNotification
                             kind="error"
@@ -87,15 +99,18 @@ export function AccountFormModal({ open, account, onClose, onSaved }: AccountFor
 
                     {!form.isEdit ? (
                         <>
-                            <FluidMoneyInput
-                                id="account-initial-balance"
-                                labelText={t('accounts.fields.initialBalance')}
-                                value={form.initialBalance}
-                                currency={form.currency}
-                                locale={locale}
-                                disabled={form.isSubmitting}
-                                onChange={form.setInitialBalance}
-                            />
+                            {form.currency ? (
+                                <FluidMoneyInput
+                                    id="account-initial-balance"
+                                    labelText={t('accounts.fields.initialBalance')}
+                                    value={form.initialBalance}
+                                    currency={form.currency}
+                                    symbol={currencies.symbol(form.currency)}
+                                    locale={locale}
+                                    disabled={form.isSubmitting}
+                                    onChange={form.setInitialBalance}
+                                />
+                            ) : null}
                             <FluidDropdown
                                 id="account-currency"
                                 titleText={t('accounts.fields.currency')}
@@ -105,7 +120,7 @@ export function AccountFormModal({ open, account, onClose, onSaved }: AccountFor
                                 selectedItem={
                                     form.currencyItems.find((item) => item.id === form.currency)
                                 }
-                                disabled={form.isSubmitting}
+                                disabled={form.isSubmitting || form.currencyUnavailable}
                                 onChange={({ selectedItem }: OnChangeData<AccountCurrencyItem>) => {
                                     if (selectedItem) {
                                         form.setCurrency(selectedItem.id);

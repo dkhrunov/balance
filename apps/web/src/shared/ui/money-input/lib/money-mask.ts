@@ -2,7 +2,7 @@ import { Money, MoneyValidationError } from '@balance/domain/money';
 import { CurrencyCode } from '@balance/dto/currencies';
 import { Locale } from '@balance/dto/users';
 import { MaskedNumberOptions, MaskedPatternOptions } from 'imask';
-import { MONEY_LOCALE_TAG } from '../../../lib/money';
+import { LOCALE_TAG } from '../../../i18n';
 
 type MoneyMaskSeparators = {
     readonly radix: string;
@@ -15,7 +15,7 @@ type MoneyMaskSeparators = {
  * @param locale App UI locale (`en` / `ru`).
  */
 export function resolveMoneySeparators(locale: Locale): MoneyMaskSeparators {
-    const parts = new Intl.NumberFormat(MONEY_LOCALE_TAG[locale], {
+    const parts = new Intl.NumberFormat(LOCALE_TAG[locale], {
         useGrouping: true,
         minimumFractionDigits: 1,
         maximumFractionDigits: 1,
@@ -28,15 +28,15 @@ export function resolveMoneySeparators(locale: Locale): MoneyMaskSeparators {
 }
 
 /**
- * Builds IMask Number block options for a currency + locale (grouping while typing).
+ * Builds IMask Number block options for a locale (grouping while typing).
  */
-function createNumberBlockOptions(currency: CurrencyCode, locale: Locale): MaskedNumberOptions {
+function createNumberBlockOptions(locale: Locale): MaskedNumberOptions {
     const { radix, thousandsSeparator } = resolveMoneySeparators(locale);
     const mapToRadix = ['.', ','].filter((candidate) => candidate !== radix);
 
     return {
         mask: Number,
-        scale: Money.getCurrencyPrecision(currency),
+        scale: Money.precision,
         radix,
         thousandsSeparator,
         mapToRadix,
@@ -47,21 +47,16 @@ function createNumberBlockOptions(currency: CurrencyCode, locale: Locale): Maske
 }
 
 /**
- * Builds IMask options for a currency + locale.
+ * Builds IMask options for a locale.
  * Optional `prefix` is a fixed Pattern leading segment (shown in the field); it is not part of
  * {@link InputMask.unmaskedValue} / the canonical amount.
  *
- * @param currency ISO currency code (drives fractional `scale`).
- * @param locale App UI locale (drives separators).
+ * @param locale App UI locale (drives separators). Fractional scale is {@link Money.precision}.
  * @param prefix Optional leading display string (e.g. `−` for expenses). Prefer plain glyphs —
  *   avoid IMask Pattern metacharacters (`0`, `a`, `*`, `[]`, `{}`, backticks).
  */
-export function createMoneyMaskOptions(
-    currency: CurrencyCode,
-    locale: Locale,
-    prefix?: string,
-): MaskedNumberOptions | MaskedPatternOptions {
-    const numberBlock = createNumberBlockOptions(currency, locale);
+export function createMoneyMaskOptions(locale: Locale, prefix?: string): MaskedNumberOptions | MaskedPatternOptions {
+    const numberBlock = createNumberBlockOptions(locale);
 
     if (!prefix) {
         return numberBlock;

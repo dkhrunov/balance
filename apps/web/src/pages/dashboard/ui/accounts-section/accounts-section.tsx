@@ -5,7 +5,7 @@ import { Account } from '@balance/dto/accounts';
 import { Transaction } from '@balance/dto/transactions';
 import { AsciiReveal, AsciiRevealHandle } from 'ascii-reveal';
 import { useTranslation } from 'react-i18next';
-import { useSettledAsciiReveal } from '../../../../shared/lib';
+import { useSettledAsciiReveal } from '../../../../shared/lib/ascii-reveal';
 import { EmptyState } from '../../../../shared/ui/empty-state';
 import { AccountDeleteModal } from './account-delete-modal';
 import { AccountFormModal } from './account-form-modal';

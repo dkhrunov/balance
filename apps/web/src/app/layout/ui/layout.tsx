@@ -15,7 +15,7 @@ import {
 } from '@carbon/react';
 import { breakpoints } from '@carbon/layout';
 import { useTranslation } from 'react-i18next';
-import { useIsDesktop } from '../../../shared/lib';
+import { useIsDesktop } from '../../../shared/lib/use-is-desktop';
 import { APP_NAV_ITEMS, ROUTES } from '../../../shared/routes';
 import { AppLogo } from '../../../shared/ui/app-logo';
 import { Divider } from '../../../shared/ui/divider';

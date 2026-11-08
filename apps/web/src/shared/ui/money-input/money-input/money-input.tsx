@@ -1,8 +1,10 @@
 import { TextInput, TextInputProps } from '@carbon/react';
-import { getCurrencySymbol } from '../../../lib/money';
 import { MoneyInputMaskProps, useMoneyInputMask } from '../lib/use-money-input-mask';
 
-export type MoneyInputProps = MoneyInputMaskProps &
+export type MoneyInputProps = MoneyInputMaskProps & {
+    /** Display symbol for {@link MoneyInputMaskProps.currency}, supplied by the caller. */
+    readonly symbol: string;
+} &
     Pick<
         TextInputProps,
         | 'id'
@@ -26,6 +28,7 @@ export function MoneyInput({
     value,
     onChange,
     currency,
+    symbol,
     locale,
     prefix,
     ref,
@@ -49,7 +52,7 @@ export function MoneyInput({
             {...textInputProps}
             ref={setInputRef}
             inputMode="decimal"
-            decorator={<span aria-hidden="true">{getCurrencySymbol(currency, locale)}</span>}
+            decorator={<span aria-hidden="true">{symbol}</span>}
             onFocus={handleFocus}
             onBlur={handleBlur}
         />

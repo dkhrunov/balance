@@ -1,1 +1,1 @@
-export { formatMoney, getCurrencySymbol, MONEY_LOCALE_TAG } from './money';
+export { formatMoney } from './format-money';

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Account } from '@balance/dto/accounts';
 import { Transaction } from '@balance/dto/transactions';
-import { fetchAllTransactions, LoadState } from '../../../shared/lib';
+import { LoadState } from '../../../shared/lib/load-state';
+import { fetchAllTransactions } from '../../../shared/lib/transactions';
 
 type UseAccountTransactionsResult = {
     readonly transactions: readonly Transaction[];

@@ -3,7 +3,7 @@ import { EntityId } from '@balance/dto/common';
 import { Locale, Theme, UserPreferences } from '@balance/dto/users';
 import { UserPreferencesApi } from '../api';
 import { useAuth } from '../auth';
-import { applyLocale, isLocale, readCachedLocale } from '../i18n';
+import { applyLocale, isLocale, readLocale } from '../i18n';
 // Import theme primitives directly (not the segment barrel) to avoid a cycle with
 // `useActiveTheme` in `shared/theme`, which depends on this provider.
 import { applyTheme, isTheme, readTheme } from '../theme/theme';
@@ -30,7 +30,7 @@ const EMPTY_ACCOUNT_ORDER: readonly EntityId[] = [];
  */
 export function PreferencesProvider({ children }: { children: ReactNode }) {
     const { status } = useAuth();
-    const [locale, setLocaleState] = useState<Locale>(readCachedLocale);
+    const [locale, setLocaleState] = useState<Locale>(readLocale);
     const [theme, setThemeState] = useState<Theme>(readTheme);
     const [accountOrder, setAccountOrderState] = useState<readonly EntityId[]>(EMPTY_ACCOUNT_ORDER);
     const [isSyncing, setIsSyncing] = useState(false);

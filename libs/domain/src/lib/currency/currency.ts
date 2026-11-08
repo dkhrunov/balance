@@ -1,13 +1,12 @@
-// TODO: store currencies in the database instead of hardcoding them here
-/**
- * Currencies supported now. Add new currencies to CURRENCY_DEFINITIONS
- * rather than scattering precision assumptions through the application.
- */
-export const CURRENCY_CODES = ['RUB', 'USD', 'EUR'] as const;
+/** ISO 4217 code. The allowed set lives in currencies. */
+export type CurrencyCode = string & { readonly __currencyCode?: never };
 
-export type CurrencyCode = (typeof CURRENCY_CODES)[number];
+export class Currency {
+    public readonly code: CurrencyCode;
+    public readonly symbol: string;
 
-export interface CurrencyDefinition {
-    readonly code: CurrencyCode;
-    readonly precision: number;
+    public constructor(code: CurrencyCode, symbol: string) {
+        this.code = code;
+        this.symbol = symbol;
+    }
 }

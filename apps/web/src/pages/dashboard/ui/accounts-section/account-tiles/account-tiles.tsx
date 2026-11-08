@@ -4,6 +4,7 @@ import { Account } from '@balance/dto/accounts';
 import { Transaction } from '@balance/dto/transactions';
 import { AccountBalance } from '@balance/domain/transactions';
 import { useTranslation } from 'react-i18next';
+import { useCurrencies } from '../../../../../entities/currency';
 import { formatMoney } from '../../../../../shared/lib/money';
 import { usePreferences } from '../../../../../shared/preferences';
 import { Icon } from '../../../../../shared/ui/icon';
@@ -40,6 +41,7 @@ export function AccountTiles({
 }: AccountTilesProps) {
     const { t } = useTranslation();
     const { locale } = usePreferences();
+    const currencies = useCurrencies();
 
     return (
         <TileGroup
@@ -75,7 +77,7 @@ export function AccountTiles({
                                 </div>
 
                                 <p className={styles.accountBalance} data-ascii-digits>
-                                    {formatMoney(balance, account.currency, locale)}
+                                    {formatMoney(balance, account.currency, currencies.symbol(account.currency), locale)}
                                 </p>
 
                                 <div className={styles.actions} data-ascii="fade">

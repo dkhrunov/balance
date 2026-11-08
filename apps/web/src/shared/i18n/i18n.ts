@@ -14,8 +14,8 @@ export function isLocale(value: unknown): value is Locale {
     return value === 'en' || value === 'ru';
 }
 
-/** Reads the cached locale, then deploy default. */
-export function readCachedLocale(): Locale {
+/** Reads the cached locale, then the built-in default. */
+export function readLocale(): Locale {
     try {
         const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
 
@@ -44,7 +44,7 @@ export function persistLocale(locale: Locale): void {
  * Initializes i18next once for the app shell.
  * Call before rendering; safe to invoke only from the app entry/provider.
  */
-export function initI18n(locale: Locale = readCachedLocale()): typeof i18n {
+export function initI18n(locale: Locale = readLocale()): typeof i18n {
     if (i18n.isInitialized) {
         void i18n.changeLanguage(locale);
         document.documentElement.lang = locale;

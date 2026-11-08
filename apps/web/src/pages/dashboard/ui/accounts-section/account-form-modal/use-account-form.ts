@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Account, ACCOUNT_NAME_MAX_LENGTH, DEFAULT_ACCOUNT_ICON } from '@balance/dto/accounts';
-import { CURRENCY_CODES, CurrencyCode } from '@balance/dto/currencies';
-import { Money } from '@balance/domain/money';
+import { CurrencyCode } from '@balance/dto/currencies';
+import { Money, MoneyValidationError } from '@balance/domain/money';
 import { useTranslation } from 'react-i18next';
+import { currencyNameWithSymbol, useCurrencies } from '../../../../../entities/currency';
 import { AccountsApi } from '../../../../../shared/api';
 import { ApiError } from '../../../../../shared/api/api-error';
+import { useAuth } from '../../../../../shared/auth';
+import { usePreferences } from '../../../../../shared/preferences';
 import { IconName, coerceIconName } from '../../../../../shared/ui/icon';
 
 export type AccountCurrencyItem = {
@@ -26,6 +29,7 @@ export type UseAccountFormResult = {
     readonly currency: CurrencyCode;
     readonly initialBalance: string;
     readonly currencyItems: AccountCurrencyItem[];
+    readonly currencyUnavailable: boolean;
     readonly error: string | null;
     readonly isSubmitting: boolean;
     readonly setName: (value: string) => void;
@@ -41,20 +45,25 @@ export type UseAccountFormResult = {
  */
 export function useAccountForm({ open, account, onClose, onSaved }: UseAccountFormArgs): UseAccountFormResult {
     const { t } = useTranslation();
+    const { locale } = usePreferences();
+    const { user } = useAuth();
+    const currencies = useCurrencies();
 
     const [name, setName] = useState('');
     const [icon, setIcon] = useState<IconName>(DEFAULT_ACCOUNT_ICON as IconName);
-    const [currency, setCurrency] = useState<CurrencyCode>('RUB');
+    const [currencyCode, setCurrencyCode] = useState<CurrencyCode>('');
     const [initialBalance, setInitialBalance] = useState('0');
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isEdit = account !== null;
 
-    const currencyItems: AccountCurrencyItem[] = CURRENCY_CODES.map((code) => ({
-        id: code,
-        label: code,
+    const currencyItems: AccountCurrencyItem[] = currencies.items.map((item) => ({
+        id: item.key,
+        label: currencyNameWithSymbol(item, locale),
     }));
+
+    const currencyUnavailable = currencies.loadState === 'error' && currencies.items.length === 0;
 
     useEffect(() => {
         if (!open) {
@@ -67,16 +76,28 @@ export function useAccountForm({ open, account, onClose, onSaved }: UseAccountFo
         if (account) {
             setName(account.name);
             setIcon(coerceIconName(account.icon));
-            setCurrency(account.currency);
+            setCurrencyCode(account.currency);
             setInitialBalance(account.initialBalance);
             return;
         }
 
         setName('');
         setIcon(coerceIconName(DEFAULT_ACCOUNT_ICON));
-        setCurrency('RUB');
+        setCurrencyCode('');
         setInitialBalance('0');
     }, [open, account]);
+
+    useEffect(() => {
+        if (!open || account || currencyCode) {
+            return;
+        }
+
+        const preferred = user?.defaultCurrencyCode;
+
+        if (preferred && currencies.items.some((item) => item.key === preferred)) {
+            setCurrencyCode(preferred);
+        }
+    }, [open, account, currencyCode, currencies.items, user]);
 
     const submit = async (event?: { preventDefault(): void }) => {
         event?.preventDefault();
@@ -89,34 +110,31 @@ export function useAccountForm({ open, account, onClose, onSaved }: UseAccountFo
             return;
         }
 
-        if (!isEdit) {
-            try {
-                Money.create(currency, initialBalance || '0');
-            } catch {
-                setError(t('accounts.validation.balance'));
-                return;
-            }
+        if (!isEdit && !currencies.items.some((item) => item.key === currencyCode)) {
+            setError(t('accounts.validation.currency'));
+            return;
         }
 
         setIsSubmitting(true);
 
         try {
-            const saved = isEdit
-                ? await AccountsApi.updateAccount(account.id, {
-                      name: trimmedName,
-                      icon,
-                      version: account.version,
-                  })
-                : await AccountsApi.createAccount({
-                      name: trimmedName,
-                      currency,
-                      initialBalance: Money.create(currency, initialBalance || '0').amount,
-                      icon,
-                  });
+            const saved = await saveAccount({
+                isEdit,
+                account,
+                name: trimmedName,
+                icon,
+                currency: currencyCode,
+                initialBalance,
+            });
 
             onSaved(saved);
             onClose();
         } catch (reason) {
+            if (reason instanceof MoneyValidationError) {
+                setError(t('accounts.validation.balance'));
+                return;
+            }
+
             setError(mapAccountSaveError(reason, t));
         } finally {
             setIsSubmitting(false);
@@ -127,18 +145,47 @@ export function useAccountForm({ open, account, onClose, onSaved }: UseAccountFo
         isEdit,
         name,
         icon,
-        currency,
+        currency: currencyCode,
         initialBalance,
         currencyItems,
+        currencyUnavailable,
         error,
         isSubmitting,
         setName,
         setIcon,
-        setCurrency,
+        setCurrency: (value: string) => {
+            if (currencies.items.some((item) => item.key === value)) {
+                setCurrencyCode(value);
+            }
+        },
         setInitialBalance,
         clearError: () => setError(null),
         submit,
     };
+}
+
+function saveAccount(input: {
+    readonly isEdit: boolean;
+    readonly account: Account | null;
+    readonly name: string;
+    readonly icon: IconName;
+    readonly currency: string;
+    readonly initialBalance: string;
+}): Promise<Account> {
+    if (input.isEdit && input.account) {
+        return AccountsApi.updateAccount(input.account.id, {
+            name: input.name,
+            icon: input.icon,
+            version: input.account.version,
+        });
+    }
+
+    return AccountsApi.createAccount({
+        name: input.name,
+        currency: input.currency,
+        initialBalance: Money.create(input.currency, input.initialBalance || '0').amount,
+        icon: input.icon,
+    });
 }
 
 function mapAccountSaveError(reason: unknown, t: (key: string) => string): string {

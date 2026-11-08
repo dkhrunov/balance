@@ -26,8 +26,8 @@ describe('resolveMoneySeparators', () => {
 });
 
 describe('createMoneyMaskOptions', () => {
-    it('sets scale from currency precision and locale separators', () => {
-        const options = createMoneyMaskOptions('RUB', 'ru');
+    it('sets scale from Money.precision and locale separators', () => {
+        const options = createMoneyMaskOptions('ru');
 
         expect(options.mask).toBe(Number);
         expect(options).toMatchObject({
@@ -39,7 +39,7 @@ describe('createMoneyMaskOptions', () => {
     });
 
     it('wraps the number block in a Pattern when prefix is set', () => {
-        const options = createMoneyMaskOptions('USD', 'en', '−');
+        const options = createMoneyMaskOptions('en', '−');
 
         expect(options).toMatchObject({
             mask: '−num',
@@ -81,7 +81,7 @@ describe('prefix mask unmaskedValue', () => {
             throw new Error('expected input');
         }
 
-        const mask = IMask(input, createMoneyMaskOptions('USD', 'en', '−'));
+        const mask = IMask(input, createMoneyMaskOptions('en', '−'));
 
         expect(mask.value).toBe('−');
         expect(mask.unmaskedValue).toBe('');

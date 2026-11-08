@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useOnlineStatus } from '../../lib';
+import { useOnlineStatus } from '../../lib/use-online-status';
 import styles from './connection-status.module.scss';
 
 type ConnectionStatusProps = {

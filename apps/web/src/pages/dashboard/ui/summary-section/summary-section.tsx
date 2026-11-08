@@ -13,6 +13,7 @@ import { AccountBalance } from '@balance/domain/transactions';
 import { AsciiReveal, AsciiSkeleton } from 'ascii-reveal';
 import { useTranslation } from 'react-i18next';
 import { useAccounts } from '../../../../entities/account';
+import { useCurrencies } from '../../../../entities/currency';
 import { formatMoney } from '../../../../shared/lib/money';
 import { LoadState } from '../../../../shared/lib/load-state';
 import { usePreferences } from '../../../../shared/preferences';
@@ -39,6 +40,7 @@ export function SummarySection({
 }: SummarySectionProps) {
     const { t } = useTranslation();
     const { locale } = usePreferences();
+    const currencies = useCurrencies();
     const { loadState: accountsLoadState } = useAccounts();
     const [preset, setPreset] = useState<DateRangePreset>('thisMonth');
 
@@ -63,6 +65,7 @@ export function SummarySection({
             : formatMoney(
                 AccountBalance.derive(account.initialBalance, account.currency, transactions),
                 account.currency,
+                currencies.symbol(account.currency),
                 locale,
             );
 
@@ -72,6 +75,7 @@ export function SummarySection({
             : `+${formatMoney(
                 AccountBalance.sumByTypes(account.currency, inRange, ['INCOME']),
                 account.currency,
+                currencies.symbol(account.currency),
                 locale,
             )}`;
 
@@ -81,6 +85,7 @@ export function SummarySection({
             : `−${formatMoney(
                 AccountBalance.sumByTypes(account.currency, inRange, ['EXPENSE']),
                 account.currency,
+                currencies.symbol(account.currency),
                 locale,
             )}`;
 

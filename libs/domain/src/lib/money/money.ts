@@ -1,12 +1,4 @@
-import { CurrencyCode, CurrencyDefinition } from '../currency';
-
-const STANDARD_FIAT_PRECISION = 2;
-
-const CURRENCY_DEFINITIONS: Readonly<Record<CurrencyCode, CurrencyDefinition>> = {
-    RUB: { code: 'RUB', precision: STANDARD_FIAT_PRECISION },
-    USD: { code: 'USD', precision: STANDARD_FIAT_PRECISION },
-    EUR: { code: 'EUR', precision: STANDARD_FIAT_PRECISION },
-};
+import { CurrencyCode } from '../currency';
 
 const DECIMAL_AMOUNT_PATTERN = /^(-?)(\d+)(?:\.(\d+))?$/;
 
@@ -33,7 +25,10 @@ export class CurrencyMismatchError extends Error {
  * integer minor units with BigInt only while performing calculations.
  */
 export class Money {
-    /** Canonical decimal amount at this currency's configured precision. */
+    /** Fractional digits for every amount. Not stored per currency. */
+    public static readonly precision = 2;
+
+    /** Canonical decimal amount at {@link Money.precision}. */
     public readonly amount: string;
 
     /** ISO currency code associated with the amount. */
@@ -45,41 +40,14 @@ export class Money {
     }
 
     /**
-     * Determines whether an unknown runtime value is a supported currency code.
-     *
-     * @param value Value received from an untyped boundary.
-     */
-    public static isCurrencyCode(value: unknown): value is CurrencyCode {
-        return typeof value === 'string' && value in CURRENCY_DEFINITIONS;
-    }
-
-    /**
-     * Returns the immutable metadata for a supported currency.
-     *
-     * @param currency Supported currency code.
-     */
-    public static getCurrencyDefinition(currency: CurrencyCode): CurrencyDefinition {
-        return CURRENCY_DEFINITIONS[currency];
-    }
-
-    /**
-     * Returns the number of fractional decimal places permitted for a currency.
-     *
-     * @param currency Supported currency code.
-     */
-    public static getCurrencyPrecision(currency: CurrencyCode): number {
-        return Money.getCurrencyDefinition(currency).precision;
-    }
-
-    /**
      * Creates an immutable monetary value and normalizes its decimal amount.
      *
-     * @param currency Supported currency code.
-     * @param amount Decimal string, with no more fractional digits than the currency supports.
-     * @throws {MoneyValidationError} If amount is not a valid decimal string or exceeds currency precision.
+     * @param currency ISO currency code carried with the amount.
+     * @param amount Decimal string, with no more fractional digits than {@link Money.precision}.
+     * @throws {MoneyValidationError} If amount is not a valid decimal string or exceeds {@link Money.precision}.
      */
     public static create(currency: CurrencyCode, amount: string): Money {
-        return new Money(currency, Money.formatMinorUnits(Money.parseAmountToMinorUnits(currency, amount), currency));
+        return new Money(currency, Money.formatMinorUnits(Money.parseAmountToMinorUnits(currency, amount)));
     }
 
     /**
@@ -95,7 +63,6 @@ export class Money {
             Money.formatMinorUnits(
                 Money.parseAmountToMinorUnits(left.currency, left.amount) +
                     Money.parseAmountToMinorUnits(right.currency, right.amount),
-                left.currency,
             ),
         );
     }
@@ -113,7 +80,6 @@ export class Money {
             Money.formatMinorUnits(
                 Money.parseAmountToMinorUnits(left.currency, left.amount) -
                     Money.parseAmountToMinorUnits(right.currency, right.amount),
-                left.currency,
             ),
         );
     }
@@ -150,10 +116,9 @@ export class Money {
 
     private static parseAmountToMinorUnits(currency: CurrencyCode, amount: string): bigint {
         const [, sign, integerPart, fractionalPart = ''] = Money.parseDecimalAmount(amount);
-        const precision = Money.getCurrencyPrecision(currency);
-        Money.assertFractionalPrecision(currency, fractionalPart, precision);
+        Money.assertFractionalPrecision(currency, fractionalPart);
 
-        const fractionalMinorUnits = fractionalPart.padEnd(precision, '0');
+        const fractionalMinorUnits = fractionalPart.padEnd(Money.precision, '0');
         const minorUnits = BigInt(`${integerPart}${fractionalMinorUnits}`);
 
         return sign === '-' ? -minorUnits : minorUnits;
@@ -173,24 +138,20 @@ export class Money {
         return match;
     }
 
-    private static assertFractionalPrecision(currency: CurrencyCode, fractionalPart: string, precision: number): void {
-        if (fractionalPart.length > precision) {
-            throw new MoneyValidationError(`${currency} supports at most ${String(precision)} decimal places.`);
+    private static assertFractionalPrecision(currency: CurrencyCode, fractionalPart: string): void {
+        if (fractionalPart.length > Money.precision) {
+            throw new MoneyValidationError(
+                `${currency} supports at most ${String(Money.precision)} decimal places.`,
+            );
         }
     }
 
-    private static formatMinorUnits(minorUnits: bigint, currency: CurrencyCode): string {
-        const precision = Money.getCurrencyPrecision(currency);
+    private static formatMinorUnits(minorUnits: bigint): string {
         const isNegative = minorUnits < ZERO_MINOR_UNITS;
         const absoluteMinorUnits = isNegative ? -minorUnits : minorUnits;
-        const paddedDigits = absoluteMinorUnits.toString().padStart(precision + 1, '0');
-
-        if (precision === 0) {
-            return `${isNegative ? '-' : ''}${paddedDigits}`;
-        }
-
-        const integerPart = paddedDigits.slice(0, -precision);
-        const fractionalPart = paddedDigits.slice(-precision);
+        const paddedDigits = absoluteMinorUnits.toString().padStart(Money.precision + 1, '0');
+        const integerPart = paddedDigits.slice(0, -Money.precision);
+        const fractionalPart = paddedDigits.slice(-Money.precision);
 
         return `${isNegative ? '-' : ''}${integerPart}.${fractionalPart}`;
     }

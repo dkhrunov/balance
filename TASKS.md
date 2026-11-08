@@ -9,7 +9,7 @@
      policy: Делать сверху вниз. Первая незакрытая задача без невыполненного Blocked by. Не перескакивать.
      policy: Подсекция — одна фича: BE (контракты + API), затем FE, затем следующая подсекция. -->
 
-### Foundation
+## Foundation
 
 - [x] Каркас Nx-монорепо с `apps/web` и `apps/server`
   - **ID**: scaffold-nx-monorepo
@@ -38,7 +38,7 @@
   - **Acceptance**: Unit-тесты покрывают сложение, вычитание, сравнение и отклоняют небезопасные пути через `number`; dto экспортирует типы Money и CurrencyCode.
   - **Blocked by**: contracts-skeleton
 
-### Auth
+## Auth
 
 - [x] Схема пользователей и admin seed (без публичной регистрации)
   - **ID**: users-schema
@@ -68,7 +68,7 @@
   - **Acceptance**: Пользователь входит через API; защищённые маршруты перенаправляют; виден desktop-хром Carbon; приёмка на широком viewport.
   - **Blocked by**: auth-jwt, scaffold-nx-monorepo
 
-### Preferences
+## Preferences
 
 - [x] API настроек пользователя — locale и тема
   - **ID**: user-preferences-api
@@ -84,23 +84,23 @@
   - **Acceptance**: Обе локали; переключатель темы на токенах Carbon; `system` следует ОС; настройка переживает перезагрузку и второй браузер.
   - **Blocked by**: web-shell-auth, user-preferences-api
 
-### Currency
+## Currency
 
 - [x] API справочника валют
-  - **ID**: currency-catalog-api
+  - **ID**: currencies-api
   - **Tags**: backend, currencies, database
   - **Details**: [`docs/requirements/currency.md`](./docs/requirements/currency.md), [`docs/requirements/ERD.md`](./docs/requirements/ERD.md) — таблица `currencies` и read-only API. Миграция создаёт справочник, заполняет RUB/USD/EUR и заменяет `CHECK (... IN ('RUB', 'USD', 'EUR'))` у `accounts.currency_code`, `transactions.currency_code` и `users.default_currency_code` на внешний ключ к `currencies.key`.
   - **Acceptance**: Миграция создаёт таблицу и три начальные строки; `accounts.currency_code`, `transactions.currency_code` и `users.default_currency_code` ссылаются на `currencies.key`, старых проверок-списков нет; оба маршрута требуют auth и возвращают хеш; SQL-правка `symbol` меняет `version`; маршрута записи нет; тесты покрывают оба чтения и смену version.
   - **Blocked by**: accounts-api, auth-jwt
 
-- [ ] UI справочника валют
-  - **ID**: currency-catalog-ui
+- [x] UI справочника валют
+  - **ID**: currencies-ui
   - **Tags**: frontend, currencies
   - **Details**: [`docs/requirements/currency.md`](./docs/requirements/currency.md) — кэш справочника и выбор валюты в UI.
   - **Acceptance**: Тёплый кэш с той же version не вызывает `GET /currencies`; расхождение version заменяет кэш и открытые списки валют; неудачная проверка version не удаляет кэш; при пустом кэше и неудачной загрузке UI не выдумывает RUB/USD/EUR; символы и локализованные названия рисуются по `key`.
-  - **Blocked by**: currency-catalog-api, web-shell-auth, i18n-theme-ui
+  - **Blocked by**: currencies-api, web-shell-auth, i18n-theme-ui
 
-### Accounts
+## Accounts
 
 - [x] Domain и API счетов
   - **ID**: accounts-api
@@ -116,7 +116,7 @@
   - **Acceptance**: Полный CRUD online по контрактам; видны валюта и баланс; empty/loading/error; usable на широком viewport.
   - **Blocked by**: web-shell-auth, accounts-api
 
-### Categories
+## Categories
 
 - [x] API категорий (доход и расход)
   - **ID**: categories-api
@@ -132,7 +132,7 @@
   - **Acceptance**: Полный CRUD online по контрактам; разделение типов видно; empty/loading/error; usable на широком viewport.
   - **Blocked by**: web-shell-auth, categories-api
 
-### Labels
+## Labels
 
 - [ ] Имена удалённых счетов и категорий в истории
   - **ID**: deleted-reference-labels
@@ -141,7 +141,7 @@
   - **Acceptance**: Транзакция на удалённый счёт показывает его имя и валюту, на удалённую категорию — её имя. Эти записи не в активном списке и не выбираются для новой операции. `accountId` и `categoryId` истории не обнуляются.
   - **Blocked by**: accounts-api, categories-api, transactions-income-expense
 
-### Transactions
+## Transactions
 
 - [x] API транзакций — доход и расход и фильтры атрибуции
   - **ID**: transactions-income-expense
@@ -178,7 +178,7 @@
   - **Acceptance**: Повтор того же `operationId` возвращает результат первого применения, без второй записи и без ошибки «дубликат». Другой `operationId` создаёт другую запись. Контракт и тесты покрывают доход, расход, перевод и удаление.
   - **Blocked by**: transactions-transfer
 
-### Optimistic UI
+## Optimistic UI
 
 - [ ] Optimistic UI мутаций и передача operationId
   - **ID**: optimistic-mutations-ui
@@ -187,7 +187,7 @@
   - **Acceptance**: Создание и правка счёта, категории и транзакции видны до ответа сервера и после успеха совпадают с ним. Ошибка возвращает прежний UI и показывает сообщение. Повтор мутации транзакции уходит с тем же `operationId` и не создаёт вторую запись.
   - **Blocked by**: transactions-operation-id, accounts-ui, categories-ui, transactions-ui
 
-### i18n
+## i18n
 
 - [ ] Дефолтная локаль на этапе деплоя
   - **ID**: deploy-default-locale
@@ -196,7 +196,7 @@
   - **Acceptance**: `VITE_DEFAULT_LOCALE=ru` даёт русский до входа и при пустом кэше; `en` и отсутствие переменной оставляют английский; сохранённая настройка пользователя важнее дефолта.
   - **Blocked by**: i18n-theme-ui
 
-### Накопления
+## Накопления
 
 - [ ] API целей накоплений
   - **ID**: savings-goals-api
@@ -212,7 +212,7 @@
   - **Acceptance**: Создать, обновить и завершить цель в UI; прогресс виден; empty/loading/error; широкий viewport.
   - **Blocked by**: savings-goals-api, web-shell-auth
 
-### Курсы валют
+## Курсы валют
 
 - [ ] Курсы для конвертации без переписывания истории
   - **ID**: exchange-rates
@@ -221,7 +221,7 @@
   - **Acceptance**: Конвертация принимает timestamp и источник курса; тесты отделяют исторический курс от текущего.
   - **Blocked by**: money-currency-domain
 
-### Аналитика
+## Аналитика
 
 - [ ] API итогов капитала в валюте отчёта
   - **ID**: capital-analytics-api
@@ -237,7 +237,7 @@
   - **Acceptance**: Графики рисуются на примерных данных; пустые состояния обработаны; широкий viewport.
   - **Blocked by**: capital-analytics-api, web-shell-auth
 
-### Долги
+## Долги
 
 - [ ] API долгов, кредитов, рассрочек и ипотек
   - **ID**: debts-loans-api
@@ -253,7 +253,7 @@
   - **Acceptance**: CRUD, остаток и следующий платёж видны в UI; empty/loading/error; широкий viewport.
   - **Blocked by**: debts-loans-api, web-shell-auth
 
-### Импорт и экспорт
+## Импорт и экспорт
 
 - [ ] API импорта и экспорта (JSON/CSV) с предпросмотром
   - **ID**: import-export-api
@@ -269,7 +269,7 @@
   - **Acceptance**: Круговой проход из UI на примерных данных; структурированные ошибки показаны; широкий viewport.
   - **Blocked by**: import-export-api, web-shell-auth
 
-### Аудит
+## Аудит
 
 - [ ] Журнал аудита финансовых мутаций
   - **ID**: audit-trail
@@ -278,7 +278,7 @@
   - **Acceptance**: Создание и изменение транзакции пишут запись аудита с актором; секреты не логируются.
   - **Blocked by**: transactions-income-expense
 
-### Категории: подкатегории и цвет
+## Категории: подкатегории и цвет
 
 - [ ] Подкатегории и цвет категорий
   - **ID**: category-ux-extensions
@@ -287,7 +287,7 @@
   - **Acceptance**: Создание и список подкатегорий; цвет сохраняется и показывается. Текущее поведение иконки не меняется.
   - **Blocked by**: categories-api
 
-### Пользователи
+## Пользователи
 
 - [ ] Admin UI для создания пользователей (необязательно; seed в БД остаётся допустимым)
   - **ID**: admin-user-ui
@@ -296,7 +296,7 @@
   - **Acceptance**: Уполномоченный администратор создаёт пользователя из UI; пароль хешируется на сервере.
   - **Blocked by**: auth-jwt, web-shell-auth
 
-### Пространства
+## Пространства
 
 - [ ] Несколько финансовых пространств (решение не принято)
   - **ID**: multi-space-undecided
