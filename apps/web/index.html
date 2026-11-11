@@ -15,14 +15,16 @@
                  * Keep this script in index.html to avoid first-paint flash.
                  */
                 try {
-                    var preference = localStorage.getItem('balance.themePreference');
+                    const preference = localStorage.getItem('balance.themePreference');
+
                     if (preference === 'light') {
                         document.documentElement.setAttribute('data-carbon-theme', 'white');
                     } else if (preference === 'dark') {
                         document.documentElement.setAttribute('data-carbon-theme', 'g100');
                     }
 
-                    var locale = localStorage.getItem('balance.locale');
+                    const locale = localStorage.getItem('balance.locale');
+
                     if (locale === 'en' || locale === 'ru') {
                         document.documentElement.lang = locale;
                     }
